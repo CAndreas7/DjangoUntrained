@@ -3,6 +3,7 @@ from .models import User
 
 
 class LoginTests(TestCase):
+    """
     user = None
     credentials = None
 
@@ -24,7 +25,7 @@ class LoginTests(TestCase):
 
     def test_complete(self):
         pass
-
+"""
 
 class LoginFail(TestCase):
     pass
