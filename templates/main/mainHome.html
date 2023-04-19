@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h1>TA Scheduler App</h1>
+        {% csrf_token %}
+    <button type="button" name="courses">Courses</button>
+    <button type="button" name="accountInfo">Account Information</button>
+
+    {% if role == 1 or role == 2 %}
+        <button type="button" name="notification">Send Notification</button>
+    {% endif %}
+
+{% endblock content %}
