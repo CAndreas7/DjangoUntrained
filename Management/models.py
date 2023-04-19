@@ -5,7 +5,7 @@ from django.db import models
 class Course(models.Model) :
 
     section = models.IntegerField()
-    #users = models.ManyToManyField(User)
+    #users = models.ManyToManyField(User) #an array that string match username|email or how User objects
     #tasks = ArrayField(models.CharField(max_length=20))
 class User(models.Model):
 
