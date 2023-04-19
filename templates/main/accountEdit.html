@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <form method="post" action="/static">
+        {% csrf_token %}
+        Email: <input type="text" name="name"><br/>
+        Phone #: <input type="text" name="number"><br/>
+        <input type="submit">
+    </form>
+
+    <p>{{message}}</p>
+    {#  <table>#}
+    {#    <tr><th>Name</th><th>Number</th></tr>#}
+    {#    {% for i in myList %}#}
+    {#    <tr><td>{{i.0}}</td><td>{{i.1}}</td></tr>#}
+    {#    {% endfor %}#}
+    {#  </table>#}
+    {#{% endblock content %}#}
+    <button type="button" name="courses">Courses</button>
+    <button type="button" name="accountInfo">Account Information</button>
+
+{% endblock content %}
