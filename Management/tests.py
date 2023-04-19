@@ -25,6 +25,30 @@ class LoginTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '/', msg_prefix="make sure it stays in home")
 
+    def testNonExistentUser(self):
+        response = self.client.post('/', {
+            'email': 'IDontExisit@gmail.com',
+            'password': 'testpass'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Please enter a correct email and password.')
+
+    def testMissingEmail(self):
+        response = self.client.post('/', {
+            'email': '',
+            'password': 'testpass'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This field is required.')
+
+    def testMissingPassword(self):
+        response = self.client.post('/', {
+            'email': 'testuser',
+            'password': ''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This field is required.')
+
 
 class CreateAccount(TestCase):
     pass
