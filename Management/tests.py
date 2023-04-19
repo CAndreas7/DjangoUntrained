@@ -20,7 +20,18 @@ class LoginTests(TestCase):
 
 
 class LoginFail(TestCase):
-    pass
+    #create a good user
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='gooduser', password='goodpass')
+
+    def testBadPass(self):
+        response = self.client.login(username='gooduser', password='badpass')
+        self.assertFalse(response)
+    def testBadUser(self):
+        response = self.client.login(username='baduser', password='goodpass')
+        self.assertFalse(response)
 
 
 class CreateAccount(TestCase):
