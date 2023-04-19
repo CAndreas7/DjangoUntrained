@@ -63,10 +63,10 @@ class Section(models.Model):
     capacity = models.IntegerField()
     # this references a value in Courses, when a TA/User is deleted
     # the section will remain and this field becomes Null
-    TA = models.ForeignKey(User, on_delete=models.SET_NULL())
+    TA = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
     # since this is intrinsically tied to Courses, when a course is deleted
     # the section shouldn't exist anymore, so we delete this section
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE())
+    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     # this is a junction table, showing a user assigned to a course
     # A user can be assigned multiple courses, and a course can have multiple users assigned
@@ -76,5 +76,5 @@ class Section(models.Model):
 
 
 class UsersToCourse(models.Model):
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE())
-    assignment = models.ForeignKey(User, on_delete=models.CASCADE())
+    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
+    assignment = models.ForeignKey(User, on_delete=models.CASCADE)

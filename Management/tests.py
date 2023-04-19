@@ -5,33 +5,25 @@ from .models import User
 
 class LoginTests(TestCase):
     def setUp(self):
-        # set user credentials
         self.client = Client()
-        self.credentials = {
-            'username': 'testuser',
-            'password': 'secret'}
-        User.objects.create_user(**self.credentials)
+        self.user = User.objects.create(email='testuser@uwm.edu', password='testpass', role='1')
 
-    def testLogin(self):
-        # send login
-        response = self.client.post(reverse('login'), self.credentials, follow=True)
-        # check if logged in
-        self.assertTrue(response.context['user'].is_active)
+    def testGoodLogin(self):
+        response = self.client.post('/', {
+            'email': 'testuser@uwm.edu',
+            'password': 'testpass'
+        })
+        self.assertEqual(response.status_code, 302, "The status code should be 302 for a good login")
+        self.assertContains(response, '/base', msg_prefix="The response should let you through to /base i think.")
 
+    def testBadLogin(self):
+        response = self.client.post("/", {
+            'email': 'testuser@uwm.edu',
+            'password': 'badpass'},
+            follow=True)
 
-class LoginFail(TestCase):
-    #create a good user
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(
-            username='gooduser', password='goodpass')
-
-    def testBadPass(self):
-        response = self.client.login(username='gooduser', password='badpass')
-        self.assertFalse(response)
-    def testBadUser(self):
-        response = self.client.login(username='baduser', password='goodpass')
-        self.assertFalse(response)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '/', msg_prefix="make sure it stays in home")
 
 
 class CreateAccount(TestCase):
