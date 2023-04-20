@@ -34,3 +34,7 @@ class MainHome(View):
     def get(self,request):
         m = request.session["name"]
         return render(request, "main/mainHome.html", {"name": m})
+
+
+class EditSections:
+    pass
