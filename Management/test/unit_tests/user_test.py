@@ -43,6 +43,7 @@ class TestUser(TestCase):
 
     def test_removeAccount(self):
         user = User.objects.create("deleteme@uwm.edu", "goodbye", "", 3)
+        User.objects.create(s)
         self.supervisor.removeAccount("deleteme@uwm.edu")
         self.assertEqual(User.objects.filter(email="deleteme@uwm.edu", password="goodbye").len(), 0,
                          msg="An account exists with the credentials that should have been deleted")

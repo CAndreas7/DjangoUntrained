@@ -1,5 +1,5 @@
 from django.test import TestCase
-from Management.models import Section
+from Management.models import Section, Course
 from Management.views import EditSections
 
 
@@ -39,7 +39,15 @@ from Management.views import EditSections
 # Side effects:  Anywhere that this sectionID was displayed will be changed to reflect this change
 # SectionID(IN):  This parameter is the new sectionID that will be entered in the database
 
+
+
+
 class TestSection(TestCase):
+
+    def setup(self):
+
+        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
+
     def test_add_section(self):
         # Create an instance of the EditSections class
         edit_sections = EditSections()
@@ -61,6 +69,10 @@ class TestSection(TestCase):
         self.assertEqual(section.courseID_id, 1)
 
     def test_view_section(self):
+
+        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
+        Course.objects.create(courseName="test2", courseID=2, courseDepartment="testdep", courseDescription='')
+
         # Create some test data
         Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
                                capacity=30, TA=None, courseID_id=1)
@@ -74,9 +86,11 @@ class TestSection(TestCase):
         sections = edit_sections.viewSection()
 
         # Check that the list contains all sections in the database
-        self.assertEqual(len(sections), 2)
+        self.assertListEqual(list(sections), [Section.objects.get(sectionID=1), Section.objects.get(sectionID=2)])
 
     def test_remove_section(self):
+
+        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
         # Create some test data
         Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
                                capacity=30, TA=None, courseID_id=1)
@@ -91,7 +105,10 @@ class TestSection(TestCase):
         self.assertEqual(Section.objects.count(), 0)
 
     class SectionTest(TestCase):
-        def test_get_id_returns_section_id(self):
+        def test_get_id(self):
+
+            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
+
             # Create some test data
             section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
                                              endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
@@ -102,7 +119,8 @@ class TestSection(TestCase):
             # Check that the method returns the correct section ID
             self.assertEqual(section_id, 1)
 
-        def test_set_id_updates_section_id(self):
+        def test_set_id(self):
+            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
             # Create some test data
             section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
                                              endTime='10:00AM', capacity=30, TA=None, courseID_id=1)

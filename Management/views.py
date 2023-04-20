@@ -37,4 +37,11 @@ class MainHome(View):
 
 
 class EditSections:
-    pass
+    def removeSection(self, param):
+        pass
+
+    def viewSection(self):
+        pass
+
+    def addSection(self, param, param1, param2, param3, param4, param5, param6):
+        pass
