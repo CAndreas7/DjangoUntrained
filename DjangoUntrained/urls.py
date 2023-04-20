@@ -18,9 +18,10 @@ from django.urls import path
 
 from django.contrib import admin
 from django.urls import path
-from Management.views import Home
+from Management.views import Home, MainHome
 #from ProjectApp.views import Home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Home.as_view()),
+    path('main/', MainHome.as_view()),
 ]

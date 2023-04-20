@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import User
+from Management.models import User
 
 
 class LoginTests(TestCase):
@@ -48,27 +48,3 @@ class LoginTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'This field is required.')
-
-
-class CreateAccount(TestCase):
-    pass
-
-
-class CreateCourse(TestCase):
-    pass
-
-
-class CreateSection(TestCase):
-    pass
-
-
-class DeleteAccount(TestCase):
-    pass
-
-
-class DeleteCourse(TestCase):
-    pass
-
-
-class DeleteSection(TestCase):
-    pass

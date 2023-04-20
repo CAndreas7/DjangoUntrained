@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <form method="post" action="/static">
+    <form method="post" action="/templates/static">
         {% csrf_token %}
         Email: <input type="text" name="name"><br/>
         Phone #: <input type="text" name="number"><br/>
