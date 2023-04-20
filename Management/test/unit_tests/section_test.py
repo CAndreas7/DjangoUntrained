@@ -17,13 +17,13 @@ class TestSection(TestCase):
 
         # Check that the new section has the correct information
         section = Section.objects.first()
-        self.assertEqual(section.sectionID, 1)
-        self.assertEqual(section.location, 'Test Location')
-        self.assertEqual(section.startTime, '9:00AM')
-        self.assertEqual(section.endTime, '10:00AM')
-        self.assertEqual(section.capacity, 30)
-        self.assertIsNone(section.TA)
-        self.assertEqual(section.courseID_id, 1)
+        self.assertEqual(section.sectionID, 1, msg="sectionID is wrong/not set")
+        self.assertEqual(section.location, 'Test Location', msg="location is wrong/not set")
+        self.assertEqual(section.startTime, '9:00AM', msg="start time is wrong/not set")
+        self.assertEqual(section.endTime, '10:00AM', msg="end time is wrong/not set")
+        self.assertEqual(section.capacity, 30, msg="capacity is wrong/not set")
+        self.assertIsNone(section.TA, mssg="TA should be none in this test")
+        self.assertEqual(section.courseID_id, 1, msg="course id is wrong/not set")
 
     def test_view_section(self):
 
@@ -43,7 +43,8 @@ class TestSection(TestCase):
         sections = edit_sections.viewSection()
 
         # Check that the list contains all sections in the database
-        self.assertListEqual(list(sections), [Section.objects.get(sectionID=1), Section.objects.get(sectionID=2)])
+        self.assertListEqual(list(sections), [Section.objects.get(sectionID=1), Section.objects.get(sectionID=2)],
+                             msg="List should contain all sections in the database")
 
     def test_remove_section(self):
 
@@ -59,7 +60,7 @@ class TestSection(TestCase):
         edit_sections.removeSection(1)
 
         # Check that the section was deleted from the database
-        self.assertEqual(Section.objects.count(), 0)
+        self.assertEqual(Section.objects.count(), 0, msg="section isn't deleted from DB")
 
     class SectionTest(TestCase):
         def test_get_id(self):
@@ -74,7 +75,7 @@ class TestSection(TestCase):
             section_id = section.getID()
 
             # Check that the method returns the correct section ID
-            self.assertEqual(section_id, 1)
+            self.assertEqual(section_id, 1, msg="did not return correct section id")
 
         def test_set_id(self):
             Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
@@ -87,4 +88,4 @@ class TestSection(TestCase):
 
             # Check that the section ID was updated in the database
             section.refresh_from_db()
-            self.assertEqual(section.sectionID, 2)
+            self.assertEqual(section.sectionID, 2, msg="section id was no updated")
