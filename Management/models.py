@@ -63,7 +63,7 @@ class Section(models.Model):
     capacity = models.IntegerField()
     # this references a value in Courses, when a TA/User is deleted
     # the section will remain and this field becomes Null
-    TA = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    TA = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     # since this is intrinsically tied to Courses, when a course is deleted
     # the section shouldn't exist anymore, so we delete this section
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)

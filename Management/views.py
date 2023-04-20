@@ -21,7 +21,7 @@ class Home(View):
         except:
             noSuchUser = True
         if noSuchUser:
-            return render(request, "home.html", {"message": "User does not exist"})
+            return render(request, "home.html", {"message": "Please enter a correct email and password."})
         elif badPassword:
             return render(request, "home.html", {"message": "bad password"})
         else:
