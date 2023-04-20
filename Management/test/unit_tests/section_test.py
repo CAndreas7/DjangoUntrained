@@ -6,6 +6,7 @@ from Management.views import EditSections
 class TestSection(TestCase):
 
     def test_add_section(self):
+        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
         # Create an instance of the EditSections class
         edit_sections = EditSections()
 
@@ -13,7 +14,7 @@ class TestSection(TestCase):
         edit_sections.addSection(1, 'Test Location', '9:00AM', '10:00AM', 30, None, 1)
 
         # Check that a new section was added to the database
-        self.assertEqual(Section.objects.count(), 1)
+        self.assertEqual(Section.objects.count(), 1, msg="Check if a new section was added to the database")
 
         # Check that the new section has the correct information
         section = Section.objects.first()
