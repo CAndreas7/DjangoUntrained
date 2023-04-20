@@ -3,50 +3,7 @@ from Management.models import Section, Course
 from Management.views import EditSections
 
 
-# EditSections.addSection()
-#
-# Precondition: No section exists with the given information/primary key.
-# Postcondition: A new section will be added to the database with given parameters.
-# Side Effects: A new entry will be added to the database/models
-# SectionID(IN): Unique identifier for each section, the section number.
-# Name(IN): Name/title of the course.
-# Department(IN): The department the course is in.
-
-# EditSections.viewSection()
-#
-# Precondition:  There exists at least one section in the database
-# Postcondition:  A table in a HTML page is created and filled with information about the sections
-# Side effects:  This is a read operation and the table is destroyed when we leave the page/re render
-# No input, the method will read everything from the model/database
-
-# EditSections.removeSection(SectionID)
-# Precondition:  The database has at least 1 section in it, and the user has permission to remove sections
-# Postcondition:  The record associated with the given SectionID is deleted from database
-# Side Effects:  Sections shouldn’t have many other connections that rely on a section existing, so no side effects
-# SectionID(IN):  The given sectionID to identify the record to delete
-
-# Sections.getID()
-#
-# Precondition:  The section has an ID entered in the database
-# Postcondition:  The method returns the section’s sectionID
-# Side effects:  None
-# No inputs
-
-# Section.setID(sectionID)
-#
-# Precondition:  The section should have an id, but the method will work without it
-# Postcondition:  The given section will have its sectionID updated
-# Side effects:  Anywhere that this sectionID was displayed will be changed to reflect this change
-# SectionID(IN):  This parameter is the new sectionID that will be entered in the database
-
-
-
-
 class TestSection(TestCase):
-
-    def setup(self):
-
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
 
     def test_add_section(self):
         # Create an instance of the EditSections class
