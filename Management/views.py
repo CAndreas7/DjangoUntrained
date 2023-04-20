@@ -21,9 +21,9 @@ class Home(View):
         except:
             noSuchUser = True
         if noSuchUser:
-            return render(request, "home.html", {"message": "Please enter a correct email and password."})
+            return render(request, "main/home.html", {"message": "Please enter a correct email and password."})
         elif badPassword:
-            return render(request, "home.html", {"message": "bad password"})
+            return render(request, "main/home.html", {"message": "bad password"})
         else:
             request.session["name"] = m.name
             return redirect("/main/")
@@ -34,3 +34,14 @@ class MainHome(View):
     def get(self,request):
         m = request.session["name"]
         return render(request, "main/mainHome.html", {"name": m})
+
+
+class EditSections:
+    def removeSection(self, param):
+        pass
+
+    def viewSection(self):
+        pass
+
+    def addSection(self, param, param1, param2, param3, param4, param5, param6):
+        pass
