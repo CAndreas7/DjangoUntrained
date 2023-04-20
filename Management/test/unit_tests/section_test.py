@@ -22,7 +22,7 @@ class TestSection(TestCase):
         self.assertEqual(section.startTime, '9:00AM', msg="start time is wrong/not set")
         self.assertEqual(section.endTime, '10:00AM', msg="end time is wrong/not set")
         self.assertEqual(section.capacity, 30, msg="capacity is wrong/not set")
-        self.assertIsNone(section.TA, mssg="TA should be none in this test")
+        self.assertIsNone(section.TA, msg="TA should be none in this test")
         self.assertEqual(section.courseID_id, 1, msg="course id is wrong/not set")
 
     def test_view_section(self):
