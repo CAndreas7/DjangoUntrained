@@ -47,13 +47,17 @@ class EditSections:
         pass
 
 
-def courses(request):
-    return None
+class courses(View):
+    def get(self,request):
+        return render(request, "main/courses.html", {})
 
 
-def courseEdit(request):
-    return None
+class courseEdit(View):
+    def get(self,request):
+        return render(request, "main/courseEdit.html", {})
 
 
-def editUserInCourse(request):
-    return None
+class editUserInCourse(View):
+
+    def get(self,request):
+        return render(request, "main/editUserInCourse.html", {})
