@@ -16,7 +16,7 @@ class Home(View):
         noSuchUser = False
         badPassword = False
         try:
-            m = User.objects.get(name=request.POST['email'])
+            m = User.objects.get(email=request.POST['email'])
             badPassword = (m.password != request.POST['password'])
         except:
             noSuchUser = True
@@ -25,15 +25,15 @@ class Home(View):
         elif badPassword:
             return render(request, "main/home.html", {"message": "bad password"})
         else:
-            request.session["name"] = m.name
+            request.session["email"] = m.email
             return redirect("/main/")
 
 
 class MainHome(View):
 
     def get(self,request):
-        m = request.session["name"]
-        return render(request, "main/mainHome.html", {"name": m})
+        m = request.session["email"]
+        return render(request, "main/mainHome.html", {"email": m})
 
 
 class EditSections:
@@ -45,3 +45,19 @@ class EditSections:
 
     def addSection(self, param, param1, param2, param3, param4, param5, param6):
         pass
+
+
+class courses(View):
+    def get(self,request):
+        return render(request, "main/courses.html", {})
+
+
+class courseEdit(View):
+    def get(self,request):
+        return render(request, "main/courseEdit.html", {})
+
+
+class editUserInCourse(View):
+
+    def get(self,request):
+        return render(request, "main/editUserInCourse.html", {})
