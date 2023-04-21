@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+<h1>Edit Courses</h1>
+    <form action="/" method="post">
+        {% csrf_token %}
+        <table>
+            <tr><td>Course Name: </td><td><input type="text" name="CourseName"></td></tr>
+            <tr><td>Number of Sections </td><td><input type="text" name="numOfSections"></td></tr>
+        </table>
+        <label for="AddRemove">Add or Remove Course: </label>
+        <select name="AddRemove" id="AddRemove">
+            <option value="Add">Add</option>
+            <option value="Remove">Remove</option>
+            </select> <br/>
+        <input type="submit">
+    </form>
+
