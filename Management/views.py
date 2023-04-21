@@ -26,7 +26,7 @@ class Home(View):
             return render(request, "main/home.html", {"message": "bad password"})
         else:
             request.session["name"] = m.name
-            return redirect("/main/")
+            return redirect("/main/maihHome.html")
 
 
 class MainHome(View):
@@ -45,3 +45,15 @@ class EditSections:
 
     def addSection(self, param, param1, param2, param3, param4, param5, param6):
         pass
+
+
+def courses(request):
+    return None
+
+
+def courseEdit(request):
+    return None
+
+
+def editUserInCourse(request):
+    return None

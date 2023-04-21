@@ -18,10 +18,12 @@ from django.urls import path
 
 from django.contrib import admin
 from django.urls import path
-from Management.views import Home, MainHome
+from Management.views import Home, MainHome, courses, courseEdit, editUserInCourse
 #from ProjectApp.views import Home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Home.as_view()),
     path('main/', MainHome.as_view()),
+    path('courses/', courses.as_view()),
+    path('courseEdit/', courseEdit.as_view()),
 ]
