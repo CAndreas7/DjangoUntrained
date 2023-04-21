@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+{% csrf_token %}
+<h1>Add/Remove Users from Courses</h1>
+
+<form method="post" action="/templates/static">
+    <label for="course">Select course:</label>
+    <select name="course" id="course">
+        <option value="CS250">CS250 we can fill this with our courses</option>
+        <option value="CS350">CS350</option>
+        <option value="CS361">CS361</option>
+        <option value="CS1000">CS1000</option>
+    </select> <br/>
+
+    <label for="userType">Select type of Individual:</label>
+    <select name="userType" id="userType">
+        <option value="Supervisor">Supervisor</option>
+        <option value="TA">TA</option>
+        <option value="Instructor">Instructor</option>
+    </select> <br/>
+
+    <label for="userType">Select Name:</label>
+    <select name="username" id="username">
+        <option value="username1">input all names of users in SELECT COURSE and are that type above.</option>
+        <option value="username2">sadf</option>
+    </select> <br/>
+
+    <label for="Section">Select Section (IF TA): </label>
+    <select name="section" id="section">
+        <option value="section1">input all sections in the selected COURSE above IF user is TA.</option>
+        <option value="username2">sadf</option>
+    </select> <br/>
+
+    <label for="AddRemove">Add or Remove</label>
+    <select name="AddRemove" id="AddRemove">
+        <option value="Add">Remove</option>
+        <option value="Remove">Remove</option>
+    </select> <br/>
+    </form>
+
+    <button type="Submit" name="submitAssignments">submit</button>
+
+</html>
