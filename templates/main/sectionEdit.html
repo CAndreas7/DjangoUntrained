@@ -1,0 +1,7 @@
+<h1>Edit Section</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Save changes">
+</form>

@@ -78,20 +78,21 @@ class sectionAdd(View):
 
 
 class sectionEdit(View):
-    def get(self, request, course_id, section_id):
-        section = get_object_or_404(Section, courseID=course_id, pk=section_id)
-        form = SectionForm(instance=section)
-        return render(request, 'main/sectionEdit.html', {'form': form})
+    def get(self, request, section_id, course_id):
+        section = get_object_or_404(Section, pk=section_id)
+        form = SectionForm(instance=section) # change here
+        context = {'section': section, 'form': form}
+        return render(request, "main/sectionEdit.html", context)
 
-    def post(self, request, course_id, section_id):
-        section = get_object_or_404(Section, courseID=course_id, pk=section_id)
-        form = SectionForm(request.POST, instance=section)
+    def post(self, request, section_id, course_id):
+        section = get_object_or_404(Course, pk=section_id)
+        form = SectionForm(request.POST, instance=section) # change here
         if form.is_valid():
             form.save()
-            # redirect to a success page
+            return redirect('sections', course_id=course_id)
         else:
-            form = SectionForm(instance=section)
-        return render(request, 'main/sectionEdit.html', {'form': form})
+            context = {'section': section, 'form': form}
+            return render(request, "main/sectionEdit.html", context)
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
