@@ -1,8 +1,8 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import User, Section
-from .forms import SectionForm
+from .models import User, Section, Course
+from .forms import SectionForm, CourseForm
 
 
 # Create your views here.
@@ -40,6 +40,10 @@ class MainHome(View):
 
 class EditSections(View):
 
+    def get(self, request):
+        m = request.session["email"]
+        return render(request, 'main/addSection.html', {'email': m})
+
     def viewSection(self):
         # Return a QuerySet containing all sections in the database
         return Section.objects.all()
@@ -76,15 +80,34 @@ class EditSections(View):
 
 class courses(View):
     def get(self, request):
-        return render(request, "main/courses.html", {})
-
+        courses = Course.objects.all()
+        context = {'courses': courses}
+        return render(request, "main/courses.html", context)
 
 class courseEdit(View):
-    def get(self, request):
-        return render(request, "main/courseEdit.html", {})
+    def get(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        form = CourseForm(instance=course)
+        context = {'course': course, 'form': form}
+        return render(request, "main/courseEdit.html", context)
+
+    def post(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect('courses')
+        else:
+            context = {'course': course, 'form': form}
+            return render(request, "main/courseEdit.html", context)
 
 
 class editUserInCourse(View):
 
     def get(self, request):
         return render(request, "main/editUserInCourse.html", {})
+
+
+class accountEdit(View):
+    def get(self, request):
+        return render(request, "main/accountEdit.html", {})
