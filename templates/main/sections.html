@@ -1,0 +1,30 @@
+<h1>{{ course.courseName }} Sections</h1>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<table style="width:100%">
+  <tr>
+    <th>Section ID</th>
+    <th>Location</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th>Capacity</th>
+    <th>Edit</th>
+    <th>Delete</th>
+  </tr>
+  {% for section in sections %}
+  <tr>
+    <td>{{ section.sectionID }}</td>
+    <td>{{ section.location }}</td>
+    <td>{{ section.startTime }}</td>
+    <td>{{ section.endTime }}</td>
+    <td>{{ section.capacity }}</td>
+    <td><a href="{% url 'sectionEdit' course.courseID section.sectionID %}">Edit Section</a></td>
+    <td><a href="{% url 'sectionDelete' course.courseID section.sectionID %}">Delete Section</a></td>
+  </tr>
+  {% endfor %}
+</table> <br>
+
+<a href="{% url 'sectionAdd' course.courseID %}">Add Section</a>

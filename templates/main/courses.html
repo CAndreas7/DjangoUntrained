@@ -9,6 +9,7 @@ table, th, td {
     <th>Course Name</th>
     <th>Course Description</th>
     <th>Department</th>
+    <th>Sections</th>
     <th>Edit</th>
   </tr>
   {% for course in courses %}
@@ -16,6 +17,7 @@ table, th, td {
     <td>{{ course.courseName }}</td>
     <td>{{ course.courseDescription }}</td>
     <td>{{ course.courseDepartment }}</td>
+    <td><a href="{% url 'sections' course.courseID %}">View Sections</a></td>
     <td><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></td>
   </tr>
   {% endfor %}
