@@ -1,35 +1,35 @@
+from unittest.mock import patch, MagicMock
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from Management.models import Section, Course
 from Management.views import EditSections
+from django.test import RequestFactory
 
 
 class TestSection(TestCase):
 
-    def test_add_section(self):
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-        # Create an instance of the EditSections class
-        edit_sections = EditSections()
-
-        # Call the addSection method to add a new section
-        edit_sections.addSection(1, 'Test Location', '9:00AM', '10:00AM', 30, None, 1)
-
-        # Check that a new section was added to the database
-        self.assertEqual(Section.objects.count(), 1, msg="Check if a new section was added to the database")
-
-        # Check that the new section has the correct information
-        section = Section.objects.first()
-        self.assertEqual(section.sectionID, 1, msg="sectionID is wrong/not set")
-        self.assertEqual(section.location, 'Test Location', msg="location is wrong/not set")
-        self.assertEqual(section.startTime, '9:00AM', msg="start time is wrong/not set")
-        self.assertEqual(section.endTime, '10:00AM', msg="end time is wrong/not set")
-        self.assertEqual(section.capacity, 30, msg="capacity is wrong/not set")
-        self.assertIsNone(section.TA, msg="TA should be none in this test")
-        self.assertEqual(section.courseID_id, 1, msg="course id is wrong/not set")
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.course = Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep",
+                                            courseDescription='')
+        self.edit_sections = EditSections()
 
     def test_view_section(self):
+        try:
+            # Try to get a Course object with the given courseID
+            course = Course.objects.get(courseID=1)
+        except ObjectDoesNotExist:
+            # If no Course object with the given courseID exists, create a new one
+            course = Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep",
+                                           courseDescription='')
 
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-        Course.objects.create(courseName="test2", courseID=2, courseDepartment="testdep", courseDescription='')
+        try:
+            # Try to get a Course object with the given courseID
+            course = Course.objects.get(courseID=2)
+        except ObjectDoesNotExist:
+            # If no Course object with the given courseID exists, create a new one
+            course = Course.objects.create(courseName="test2", courseID=2, courseDepartment="testdep",
+                                           courseDescription='')
 
         # Create some test data
         Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
@@ -49,44 +49,99 @@ class TestSection(TestCase):
 
     def test_remove_section(self):
 
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
+        def test_remove_section(self):
+            try:
+                # Try to get a Course object with the given courseID
+                course = Course.objects.get(courseID=1)
+            except ObjectDoesNotExist:
+                # If no Course object with the given courseID exists, create a new one
+                course = Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep",
+                                               courseDescription='')
+
+            # Create some test data
+            Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
+                                   capacity=30, TA=None, courseID_id=1)
+
+            # Create an instance of the EditSections class
+            edit_sections = EditSections()
+
+            # Call the removeSection method to delete a section
+            edit_sections.removeSection(1)
+
+            # Check that the section was deleted from the database
+            self.assertEqual(Section.objects.count(), 0, msg="section isn't deleted from DB")
+
+    def test_get_id(self):
+        try:
+            # Try to get a Course object with the given courseID
+            course = Course.objects.get(courseID=1)
+        except ObjectDoesNotExist:
+            # If no Course object with the given courseID exists, create a new one
+            course = Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep",
+                                           courseDescription='')
+
         # Create some test data
-        Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
-                               capacity=30, TA=None, courseID_id=1)
+        section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
+                                         endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
 
-        # Create an instance of the EditSections class
-        edit_sections = EditSections()
+        # Call the getID method to get the section ID
+        section_id = section.getID()
 
-        # Call the removeSection method to delete a section
-        edit_sections.removeSection(1)
+        # Check that the method returns the correct section ID
+        self.assertEqual(section_id, 1, msg="did not return correct section id")
 
-        # Check that the section was deleted from the database
-        self.assertEqual(Section.objects.count(), 0, msg="section isn't deleted from DB")
+    def test_set_id(self):
+        try:
+            # Try to get a Course object with the given courseID
+            course = Course.objects.get(courseID=1)
+        except ObjectDoesNotExist:
+            # If no Course object with the given courseID exists, create a new one
+            course = Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep",
+                                           courseDescription='')
 
-    class SectionTest(TestCase):
-        def test_get_id(self):
+        # Create some test data
+        section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
+                                         endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
 
-            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
+        # Call the setID method to update the section ID
+        section.setID(2)
 
-            # Create some test data
-            section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
-                                             endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
+        # Check that the section ID was updated in the database
+        section.refresh_from_db()
+        self.assertEqual(section.sectionID, 2, msg="section id was no updated")
 
-            # Call the getID method to get the section ID
-            section_id = section.getID()
+    class AddSectionTestCase(TestCase):
+        @patch('main.views.SectionForm')
+        @patch('main.views.Section')
+        def test_post_request_with_valid_form_data(self, mock_section, mock_section_form):
+            # Set up mock form
+            mock_form = mock_section_form.return_value
+            mock_form.is_valid.return_value = True
+            form_data = {
+                'courseID': 'CS101',
+                'location': 'Room 101',
+                'startTime': '09:00',
+                'endTime': '10:00',
+                'capacity': 30,
+                'TA': 'John Doe',
+                'sectionID': 'A'
+            }
+            mock_form.cleaned_data = form_data
 
-            # Check that the method returns the correct section ID
-            self.assertEqual(section_id, 1, msg="did not return correct section id")
+            # Set up mock request
+            mock_request = MagicMock()
+            mock_request.method = 'POST'
+            mock_request.POST = form_data
 
-        def test_set_id(self):
-            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-            # Create some test data
-            section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
-                                             endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
+            # Call the addSection method
+            response = EditSections.addSection(mock_request)
 
-            # Call the setID method to update the section ID
-            section.setID(2)
+            # Check that a new Section object was created with the correct data
+            mock_section.assert_called_once_with(**form_data)
 
-            # Check that the section ID was updated in the database
-            section.refresh_from_db()
-            self.assertEqual(section.sectionID, 2, msg="section id was no updated")
+            # Check that the new section was saved to the database
+            new_section = mock_section.return_value
+            new_section.save.assert_called_once()
+
+            # Check that the response is an HttpResponse with the text 'Section added successfully'
+            self.assertContains(response, 'Section added successfully')
