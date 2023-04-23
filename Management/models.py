@@ -108,7 +108,21 @@ class Section(models.Model):
     # When a course is deleted, the assignment doesn't exist anymore
     # When a user is deleted, the assignment doesn't exist anymore
 
+    def __init__(self, ID, location, start, end, capacity, ta, cID):
+        self.sectionID = ID
+        self.location = location
+        self.startTime = start
+        self.endTime = end
+        self.capacity = capacity
+        self.TA = ta
+        self.courseID = cID
+
 
 class UsersToCourse(models.Model):
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
     assignment = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __init__(self, ID, assignment):
+        self.courseID = ID
+        self.assignment = assignment
+        
