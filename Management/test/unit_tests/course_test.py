@@ -40,19 +40,20 @@ class TestCourse(TestCase):
         self.assertEqual("yolo", self.courseCS250.courseDepartment,
                          msg="department wasn't set properly.")
 
-    def test_addSection(self):
-        """ mockSection = Section(1, "England", "1PM", "10PM", 300, User("taemail@uwm.edu", "mypass", "", 3), 2)"""
-
-        mockSection = "mock"
-        self.courseCS350.addSection(mockSection)
-        self.assertEqual(mockSection, self.courseCS350.Section[0], msg="Added section is not added to the section array"
-                                                                       "in courses")
-
-    def test_removeSection(self):
-        """mockSection = Section(1, "England", "1PM", "10PM", 300, User("taemail@uwm.edu", "mypass", "", 3), 2)"""
-        mockSection = "mock"
-        self.courseCS350.addSection(mockSection)
-        self.courseCS350.removeSection(mockSection.getID())
-        self.assertEqual(None, self.courseCS350.Section[0],
-                         msg="Added section is not removed from the section array in "
-                             "courses")
+    # no need for add/remove section, but keeping it here just in case
+    # def test_addSection(self):
+    #     """ mockSection = Section(1, "England", "1PM", "10PM", 300, User("taemail@uwm.edu", "mypass", "", 3), 2)"""
+    #
+    #     mockSection = "mock"
+    #     self.courseCS350.addSection(mockSection)
+    #     self.assertEqual(mockSection, self.courseCS350.Section[0], msg="Added section is not added to the section array"
+    #                                                                    "in courses")
+    #
+    # def test_removeSection(self):
+    #     """mockSection = Section(1, "England", "1PM", "10PM", 300, User("taemail@uwm.edu", "mypass", "", 3), 2)"""
+    #     mockSection = "mock"
+    #     self.courseCS350.addSection(mockSection)
+    #     self.courseCS350.removeSection(mockSection.getID())
+    #     self.assertEqual(None, self.courseCS350.Section[0],
+    #                      msg="Added section is not removed from the section array in "
+    #                          "courses")
