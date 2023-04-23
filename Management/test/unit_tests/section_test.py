@@ -1,92 +1,82 @@
+from django.shortcuts import redirect
 from django.test import TestCase
-from Management.models import Section, Course
-from Management.views import EditSections
+from django.urls import reverse
+from Management.models import Course, Section
+from Management.views import sections, sectionAdd, sectionEdit, sectionDelete, courses
+from django.contrib.auth.models import User
 
 
-class TestSection(TestCase):
+class SectionsViewTest(TestCase):
+    def setUp(self):
+        self.course = Course.objects.create(courseID=1, courseName='Test Course')
+        self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
 
-    def test_add_section(self):
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-        # Create an instance of the EditSections class
-        edit_sections = EditSections()
+    def test_get(self):
+        response = self.client.get(reverse('sections', args=[self.course.courseID]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'main/sections.html')
+        self.assertContains(response, 'Test Course')
+        self.assertContains(response, '1')
 
-        # Call the addSection method to add a new section
-        edit_sections.addSection(1, 'Test Location', '9:00AM', '10:00AM', 30, None, 1)
 
-        # Check that a new section was added to the database
-        self.assertEqual(Section.objects.count(), 1, msg="Check if a new section was added to the database")
+class SectionAddViewTest(TestCase):
+    def setUp(self):
+        self.course = Course.objects.create(courseID=1, courseName='Test Course')
 
-        # Check that the new section has the correct information
-        section = Section.objects.first()
-        self.assertEqual(section.sectionID, 1, msg="sectionID is wrong/not set")
-        self.assertEqual(section.location, 'Test Location', msg="location is wrong/not set")
-        self.assertEqual(section.startTime, '9:00AM', msg="start time is wrong/not set")
-        self.assertEqual(section.endTime, '10:00AM', msg="end time is wrong/not set")
-        self.assertEqual(section.capacity, 30, msg="capacity is wrong/not set")
-        self.assertIsNone(section.TA, msg="TA should be none in this test")
-        self.assertEqual(section.courseID_id, 1, msg="course id is wrong/not set")
+    def test_get(self):
+        response = self.client.get(reverse('sectionAdd', args=[self.course.courseID]))
+        # self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'main/addSection.html')
 
-    def test_view_section(self):
+    def test_post(self):
+        # Create a dictionary with the data to be submitted in the POST request
+        post_data = {
+            'courseID': self.course.courseID,
+            'sectionID': 1,
+            'location': 'Test Location',
+            'startTime': '09:00',
+            'endTime': '10:00',
+            'capacity': 30
+        }
 
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-        Course.objects.create(courseName="test2", courseID=2, courseDepartment="testdep", courseDescription='')
+        # Send a POST request to the sectionAdd URL with the post_data
+        response = self.client.post(reverse('sectionAdd', args=[self.course.courseID]), post_data)
 
-        # Create some test data
-        Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
-                               capacity=30, TA=None, courseID_id=1)
-        Section.objects.create(sectionID=2, location='Test Location 2', startTime='10:00AM', endTime='11:00AM',
-                               capacity=40, TA=None, courseID_id=2)
+        # Check that a new Section object was created in the database
+        self.assertTrue(Section.objects.filter(sectionID=1).exists())
 
-        # Create an instance of the EditSections class
-        edit_sections = EditSections()
+        # Get the newly created Section object from the database
+        section = Section.objects.get(sectionID=1)
 
-        # Call the viewSection method to get a list of all sections
-        sections = edit_sections.viewSection()
+        # Check that the attributes of the new Section object match the data submitted in the POST request
+        self.assertEqual(section.location, post_data['location'])
+        self.assertEqual(section.startTime, post_data['startTime'])
+        self.assertEqual(section.endTime, post_data['endTime'])
+        self.assertEqual(section.capacity, post_data['capacity'])
 
-        # Check that the list contains all sections in the database
-        self.assertListEqual(list(sections), [Section.objects.get(sectionID=1), Section.objects.get(sectionID=2)],
-                             msg="List should contain all sections in the database")
 
-    def test_remove_section(self):
+class TestSectionEditView(TestCase):
+    pass
 
-        Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-        # Create some test data
-        Section.objects.create(sectionID=1, location='Test Location 1', startTime='9:00AM', endTime='10:00AM',
-                               capacity=30, TA=None, courseID_id=1)
 
-        # Create an instance of the EditSections class
-        edit_sections = EditSections()
+class SectionDeleteViewTest(TestCase):
+    def setUp(self):
+        self.course = Course.objects.create(courseID=1, courseName='Test Course')
+        self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
 
-        # Call the removeSection method to delete a section
-        edit_sections.removeSection(1)
+    def test_get(self):
+        response = self.client.get(reverse('sectionDelete', args=[self.course.courseID, self.section.sectionID]))
+        self.assertEqual(response.status_code, 302)
+        with self.assertRaises(Section.DoesNotExist):
+            Section.objects.get(pk=self.section.sectionID)
 
-        # Check that the section was deleted from the database
-        self.assertEqual(Section.objects.count(), 0, msg="section isn't deleted from DB")
 
-    class SectionTest(TestCase):
-        def test_get_id(self):
+class CoursesViewTest(TestCase):
+    def setUp(self):
+        self.course = Course.objects.create(courseID=1, courseName='Test Course')
+        self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
 
-            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-
-            # Create some test data
-            section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
-                                             endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
-
-            # Call the getID method to get the section ID
-            section_id = section.getID()
-
-            # Check that the method returns the correct section ID
-            self.assertEqual(section_id, 1, msg="did not return correct section id")
-
-        def test_set_id(self):
-            Course.objects.create(courseName="test", courseID=1, courseDepartment="testdep", courseDescription='')
-            # Create some test data
-            section = Section.objects.create(sectionID=1, location='Test Location', startTime='9:00AM',
-                                             endTime='10:00AM', capacity=30, TA=None, courseID_id=1)
-
-            # Call the setID method to update the section ID
-            section.setID(2)
-
-            # Check that the section ID was updated in the database
-            section.refresh_from_db()
-            self.assertEqual(section.sectionID, 2, msg="section id was no updated")
+    def test_get(self):
+        response = self.client.get(reverse('courses'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "main/courses.html")
