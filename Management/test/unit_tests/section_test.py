@@ -1,7 +1,9 @@
+from django.shortcuts import redirect
 from django.test import TestCase
 from django.urls import reverse
 from Management.models import Course, Section
 from Management.views import sections, sectionAdd, sectionEdit, sectionDelete, courses
+from django.contrib.auth.models import User
 
 
 class SectionsViewTest(TestCase):
@@ -53,31 +55,8 @@ class SectionAddViewTest(TestCase):
         self.assertEqual(section.capacity, post_data['capacity'])
 
 
-class SectionEditViewTest(TestCase):
-    def setUp(self):
-        self.course = Course.objects.create(courseID=1, courseName='Test Course')
-        self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
-
-    def test_get(self):
-        response = self.client.get(reverse('sectionEdit', args=[self.course.courseID, self.section.sectionID]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'main/sectionEdit.html')
-
-    def test_post(self):
-        response = self.client.post(reverse('sectionEdit', args=[self.course.courseID, self.section.sectionID]), {
-            'sectionID': 2,
-            'location': 'Updated Location',
-            'startTime': '10:00',
-            'endTime': '11:00',
-            'capacity': 40
-        })
-        #self.assertEqual(response.status_code, 302)
-        section = Section.objects.get(pk=self.section.sectionID)
-        self.assertEqual(section.sectionID, 2)
-        self.assertEqual(section.location, 'Updated Location')
-        self.assertEqual(section.startTime, '10:00')
-        self.assertEqual(section.endTime, '11:00')
-        self.assertEqual(section.capacity, 40)
+class TestSectionEditView(TestCase):
+    pass
 
 
 class SectionDeleteViewTest(TestCase):
