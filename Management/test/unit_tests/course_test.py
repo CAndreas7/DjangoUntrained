@@ -36,7 +36,7 @@ class TestCourse(TestCase):
 
         mockSection = "mock"
         self.courseCS350.addSection(mockSection)
-        self.assertEqual(mockSection, courseCS350.Section[0], msg="Added section is not added to the section array"
+        self.assertEqual(mockSection, self.courseCS350.Section[0], msg="Added section is not added to the section array"
                                                                   "in courses")
 
     def test_removeSection(self):
@@ -44,6 +44,6 @@ class TestCourse(TestCase):
         mockSection = "mock"
         self.courseCS350.addSection(mockSection)
         self.courseCS350.removeSection(mockSection.getID())
-        self.assertEqual(None, courseCS350.Section[0], msg="Added section is not removed from the section array in "
+        self.assertEqual(None, self.courseCS350.Section[0], msg="Added section is not removed from the section array in "
                                                            "courses")
 
