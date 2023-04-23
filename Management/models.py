@@ -38,6 +38,12 @@ class User(models.Model):
             (3, "TA")
         ))
 
+    def __init__(self, email, password, phone, role):
+        self.email = email
+        self.password = password
+        self.phone = phone
+        self.role = role
+
 
 # This is the Course table, which stores information about a Course at a university
 # The only necessary field is: courseID
