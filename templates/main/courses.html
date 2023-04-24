@@ -30,5 +30,5 @@ table, th, td {
 
 {#If user is of role 1 (supervisor) this button available to add a course#}
     {% if roleTemplate == 1 %}
-        <button type="addCourse"><a href="{% url 'courseAdd' %}">Add/Delete Courses</a></button>
+        <button type="addCourse"><a href="{% url 'courseAdd' %}">Add Course</a></button>
     {% endif %}
