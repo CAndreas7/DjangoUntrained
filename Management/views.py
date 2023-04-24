@@ -88,19 +88,20 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section) # change here
+        form = SectionForm(instance=section)  # change here
         context = {'section': section, 'form': form}
         return render(request, "main/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
         section = get_object_or_404(Course, pk=section_id)
-        form = SectionForm(request.POST, instance=section) # change here
+        form = SectionForm(request.POST, instance=section)  # change here
         if form.is_valid():
             form.save()
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
             return render(request, "main/sectionEdit.html", context)
+
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
@@ -135,6 +136,43 @@ class courseEdit(View):
             return render(request, "main/courseEdit.html", context)
 
 
+class courseAdd(View):
+
+    def get(self, request):
+        form = CourseForm()
+        return render(request, 'main/courseAdd.html', {'form': form})
+
+    def post(self, request):
+
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            courseID = form.cleaned_data['courseID']
+            courseName = form.cleaned_data['courseName']
+            courseDescription = form.cleaned_data['courseDescription']
+            courseDepartment = form.cleaned_data['courseDepartment']
+
+            # Create a new Section object with the extracted data
+            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
+                            courseDepartment=courseDepartment)
+
+            # Save the new section to the database
+            course.save()
+
+            return HttpResponse('Course added successfully')
+        else:
+            form = CourseForm()
+
+        return render(request, 'main/courseAdd.html', {'form': form})
+
+
+class courseDelete(View):
+
+    def get(self, request, course_id):
+        Course.objects.filter(courseID=course_id).delete()
+        # Redirect to a success page or back to the list of courses
+        return redirect('courses')
+
+
 class editUserInCourse(View):
 
     def get(self, request):
@@ -144,6 +182,7 @@ class editUserInCourse(View):
 class accountEdit(View):
     def get(self, request):
         return render(request, "main/accountEdit.html", {})
+
 
 class notificationSend(View):
 
@@ -157,12 +196,6 @@ class notificationSend(View):
         #
         # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
-
-class courseAdd(View):
-
-    def get(self, request):
-
-        return render(request, "main/courseAdd.html", {})
 
 
 class MyUser(User):
@@ -226,7 +259,8 @@ class MyUser(User):
         self.role = None
 
     def addCourse(self, courseID, courseName, courseDesc, courseDept):
-        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDesc, courseDepartment=courseDept)
+        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDesc,
+                        courseDepartment=courseDept)
         course.save()
 
     def editCourse(self, courseID, courseName, courseDescription, courseDepartment):
@@ -241,7 +275,8 @@ class MyUser(User):
         Course.objects.filter(courseID=courseID).delete()
 
     def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime, capacity=capacity, TA=ta, courseID=courseID)
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                          capacity=capacity, TA=ta, courseID=courseID)
         section.save()
 
     def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
@@ -257,5 +292,3 @@ class MyUser(User):
 
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
-
-
