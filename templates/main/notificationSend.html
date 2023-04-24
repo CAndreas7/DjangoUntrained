@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Send Notification To: </h1>
+    {% csrf_token %}
+    <button type="button">
+{#        <a href="{% url 'courses' %}">#}
+         Submit
+{#         </a>#}
+    </button>
+    <button type="button"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
+{% endblock content %}
