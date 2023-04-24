@@ -88,13 +88,13 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section) # change here
+        form = SectionForm(instance=section)
         context = {'section': section, 'form': form}
         return render(request, "main/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
-        section = get_object_or_404(Course, pk=section_id)
-        form = SectionForm(request.POST, instance=section) # change here
+        section = get_object_or_404(Section, pk=section_id)
+        form = SectionForm(request.POST, instance=section)
         if form.is_valid():
             form.save()
             return redirect('sections', course_id=course_id)
