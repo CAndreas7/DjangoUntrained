@@ -11,7 +11,7 @@ class SectionForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['courseName', 'courseDescription', 'courseDepartment']
+        fields = ['courseID', 'courseName', 'courseDescription', 'courseDepartment']
 
 class UserForm(forms.ModelForm):
     class Meta:
