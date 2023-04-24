@@ -36,3 +36,4 @@ class Test_EditCourses(TestCase):
         self.assertEqual(Course.objects.filter(courseID=500).count(), 0,
                          msg="When posting a new course Department field, the course department field was not changed")
         self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
+
