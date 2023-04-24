@@ -51,7 +51,6 @@ class Course(models.Model):
     # specifying primary_key=True disables the default ID field
     courseID = models.IntegerField(primary_key=True)
     courseName = models.CharField(max_length=40)
-    courseSections = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
     # VVVV  These 2 fields below may not be necessary, included for appearance
     courseDescription = models.CharField(max_length=140)
     courseDepartment = models.CharField(max_length=16)
