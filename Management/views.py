@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import User, Section, Course
-from .forms import SectionForm, CourseForm
+from .forms import SectionForm, CourseForm, UserForm
 from django.urls import reverse
 
 
@@ -35,8 +35,16 @@ class Home(View):
 class MainHome(View):
 
     def get(self, request):
-        m = request.session["email"]
-        return render(request, "main/mainHome.html", {"email": m})
+        userEmail = request.session["email"]
+
+        try:
+            thisUser = User.objects.get(pk=userEmail)
+        except ValueError:
+            thisUser = None
+
+        userRole = thisUser.role
+        request.session['roleSession'] = userRole
+        return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
 
 
 class sections(View):
@@ -103,8 +111,9 @@ class sectionDelete(View):
 
 class courses(View):
     def get(self, request):
+        userRole = request.session['roleSession']
         courses = Course.objects.all()
-        context = {'courses': courses}
+        context = {'courses': courses, 'roleTemplate': userRole}
         return render(request, "main/courses.html", context)
 
 
@@ -135,3 +144,24 @@ class editUserInCourse(View):
 class accountEdit(View):
     def get(self, request):
         return render(request, "main/accountEdit.html", {})
+
+class notificationSend(View):
+
+    def get(self, request):
+        # userEmail = request.session["email"]
+        #
+        # try:
+        #     thisUser = User.objects.get(pk=userEmail)
+        # except ValueError:
+        #     thisUser = None
+        #
+        # roleVariableView = thisUser.role
+        return render(request, "main/notificationSend.html", {})
+
+class courseAdd(View):
+
+    def get(self, request):
+
+        return render(request, "main/courseAdd.html", {})
+
+
