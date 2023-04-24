@@ -105,6 +105,14 @@ class Section(models.Model):
     # this should have an intrinsic, auto incrementing ID field in Django
     # When a course is deleted, the assignment doesn't exist anymore
     # When a user is deleted, the assignment doesn't exist anymore
+    def getID(self):
+        # Return the section ID
+        return self.sectionID
+
+    def setID(self, new_id):
+        # Update the section ID
+        self.sectionID = new_id
+        self.save()
 
     def __init__(self, ID, location, start, end, capacity, ta, cID):
         self.sectionID = ID

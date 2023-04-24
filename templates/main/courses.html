@@ -9,18 +9,19 @@ table, th, td {
     <th>Course Name</th>
     <th>Course Description</th>
     <th>Department</th>
+    <th>Sections</th>
+    <th>Edit</th>
   </tr>
+  {% for course in courses %}
   <tr>
-    <td>CS12049</td>
-    <td>Super Advanced ultra level comp sci course intended for super super seniors</td>
-    <td>Computer Science</td>
+    <td>{{ course.courseName }}</td>
+    <td>{{ course.courseDescription }}</td>
+    <td>{{ course.courseDepartment }}</td>
+    <td><a href="{% url 'sections' course.courseID %}">View Sections</a></td>
+    <td><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></td>
   </tr>
-  <tr>
-    <td>template</td>
-    <td>template disc</td>
-    <td>Some lame natural science course</td>
-  </tr>
+  {% endfor %}
 </table> <br>
+
 <button type="EditAssignments" name="EditAssignments">Edit User Assignments</button>
-<button type="EditCourses" name="editCourses">Edit Courses</button><br> <br> <br> <br>
-<button type="HomePage" name="homeButton">Home Page</button>
+<button type="AddCourses" name="addCourses">Add Courses</button><br> <br> <br> <br>
