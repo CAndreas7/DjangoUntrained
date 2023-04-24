@@ -258,3 +258,4 @@ class MyUser(User):
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
+
