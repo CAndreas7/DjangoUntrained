@@ -38,11 +38,11 @@ class User(models.Model):
             (3, "TA")
         ))
 
-    def __init__(self, email, password, phone, role):
-        self.email = email
-        self.password = password
-        self.phone = phone
-        self.role = role
+    # def __init__(self, email, password, phone, role):
+    #     self.email = email
+    #     self.password = password
+    #     self.phone = phone
+    #     self.role = role
 
 
 # This is the Course table, which stores information about a Course at a university
@@ -55,11 +55,11 @@ class Course(models.Model):
     courseDescription = models.CharField(max_length=140)
     courseDepartment = models.CharField(max_length=16)
 
-    def __init__(self, cID, name, descr, dep):
-        self.courseID = cID
-        self.courseName = name
-        self.courseDescription = descr
-        self.courseDepartment = dep
+    # def __init__(self, cID, name, descr, dep):
+    #     self.courseID = cID
+    #     self.courseName = name
+    #     self.courseDescription = descr
+    #     self.courseDepartment = dep
 
     def getName(self):
         return self.courseName
@@ -114,20 +114,20 @@ class Section(models.Model):
         self.sectionID = new_id
         self.save()
 
-    def __init__(self, ID, location, start, end, capacity, ta, cID):
-        self.sectionID = ID
-        self.location = location
-        self.startTime = start
-        self.endTime = end
-        self.capacity = capacity
-        self.TA = ta
-        self.courseID = cID
+    # def __init__(self, ID, location, start, end, capacity, ta, cID):
+    #     self.sectionID = ID
+    #     self.location = location
+    #     self.startTime = start
+    #     self.endTime = end
+    #     self.capacity = capacity
+    #     self.TA = ta
+    #     self.courseID = cID
 
 
 class UsersToCourse(models.Model):
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
     assignment = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __init__(self, ID, assignment):
-        self.courseID = ID
-        self.assignment = assignment
+    # def __init__(self, ID, assignment):
+    #     self.courseID = ID
+    #     self.assignment = assignment
