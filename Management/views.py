@@ -71,12 +71,10 @@ class sectionAdd(View):
             TA = form.cleaned_data['TA']
             sectionID = form.cleaned_data['sectionID']
 
-            # Create a new Section object with the extracted data
-            section = Section(courseID=courseID, location=location, startTime=startTime,
-                              endTime=endTime, capacity=capacity, TA=TA, sectionID=sectionID)
+            section = MySection(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                                capacity=capacity, ta=TA, courseID=courseID)
 
-            # Save the new section to the database
-            section.save()
+            section.addSection()
 
             return HttpResponse('Section added successfully')
         else:
@@ -88,13 +86,13 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section)
+        form = SectionForm(instance=section)  # change here
         context = {'section': section, 'form': form}
         return render(request, "main/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
         section = get_object_or_404(Course, pk=section_id)
-        form = SectionForm(request.POST, instance=section)
+        form = SectionForm(request.POST, instance=section)  # change here
         if form.is_valid():
             form.save()
             return redirect('sections', course_id=course_id)
@@ -136,31 +134,6 @@ class courseEdit(View):
             return render(request, "main/courseEdit.html", context)
 
 
-class editUserInCourse(View):
-
-    def get(self, request):
-        return render(request, "main/editUserInCourse.html", {})
-
-
-class accountEdit(View):
-    def get(self, request):
-        return render(request, "main/accountEdit.html", {})
-
-
-class notificationSend(View):
-
-    def get(self, request):
-        # userEmail = request.session["email"]
-        #
-        # try:
-        #     thisUser = User.objects.get(pk=userEmail)
-        # except ValueError:
-        #     thisUser = None
-        #
-        # roleVariableView = thisUser.role
-        return render(request, "main/notificationSend.html", {})
-
-
 class courseAdd(View):
 
     def get(self, request):
@@ -196,3 +169,141 @@ class courseDelete(View):
         Course.objects.filter(courseID=course_id).delete()
         # Redirect to a success page or back to the list of courses
         return redirect('courses')
+
+
+class editUserInCourse(View):
+
+    def get(self, request):
+        return render(request, "main/editUserInCourse.html", {})
+
+
+class accountEdit(View):
+    def get(self, request):
+        return render(request, "main/accountEdit.html", {})
+
+
+class notificationSend(View):
+
+    def get(self, request):
+        # userEmail = request.session["email"]
+        #
+        # try:
+        #     thisUser = User.objects.get(pk=userEmail)
+        # except ValueError:
+        #     thisUser = None
+        #
+        # roleVariableView = thisUser.role
+        return render(request, "main/notificationSend.html", {})
+
+
+class MyUser(User):
+
+    def __init__(self, email, password, phone, role):
+        self.email = email
+        self.password = password
+        self.phone = phone
+        self.role = role
+
+    def addAccount(self, email, password, phone, role):
+        user = User(email=email, password=password, phone=phone, role=role)
+        user.save()
+
+    def getEmail(self):
+        return self.email
+
+    def setEmail(self, email):
+        users = User.objects.filter(email=self.email)
+        for user in users:
+            user.email = email
+            user.save()
+        self.email = email
+
+    def getPassword(self):
+        return self.password
+
+    def setPassword(self, password):
+        passwords = User.objects.filter(password=self.password)
+        for word in passwords:
+            word.password = password
+            word.save()
+        self.password = password
+
+    def getPhone(self):
+        return self.phone
+
+    def setPhone(self, phoneNum):
+        phones = User.objects.filter(phone=phoneNum)
+        for item in phones:
+            item.phone = phoneNum
+            item.save()
+        self.phone = phoneNum
+
+    def editAccount(self, email, password, phoneNum, role):
+        user = User.objects.filter(email=email)
+        for item in user:
+            item.password = password
+            item.phone = phoneNum
+            item.role = role
+            item.save()
+        self.password = password
+        self.phone = phoneNum
+        self.role = role
+
+    def removeAccount(self, email):
+        User.objects.filter(email=email).delete()
+        self.email = None
+        self.password = None
+        self.phone = None
+        self.role = None
+
+    def addCourse(self, courseID, courseName, courseDesc, courseDept):
+        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDesc,
+                        courseDepartment=courseDept)
+        course.save()
+
+    def editCourse(self, courseID, courseName, courseDescription, courseDepartment):
+        courses = Course.objects.filter(courseID=courseID)
+        for item in courses:
+            item.courseName = courseName
+            item.courseDescription = courseDescription
+            item.courseDepartment = courseDepartment
+            item.save()
+
+    def removeCourse(self, courseID):
+        Course.objects.filter(courseID=courseID).delete()
+
+    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                          capacity=capacity, TA=ta, courseID=courseID)
+        section.save()
+
+    def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        sections = Section.objects.filter(sectionID=sectionID)
+        for item in sections:
+            item.location = location
+            item.startTime = startTime
+            item.endTime = endTime
+            item.capacity = capacity
+            item.TA_id = ta
+            item.courseID_id = courseID
+            item.save()
+
+    def removeSection(self, sectionID):
+        Section.objects.filter(sectionID=sectionID).delete()
+
+
+class MySection(Section):
+
+    def __init__(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        self.sectionID = sectionID
+        self.location = location
+        self.startTime = startTime
+        self.endTime = endTime
+        self.capacity = capacity
+        self.TA_id = ta
+        self.courseID = courseID
+
+    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                          capacity=capacity, TA_id=ta.id, courseID_id=courseID.id)
+        section.save()
