@@ -71,12 +71,10 @@ class sectionAdd(View):
             TA = form.cleaned_data['TA']
             sectionID = form.cleaned_data['sectionID']
 
-            # Create a new Section object with the extracted data
-            section = Section(courseID=courseID, location=location, startTime=startTime,
-                              endTime=endTime, capacity=capacity, TA=TA, sectionID=sectionID)
+            section = MySection(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                                capacity=capacity, ta=TA, courseID=courseID)
 
-            # Save the new section to the database
-            section.save()
+            section.addSection()
 
             return HttpResponse('Section added successfully')
         else:
@@ -292,3 +290,20 @@ class MyUser(User):
 
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
+
+
+class MySection(Section):
+
+    def __init__(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        self.sectionID = sectionID
+        self.location = location
+        self.startTime = startTime
+        self.endTime = endTime
+        self.capacity = capacity
+        self.TA_id = ta
+        self.courseID = courseID
+
+    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                          capacity=capacity, TA_id=ta.id, courseID_id=courseID.id)
+        section.save()
