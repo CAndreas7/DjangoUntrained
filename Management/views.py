@@ -149,14 +149,14 @@ class courseAdd(View):
             courseDescription = form.cleaned_data['courseDescription']
             courseDepartment = form.cleaned_data['courseDepartment']
 
-            # Create a new Section object with the extracted data
+            # Create a new Course object with the extracted data
             course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
                             courseDepartment=courseDepartment)
 
-            # Save the new section to the database
+            # Save the new course to the database
             course.save()
 
-            return HttpResponse('Course added successfully')
+            return render(request, "main/courseAdd.html", {"message": "Course added successfully."})
         else:
             form = CourseForm()
 

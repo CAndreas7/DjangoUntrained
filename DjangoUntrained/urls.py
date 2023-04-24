@@ -32,5 +32,7 @@ urlpatterns = [
     path('courseedit/<int:course_id>/', courseEdit.as_view(), name='courseedit'),
     path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
     path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
-    path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete')
+    path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete'),
+    path('editUserInCourse/', editUserInCourse.as_view(), name='editUserInCourse')
+
 ]

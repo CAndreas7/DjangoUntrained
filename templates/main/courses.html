@@ -26,7 +26,7 @@ table, th, td {
   {% endfor %}
 </table> <br>
 
-<button type="EditAssignments" name="EditAssignments">Edit User Assignments</button>
+<button type="editUserInCourse"><a href="{% url 'editUserInCourse' %}">Edit Course Assignments</a></button>
 
 {#If user is of role 1 (supervisor) this button available to add a course#}
     {% if roleTemplate == 1 %}
