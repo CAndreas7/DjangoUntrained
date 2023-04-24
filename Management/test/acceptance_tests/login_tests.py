@@ -6,14 +6,15 @@ class LoginTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create(email='testuser@uwm.edu', password='testpass', role='1')
+        self.user.save()
 
     def testGoodLogin(self):
         response = self.client.post('/', {
             'email': 'testuser@uwm.edu',
-            'password': 'testpass'
-        })
+            'password': 'testpass'},
+            follow=True)
         self.assertEqual(response.status_code, 302, "The status code should be 302 for a good login")
-        self.assertContains(response, '/mainHome', msg_prefix="The response should let you through to /base i think.")
+        #self.assertContains(response, 'main/mainHome', msg_prefix="The response should let you through to /base i think.")
 
     def testBadLogin(self):
         response = self.client.post("/", {

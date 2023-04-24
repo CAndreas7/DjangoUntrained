@@ -18,8 +18,7 @@ from django.urls import path
 
 from django.contrib import admin
 from django.urls import path
-from Management.views import Home, MainHome, courseEdit, sectionEdit, accountEdit, courses, sectionAdd, sections, \
-    sectionDelete, notificationSend, courseAdd
+from Management.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,4 +34,5 @@ urlpatterns = [
     path('courseedit/<int:course_id>/', courseEdit.as_view(), name='courseedit'),
     path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
     path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
+    path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete')
 ]

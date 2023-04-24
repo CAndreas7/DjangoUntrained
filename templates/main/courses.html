@@ -6,6 +6,7 @@ table, th, td {
 </style>
 <table style="width:100%">
   <tr>
+      <th>Course ID</th>
     <th>Course Name</th>
     <th>Course Description</th>
     <th>Department</th>
@@ -14,11 +15,13 @@ table, th, td {
   </tr>
   {% for course in courses %}
   <tr>
+    <td>{{ course.courseID }}</td>
     <td>{{ course.courseName }}</td>
     <td>{{ course.courseDescription }}</td>
     <td>{{ course.courseDepartment }}</td>
     <td><a href="{% url 'sections' course.courseID %}">View Sections</a></td>
     <td><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></td>
+    <td><a href="{% url 'courseDelete' course.courseID %}">Delete Section</a></td>
   </tr>
   {% endfor %}
 </table> <br>
