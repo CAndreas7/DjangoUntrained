@@ -7,6 +7,12 @@
         <input type="submit">
     </form>
 
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+         <input type="submit" value="Save changes">
+    </form>
+
     <p>{{message}}</p>
     {#  <table>#}
     {#    <tr><th>Name</th><th>Number</th></tr>#}
