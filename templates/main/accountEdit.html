@@ -21,7 +21,8 @@
     {#    {% endfor %}#}
     {#  </table>#}
     {#{% endblock content %}#}
-    <button type="button" name="courses">Courses</button>
-    <button type="button" name="accountInfo">Account Information</button>
+    <br><button type="Courses"><a href="{% url 'courses' %}">Courses</a></button>
+    <button type="AccountInfo"><a href="{% url 'accountEdit' %}">Account Information</a></button>
+    <br><br><button type="Home"><a href="{% url 'mainHome' %}">Home</a></button>
 
 {% endblock content %}
