@@ -18,11 +18,27 @@ class Home(View):
         noSuchUser = False
         badPassword = False
         try:
+            user = request.POST['email']
+            password = request.POST['password']
             m = User.objects.get(email=request.POST['email'])
             badPassword = (m.password != request.POST['password'])
         except:
             noSuchUser = True
-        if noSuchUser:
+        if user == '' and password == '':
+            return render(request, "main/home.html", {"message": "Please enter an email and password."})
+        elif user == '':
+            return render(request, "main/home.html",
+                          {
+                              "password": password,
+                              "message": "Please enter an email."
+                          })
+        elif password == '':
+            return render(request, "main/home.html",
+                          {
+                              "person": user,
+                              "message": "Please enter a password."
+                          })
+        elif noSuchUser:
             return render(request, "main/home.html", {"message": "Please enter a correct email and password."})
         elif badPassword:
             return render(request, "main/home.html", {"message": "bad password"})
