@@ -377,12 +377,12 @@ class userAdd(View):
         form = UserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            #password = form.cleaned_data['password']
+            password = form.cleaned_data['password']
             phone = form.cleaned_data['phone']
             role = form.cleaned_data['role']
 
             # Create a new User object with the extracted data
-            user = User(email=email, password="password", phone=phone, role=role)
+            user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
             return HttpResponse('User added successfully')
