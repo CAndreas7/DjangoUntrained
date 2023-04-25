@@ -52,9 +52,8 @@ class MainHome(View):
 class usersInCourse(View):
     def get(self, request, course_id):
         course = Course.objects.get(courseID=course_id)
-        u2c = UsersToCourse.objects.get(courseID=course_id)
-        u = UsersToCourse.objects.filter(courseID=course_id)
-        context = {'course': u2c, 'users': u}
+        users = UsersToCourse.objects.filter(courseID=course_id)
+        context = {'course': course, 'users': users}
         return render(request, 'main/courseUsers.html', context)
 
 
@@ -111,9 +110,9 @@ class sectionAdd(View):
             # Create a new Section object with the extracted data
             section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
                               courseID=courseID)
-            section.add()
+            section.save()
 
-            return HttpResponse('Section added successfully')
+            return redirect('sections', course_id=course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
 
@@ -193,7 +192,7 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return render(request, "main/courses.html")
+            return redirect('courses')
         else:
             form = CourseForm()
 

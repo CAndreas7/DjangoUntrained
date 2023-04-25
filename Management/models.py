@@ -114,8 +114,23 @@ class Section(models.Model):
         self.sectionID = new_id
         self.save()
 
-    def add(self):
+    def addSection(self):
+
         self.save()
+
+    def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        sections = Section.objects.filter(sectionID=sectionID)
+        for item in sections:
+            item.location = location
+            item.startTime = startTime
+            item.endTime = endTime
+            item.capacity = capacity
+            item.TA_id = ta
+            item.courseID_id = courseID
+            item.save()
+
+    def removeSection(self, sectionID):
+        Section.objects.filter(sectionID=sectionID).delete()
 
 
 class UsersToCourse(models.Model):
