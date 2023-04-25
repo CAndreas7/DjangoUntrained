@@ -134,9 +134,20 @@ class Section(models.Model):
 
 
 class UsersToCourse(models.Model):
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
-    assignment = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    # def __init__(self, ID, assignment):
-    #     self.courseID = ID
-    #     self.assignment = assignment
+    assignment = models.ForeignKey(User, on_delete=models.CASCADE)
+    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    # Returns User object
+    def getUser(self):
+        return self.assignment
+
+    # Returns Course object
+    def getCourse(self):
+        return self.courseID
+
+    def setUser_Name(self, user):
+        self.assignment = user
+
+    def setCourseName(self, course):
+        self.courseID = course

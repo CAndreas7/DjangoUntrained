@@ -21,11 +21,27 @@ class Home(View):
         noSuchUser = False
         badPassword = False
         try:
+            user = request.POST['email']
+            password = request.POST['password']
             m = User.objects.get(email=request.POST['email'])
             badPassword = (m.password != request.POST['password'])
         except:
             noSuchUser = True
-        if noSuchUser:
+        if user == '' and password == '':
+            return render(request, "main/home.html", {"message": "Please enter an email and password."})
+        elif user == '':
+            return render(request, "main/home.html",
+                          {
+                              "password": password,
+                              "message": "Please enter an email."
+                          })
+        elif password == '':
+            return render(request, "main/home.html",
+                          {
+                              "person": user,
+                              "message": "Please enter a password."
+                          })
+        elif noSuchUser:
             return render(request, "main/home.html", {"message": "Please enter a correct email and password."})
         elif badPassword:
             return render(request, "main/home.html", {"message": "bad password"})
@@ -144,6 +160,11 @@ class sectionDelete(View):
         return redirect('sections', course_id=course_id)
 
 
+class users(View):
+    def get(self, request):
+        users = User.objects.all()
+        context = {'users': users}
+        return render(request, "main/accountEdit.html", context)
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
@@ -326,7 +347,27 @@ class MyUser(User):
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
+class userEdit(View):
+    def get(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(instance=user)
+        context = {'user': user, 'form': form}
+        return render(request, "main/userEdit.html", context)
 
+    def post(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            context = {'user': user, 'form': form}
+            return render(request, "main/userEdit.html", context)
+class userDelete(View):
+    def get(self, request, email_id):
+        User.objects.filter(email=email_id).delete()
+        # Redirect to a success page or back to the list of courses
+        return redirect('users')
 class userAdd(View):
     def get(self, request):
         form = UserForm()
@@ -336,16 +377,16 @@ class userAdd(View):
         form = UserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            #password = form.cleaned_data['password']
+            password = form.cleaned_data['password']
             phone = form.cleaned_data['phone']
             role = form.cleaned_data['role']
 
             # Create a new User object with the extracted data
-            user = User(email=email, password="password", phone=phone, role=role)
+            user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
             return HttpResponse('User added successfully')
         else:
             form = UserForm()
 
-        return render(request, 'main/userAdd.html', {'form': form})
+        return render(request, 'main/accountEdit.html', {'form': form})
