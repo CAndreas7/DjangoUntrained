@@ -10,8 +10,6 @@ table, th, td {
     <th>Course Name</th>
     <th>Course Description</th>
     <th>Department</th>
-    <th>Sections</th>
-    <th>Edit</th>
   </tr>
   {% for course in courses %}
   <tr>
@@ -19,18 +17,19 @@ table, th, td {
     <td>{{ course.courseName }}</td>
     <td>{{ course.courseDescription }}</td>
     <td>{{ course.courseDepartment }}</td>
-    <td><a href="{% url 'sections' course.courseID %}">View Sections</a></td>
-    <td><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></td>
-    <td><a href="{% url 'courseDelete' course.courseID %}">Delete Section</a></td>
+    <td>
+        <button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button>
+        <button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button>
+        <button type="button"><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></button>
+        <button type="button"><a href="{% url 'courseDelete' course.courseID %}">Delete Section</a></button>
+    </td>
   </tr>
   {% endfor %}
 </table> <br>
 
-<button type="editUserInCourse"><a href="{% url 'editUserInCourse' %}">Edit Course Assignments</a></button>
-
 {#If user is of role 1 (supervisor) this button available to add a course#}
     {% if roleTemplate == 1 %}
-        <button type="addCourse"><a href="{% url 'courseAdd' %}">Add Course</a></button>
+        <button type="button"><a href="{% url 'courseAdd' %}">Add Course</a></button>
     {% endif %}
 
-<br> <br> <button type="mainHome"><a href="{% url 'mainHome' %}">Home</a></button>
+<br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>
