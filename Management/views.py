@@ -47,6 +47,8 @@ class MainHome(View):
         return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
 
 
+
+
 class sections(View):
     def get(self, request, course_id):
         course = Course.objects.get(pk=course_id)
@@ -307,3 +309,40 @@ class MySection(Section):
         section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
                           capacity=capacity, TA_id=ta.id, courseID_id=courseID.id)
         section.save()
+
+    class myCourse(Course):
+        def __init__(self, courseID, courseName, courseDescription, courseDepartment):
+            self.courseID = courseID
+            self.courseName = courseName
+            self.courseDescription = courseDescription
+            self.courseDepartment = courseDepartment
+
+        def getName(self):
+            return self.courseName
+
+        def setName(self, name):
+            courses = Course.objects.filter(courseID=self.courseID)
+            for course in courses:
+                course.courseName = name
+                course.save()
+            self.courseName = name;
+
+        def getDescription(self):
+            return self.courseDescription
+
+        def setDescription(self, description):
+            courses = Course.objects.filter(courseID=self.courseID)
+            for course in courses:
+                course.courseDescription = description
+                course.save()
+            self.courseDescription = description;
+
+        def getDepartment(self):
+            return self.courseDepartment
+
+        def setDepartment(self, department):
+            courses = Course.objects.filter(courseID=self.courseID)
+            for course in courses:
+                course.courseDepartment = department
+                course.save()
+            self.courseDepartment = department;
