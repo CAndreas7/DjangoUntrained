@@ -1,18 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <form method="post" action="/templates/static">
-        {% csrf_token %}
-        Email: <input type="text" name="name"><br/>
-        Phone #: <input type="text" name="number"><br/>
-        <input type="submit">
-    </form>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-         <input type="submit" value="Save changes">
-    </form>
-
+<h1>Account Information</h1>
     <p>{{message}}</p>
 
     <style>
@@ -23,7 +11,6 @@ table, th, td {
 <table style="width:100%">
   <tr>
       <th>Email</th>
-    <th>Password</th>
     <th>Phone Number</th>
     <th>Role</th>
   </tr>
