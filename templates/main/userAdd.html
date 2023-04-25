@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Add a User</h1>
+     {{ message }} <br>
+    <form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Save changes">
+</form>
+    <br><button type="button"><a href="{% url 'mainHome' %}">Home</a></button>
+
+
+
+{% endblock content %}
+
+
+
+<br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>

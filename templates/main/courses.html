@@ -21,7 +21,7 @@ table, th, td {
         <button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button>
         <button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button>
         <button type="button"><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></button>
-        <button type="button"><a href="{% url 'courseDelete' course.courseID %}">Delete Section</a></button>
+        <button type="button"><a href="{% url 'courseDelete' course.courseID %}">Delete Course</a></button>
     </td>
   </tr>
   {% endfor %}

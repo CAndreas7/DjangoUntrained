@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
-    <form method="post" action="/templates/static">
-        {% csrf_token %}
-        Email: <input type="text" name="name"><br/>
-        Phone #: <input type="text" name="number"><br/>
-        <input type="submit">
-    </form>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-         <input type="submit" value="Save changes">
-    </form>
-
+<h1>Account Information</h1>
     <p>{{message}}</p>
+
+    <style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<table style="width:100%">
+  <tr>
+      <th>Email</th>
+    <th>Phone Number</th>
+    <th>Role</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+    <td>{{ user.email }}</td>
+    <td>{{ user.password }}</td>
+    <td>{{ user.phone }}</td>
+    <td>{{ user.role }}</td>
+    <td>
+        <button type="button"><a href="{% url 'courseedit' user.email%}">Edit User</a></button>
+        <button type="button"><a href="{% url 'courseDelete' user.email %}">Delete User</a></button>
+    </td>
+  </tr>
+  {% endfor %}
+</table> <br>
+
+     <button type="button"><a href="{% url 'userAdd' %}">Add User</a></button> <br> <br>
+
     {#  <table>#}
     {#    <tr><th>Name</th><th>Number</th></tr>#}
     {#    {% for i in myList %}#}
@@ -21,8 +37,7 @@
     {#    {% endfor %}#}
     {#  </table>#}
     {#{% endblock content %}#}
-    <br><button type="Courses"><a href="{% url 'courses' %}">Courses</a></button>
-    <button type="AccountInfo"><a href="{% url 'accountEdit' %}">Account Information</a></button>
+
     <br><br><button type="Home"><a href="{% url 'mainHome' %}">Home</a></button>
 
 {% endblock content %}

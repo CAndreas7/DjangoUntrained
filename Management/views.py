@@ -9,6 +9,9 @@ from .forms import SectionForm, CourseForm, UserForm, UserToFrom
 # Need to create a landing page after login
 # replace temp paths with proper url
 
+
+
+
 class Home(View):
 
     def get(self, request):
@@ -350,3 +353,27 @@ class MyUser(User):
 
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
+
+
+class userAdd(View):
+    def get(self, request):
+        form = UserForm()
+        return render(request, 'main/userAdd.html', {'form': form})
+
+    def post(self, request):
+        form = UserForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            #password = form.cleaned_data['password']
+            phone = form.cleaned_data['phone']
+            role = form.cleaned_data['role']
+
+            # Create a new User object with the extracted data
+            user = User(email=email, password="password", phone=phone, role=role)
+            user.save()
+
+            return HttpResponse('User added successfully')
+        else:
+            form = UserForm()
+
+        return render(request, 'main/userAdd.html', {'form': form})
