@@ -114,14 +114,8 @@ class Section(models.Model):
         self.sectionID = new_id
         self.save()
 
-    # def __init__(self, ID, location, start, end, capacity, ta, cID):
-    #     self.sectionID = ID
-    #     self.location = location
-    #     self.startTime = start
-    #     self.endTime = end
-    #     self.capacity = capacity
-    #     self.TA = ta
-    #     self.courseID = cID
+    def add(self):
+        self.save()
 
 
 class UsersToCourse(models.Model):
