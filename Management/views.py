@@ -232,33 +232,6 @@ class notificationSend(View):
         # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
 
-
-class courseAdd(View):
-
-    def get(self, request):
-        form = CourseForm()
-        return render(request, 'main/courseAdd.html', {'form': form})
-
-    def post(self, request):
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            courseID = form.cleaned_data['courseID']
-            courseName = form.cleaned_data['courseName']
-            courseDepartment = form.cleaned_data['courseDepartment']
-            courseDescription = form.cleaned_data['courseDescription']
-
-            # Create a new Section object with the extracted data
-            course = Course(courseID=courseID, courseName=courseName, courseDepartment=courseDepartment,
-                            courseDescription=courseDescription)
-            course.save()
-
-            return HttpResponse('Course added successfully')
-        else:
-            form = CourseForm()
-
-        return render(request, 'main/addSection.html', {'form': form})
-
-
 class MyUser(User):
 
     def __init__(self, email, password, phone, role):
