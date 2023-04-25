@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Section, User
+from .models import *
 
 
 class SectionForm(forms.ModelForm):
@@ -17,4 +17,8 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['email', 'phone']
+class UserToFrom(forms.ModelForm):
+    class Meta:
+        model = UsersToCourse
+        fields = ['courseID', 'assignment']
 

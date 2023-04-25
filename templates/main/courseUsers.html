@@ -1,0 +1,20 @@
+<h1>{{ course.courseName }} Users</h1>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<table style="width:100%">
+  <tr>
+    <th>Email</th>
+  </tr>
+  {% for section in sections %}
+  <tr>
+    <td>{{ users.email }}</td>
+  </tr>
+  {% endfor %}
+</table> <br>
+
+<a href="{% url 'userToCourse' course.courseID %}">Add User</a>
+
+<br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>

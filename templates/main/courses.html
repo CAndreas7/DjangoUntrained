@@ -19,7 +19,8 @@ table, th, td {
     <td>{{ course.courseName }}</td>
     <td>{{ course.courseDescription }}</td>
     <td>{{ course.courseDepartment }}</td>
-    <td><a href="{% url 'sections' course.courseID %}">View Sections</a></td>
+    <td><a href="{% url 'sections' course.courseID %}">Sections</a></td>
+    <td><a href="{% url 'usersInCourse' course.courseID %}">Users</a></td>
     <td><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></td>
     <td><a href="{% url 'courseDelete' course.courseID %}">Delete Section</a></td>
   </tr>
