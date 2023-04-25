@@ -20,5 +20,5 @@ class UserForm(forms.ModelForm):
 class UserToFrom(forms.ModelForm):
     class Meta:
         model = UsersToCourse
-        fields = ['courseID', 'assignment']
+        fields = ['assignment']
 
