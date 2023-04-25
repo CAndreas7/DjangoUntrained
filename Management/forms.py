@@ -16,7 +16,7 @@ class CourseForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'phone']
+        fields = ['email', 'phone', 'role']
 class UserToFrom(forms.ModelForm):
     class Meta:
         model = UsersToCourse

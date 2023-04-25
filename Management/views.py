@@ -1,14 +1,16 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import User, Section, Course
-from .forms import SectionForm, CourseForm, UserForm
-from django.urls import reverse
+from .models import User, Section, Course, UsersToCourse
+from .forms import SectionForm, CourseForm, UserForm, UserToFrom
 
 
 # Create your views here.
 # Need to create a landing page after login
 # replace temp paths with proper url
+
+
+
 
 class Home(View):
 
@@ -47,6 +49,39 @@ class MainHome(View):
         return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
 
 
+class usersInCourse(View):
+    def get(self, request, course_id):
+        course = Course.objects.get(courseID=course_id)
+        u2c = UsersToCourse.objects.get(courseID=course_id)
+        u = UsersToCourse.objects.filter(courseID=course_id)
+        context = {'course': u2c, 'users': u}
+        return render(request, 'main/courseUsers.html', context)
+
+
+class userToCourseAdd(View):
+
+    def get(self, request, course_id):
+        course = Course.objects.get(courseID=course_id)
+        form = UserToFrom(initial={'courseID': course})
+        return render(request, 'main/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+
+    def post(self, request, course_id):
+        form = UserToFrom(request.POST)
+
+        if form.is_valid():
+
+            course = Course.objects.get(courseID=course_id)
+            # courseID = form.cleaned_data['course']
+            user = form.cleaned_data['assignment']
+
+            userTo = UsersToCourse(courseID=course, assignment=user)
+            userTo.save()
+
+            return HttpResponse('User added successfully')
+        else:
+            form = UserToFrom(initial={'courseID': course_id})
+
+            return render(request, 'main/editUserInCourse.html', {'form': form})
 
 
 class sections(View):
@@ -73,10 +108,10 @@ class sectionAdd(View):
             TA = form.cleaned_data['TA']
             sectionID = form.cleaned_data['sectionID']
 
-            section = MySection(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
-                                capacity=capacity, ta=TA, courseID=courseID)
-
-            section.addSection()
+            # Create a new Section object with the extracted data
+            section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
+                              courseID=courseID)
+            section.add()
 
             return HttpResponse('Section added successfully')
         else:
@@ -88,13 +123,13 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section)  # change here
+        form = SectionForm(instance=section)
         context = {'section': section, 'form': form}
         return render(request, "main/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
-        section = get_object_or_404(Course, pk=section_id)
-        form = SectionForm(request.POST, instance=section)  # change here
+        section = get_object_or_404(Section, pk=section_id)
+        form = SectionForm(request.POST, instance=section)
         if form.is_valid():
             form.save()
             return redirect('sections', course_id=course_id)
@@ -158,7 +193,7 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return render(request, "main/courseAdd.html", {"message": "Course added successfully."})
+            return render(request, "main/courses.html")
         else:
             form = CourseForm()
 
@@ -196,6 +231,32 @@ class notificationSend(View):
         #
         # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
+
+
+class courseAdd(View):
+
+    def get(self, request):
+        form = CourseForm()
+        return render(request, 'main/courseAdd.html', {'form': form})
+
+    def post(self, request):
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            courseID = form.cleaned_data['courseID']
+            courseName = form.cleaned_data['courseName']
+            courseDepartment = form.cleaned_data['courseDepartment']
+            courseDescription = form.cleaned_data['courseDescription']
+
+            # Create a new Section object with the extracted data
+            course = Course(courseID=courseID, courseName=courseName, courseDepartment=courseDepartment,
+                            courseDescription=courseDescription)
+            course.save()
+
+            return HttpResponse('Course added successfully')
+        else:
+            form = CourseForm()
+
+        return render(request, 'main/addSection.html', {'form': form})
 
 
 class MyUser(User):
@@ -294,55 +355,25 @@ class MyUser(User):
         Section.objects.filter(sectionID=sectionID).delete()
 
 
-class MySection(Section):
+class userAdd(View):
+    def get(self, request):
+        form = UserForm()
+        return render(request, 'main/userAdd.html', {'form': form})
 
-    def __init__(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        self.sectionID = sectionID
-        self.location = location
-        self.startTime = startTime
-        self.endTime = endTime
-        self.capacity = capacity
-        self.TA_id = ta
-        self.courseID = courseID
+    def post(self, request):
+        form = UserForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            #password = form.cleaned_data['password']
+            phone = form.cleaned_data['phone']
+            role = form.cleaned_data['role']
 
-    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
-                          capacity=capacity, TA_id=ta.id, courseID_id=courseID.id)
-        section.save()
+            # Create a new User object with the extracted data
+            user = User(email=email, password="password", phone=phone, role=role)
+            user.save()
 
-    class myCourse(Course):
-        def __init__(self, courseID, courseName, courseDescription, courseDepartment):
-            self.courseID = courseID
-            self.courseName = courseName
-            self.courseDescription = courseDescription
-            self.courseDepartment = courseDepartment
+            return HttpResponse('User added successfully')
+        else:
+            form = UserForm()
 
-        def getName(self):
-            return self.courseName
-
-        def setName(self, name):
-            courses = Course.objects.filter(courseID=self.courseID)
-            for course in courses:
-                course.courseName = name
-                course.save()
-            self.courseName = name;
-
-        def getDescription(self):
-            return self.courseDescription
-
-        def setDescription(self, description):
-            courses = Course.objects.filter(courseID=self.courseID)
-            for course in courses:
-                course.courseDescription = description
-                course.save()
-            self.courseDescription = description;
-
-        def getDepartment(self):
-            return self.courseDepartment
-
-        def setDepartment(self, department):
-            courses = Course.objects.filter(courseID=self.courseID)
-            for course in courses:
-                course.courseDepartment = department
-                course.save()
-            self.courseDepartment = department;
+        return render(request, 'main/userAdd.html', {'form': form})
