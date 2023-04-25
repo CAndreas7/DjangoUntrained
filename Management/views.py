@@ -190,7 +190,7 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return render(request, "main/courseAdd.html", {"message": "Course added successfully."})
+            return render(request, "main/courses.html")
         else:
             form = CourseForm()
 
