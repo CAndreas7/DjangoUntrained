@@ -145,6 +145,11 @@ class sectionDelete(View):
         return redirect('sections', course_id=course_id)
 
 
+class users(View):
+    def get(self, request):
+        users = User.objects.all()
+        context = {'users': users}
+        return render(request, "main/accountEdit.html", context)
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
@@ -170,34 +175,6 @@ class courseEdit(View):
             context = {'course': course, 'form': form}
             return render(request, "main/courseEdit.html", context)
 
-
-class courseAdd(View):
-
-    def get(self, request):
-        form = CourseForm()
-        return render(request, 'main/courseAdd.html', {'form': form})
-
-    def post(self, request):
-
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            courseID = form.cleaned_data['courseID']
-            courseName = form.cleaned_data['courseName']
-            courseDescription = form.cleaned_data['courseDescription']
-            courseDepartment = form.cleaned_data['courseDepartment']
-
-            # Create a new Course object with the extracted data
-            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
-                            courseDepartment=courseDepartment)
-
-            # Save the new course to the database
-            course.save()
-
-            return render(request, "main/courses.html")
-        else:
-            form = CourseForm()
-
-        return render(request, 'main/courseAdd.html', {'form': form})
 
 
 class courseDelete(View):
@@ -354,7 +331,27 @@ class MyUser(User):
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
+class userEdit(View):
+    def get(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(instance=user)
+        context = {'user': user, 'form': form}
+        return render(request, "main/userEdit.html", context)
 
+    def post(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            context = {'user': user, 'form': form}
+            return render(request, "main/userEdit.html", context)
+class userDelete(View):
+    def get(self, request, email_id):
+        User.objects.filter(email=email_id).delete()
+        # Redirect to a success page or back to the list of courses
+        return redirect('users')
 class userAdd(View):
     def get(self, request):
         form = UserForm()
@@ -376,4 +373,4 @@ class userAdd(View):
         else:
             form = UserForm()
 
-        return render(request, 'main/userAdd.html', {'form': form})
+        return render(request, 'main/accountEdit.html', {'form': form})
