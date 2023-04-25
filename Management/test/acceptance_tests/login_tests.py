@@ -39,7 +39,8 @@ class LoginTests(TestCase):
             'password': 'testpass'
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This field is required.')
+        self.assertEqual(response.context['message'], 'Please enter an email.')
+        self.assertEqual(response.context['password'], 'testpass')
 
     def testMissingPassword(self):
         response = self.client.post('/', {
@@ -47,4 +48,13 @@ class LoginTests(TestCase):
             'password': ''
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This field is required.')
+        self.assertEqual(response.context['message'], 'Please enter a password.', "error message is incorrect")
+        self.assertEqual(response.context['person'], 'testuser', "email was not autofilled")
+
+    def testMissingEmailAndPassword(self):
+        response = self.client.post('/', {
+            'email': '',
+            'password': ''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['message'], 'Please enter an email and password.', "error message is incorrect")
