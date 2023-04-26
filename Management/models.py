@@ -109,29 +109,49 @@ class Section(models.Model):
         # Return the section ID
         return self.sectionID
 
-    def setID(self, new_id):
-        # Update the section ID
-        self.sectionID = new_id
-        self.save()
+    def getLocation(self):
+        return self.location
 
-    def addSection(self):
+    def setLocation(self, location):
+        self.location = location
 
-        self.save()
+    def getStart(self):
+        return self.startTime
 
-    def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        sections = Section.objects.filter(sectionID=sectionID)
-        for item in sections:
-            item.location = location
-            item.startTime = startTime
-            item.endTime = endTime
-            item.capacity = capacity
-            item.TA_id = ta
-            item.courseID_id = courseID
-            item.save()
+    def setStart(self, start):
+        self.startTime = start
 
-    def removeSection(self, sectionID):
-        Section.objects.filter(sectionID=sectionID).delete()
+    def getEnd(self):
+        return self.endTime
 
+    def setEnd(self, end):
+        self.endTime = end
+
+    def getCapacity(self):
+        return self.capacity
+
+    def setCapacity(self, capacity):
+        self.capacity = capacity
+
+    def getTA(self):
+        return self.TA
+
+    def setTA(self, ta):
+        self.TA = ta
+
+    def getCourseID(self):
+        return self.courseID
+
+    def setCourseID(self, course):
+        self.courseID = course
+
+    # def setID(self, new_id):
+    #     # Update the section ID
+    #     self.sectionID = new_id
+    #     self.save()
+
+    # def add(self):
+    #     self.save()
 
 class UsersToCourse(models.Model):
 

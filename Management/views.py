@@ -10,8 +10,6 @@ from .forms import SectionForm, CourseForm, UserForm, UserToFrom
 # replace temp paths with proper url
 
 
-
-
 class Home(View):
 
     def get(self, request):
@@ -165,11 +163,13 @@ class users(View):
         users = User.objects.all()
         context = {'users': users}
         return render(request, "main/accountEdit.html", context)
+
+
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
-        courses = Course.objects.all()
-        context = {'courses': courses, 'roleTemplate': userRole}
+        course = Course.objects.all()
+        context = {'courses': course, 'roleTemplate': userRole}
         return render(request, "main/courses.html", context)
 
 
@@ -251,6 +251,7 @@ class notificationSend(View):
         #
         # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
+
 
 class MyUser(User):
 
@@ -347,6 +348,7 @@ class MyUser(User):
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
+
 class userEdit(View):
     def get(self, request, email_id):
         user = get_object_or_404(User, pk=email_id)
@@ -363,11 +365,15 @@ class userEdit(View):
         else:
             context = {'user': user, 'form': form}
             return render(request, "main/userEdit.html", context)
+
+
 class userDelete(View):
     def get(self, request, email_id):
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
         return redirect('users')
+
+
 class userAdd(View):
     def get(self, request):
         form = UserForm()
