@@ -152,6 +152,8 @@ class Section(models.Model):
 
     def setCourseID(self, course):
         self.courseID = course
+    def getCourseName(self):
+        return Course.objects.get(courseID=self.courseID).getName()
 
     # def setID(self, new_id):
     #     # Update the section ID

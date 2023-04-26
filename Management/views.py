@@ -184,10 +184,14 @@ class courseEdit(View):
         course = get_object_or_404(Course, pk=course_id)
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
-            form.save()
-            return redirect('courses')
+            if course in Course.objects.all():
+                return render(request, 'main/courseEdit.html',
+                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
+            else:
+                form.save()
+                return render(request, 'main/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
         else:
-            context = {'course': course, 'form': form}
+            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
             return render(request, "main/courseEdit.html", context)
 
 
@@ -206,6 +210,7 @@ class courseAdd(View):
             courseDescription = form.cleaned_data['courseDescription']
             courseDepartment = form.cleaned_data['courseDepartment']
 
+
             # Create a new Course object with the extracted data
             course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
                             courseDepartment=courseDepartment)
@@ -213,11 +218,11 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return redirect('courses')
+            return render(request, 'main/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
         else:
             form = CourseForm()
 
-        return render(request, 'main/courseAdd.html', {'form': form})
+        return User.objects.filter(email=email_id).delete()
 
 
 class courseDelete(View):
@@ -225,7 +230,12 @@ class courseDelete(View):
     def get(self, request, course_id):
         Course.objects.filter(courseID=course_id).delete()
         # Redirect to a success page or back to the list of courses
-        return redirect('courses')
+        userRole = request.session['roleSession']
+        course = Course.objects.all()
+        context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
+        return render(request, "main/courses.html", context)
+
+
 
 
 class editUserInCourse(View):
@@ -391,8 +401,11 @@ class userAdd(View):
             user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
-            return HttpResponse('User added successfully')
+            #return HttpResponse('User added successfully')
+            return render(request, 'main/userAdd.html', {'form': form, 'message': "User Successfully Added"})
+
         else:
             form = UserForm()
 
-        return render(request, 'main/accountEdit.html', {'form': form})
+        return render(request, 'main/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                                               "Please enter a different email"})
