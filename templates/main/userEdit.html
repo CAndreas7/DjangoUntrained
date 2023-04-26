@@ -1,0 +1,8 @@
+<h1>Edit User</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Save changes">
+</form>
+<br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
