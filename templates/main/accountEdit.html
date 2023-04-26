@@ -20,7 +20,7 @@ table, th, td {
     <td>{{ user.email }}</td>
       <td>{{ user.password }}</td>
     <td>{{ user.phone }}</td>
-    <td>{{ user.role }}</td>
+    <td>{{ user.getRole}}</td>
     <td>
         <button type="button"><a href="{% url 'userEdit' user.email%}">Edit User</a></button>
         <button type="button"><a href="{% url 'userDelete' user.email %}">Delete User</a></button>
