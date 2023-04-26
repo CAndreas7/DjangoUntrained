@@ -186,7 +186,7 @@ class courseEdit(View):
         if form.is_valid():
             if course in Course.objects.all():
                 return render(request, 'main/courseEdit.html',
-                              {'form': form, 'message': "Cannot reuse the same ID. Please enter a different ID"})
+                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
             else:
                 form.save()
                 return render(request, 'main/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
@@ -401,8 +401,11 @@ class userAdd(View):
             user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
-            return HttpResponse('User added successfully')
+            #return HttpResponse('User added successfully')
+            return render(request, 'main/userAdd.html', {'form': form, 'message': "User Successfully Added"})
+
         else:
             form = UserForm()
 
-        return render(request, 'main/accountEdit.html', {'form': form})
+        return render(request, 'main/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                                               "Please enter a different email"})
