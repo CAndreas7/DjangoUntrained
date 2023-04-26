@@ -37,7 +37,15 @@ class User(models.Model):
             (2, "Instructor"),
             (3, "TA")
         ))
-
+    def getRole(self):
+        role = self.role
+        if role == 1:
+            return "Supervisor"
+        elif role == 2:
+            return "Instructor"
+        elif role == 3:
+            return "TA"
+        return
     # def __init__(self, email, password, phone, role):
     #     self.email = email
     #     self.password = password
