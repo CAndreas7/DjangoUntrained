@@ -37,6 +37,14 @@ class TestUser(TestCase):
         self.supervisor.setPhone("1(111)-111-1111")
         self.assertEqual(self.supervisor.phone, "1(111)-111-1111", msg="setPhone was did not change user's phone")
 
+
+class testAccount(TestCase):
+
+    def setUp(self):
+        self.user = User("testemail@uwm.edu", "testpassword", "", 1)
+        self.user.save()
+        self.supervisor = MyUser("testemail@uwm.edu", "testpassword", "", 1)
+
     def test_addAccount(self):
         self.supervisor.addAccount("email", "pass", "phone", 3)
         self.assertEqual(User.objects.filter(email="email").count(), 1, msg="No user exists with the given email")
@@ -48,7 +56,8 @@ class TestUser(TestCase):
         compAccount = User("taemail@uwm.edu", "newpass", "1(888)-999-0000", 3)
         compAccount.save()
         self.supervisor.editAccount("taemail@uwm.edu", "changedpass", "1(888)-999-0000", 3)
-        self.assertEqual(User.objects.filter(password="changedpass").count(), 1, msg="Editted field did not match desired field")
+        self.assertEqual(User.objects.filter(password="changedpass").count(), 1,
+                         msg="Editted field did not match desired field")
 
     def test_removeAccount(self):
         user = User(email="deleteme@uwm.edu", password="goodbye", phone="", role=3)
@@ -56,6 +65,14 @@ class TestUser(TestCase):
         self.supervisor.removeAccount("deleteme@uwm.edu")
         self.assertEqual(User.objects.filter(email="deleteme@uwm.edu", password="goodbye").count(), 0,
                          msg="An account exists with the credentials that should have been deleted")
+
+
+class testCourse(TestCase):
+
+    def setUp(self):
+        self.user = User("testemail@uwm.edu", "testpassword", "", 1)
+        self.user.save()
+        self.supervisor = MyUser("testemail@uwm.edu", "testpassword", "", 1)
 
     def test_addCourse(self):
         course = Course(courseID=101, courseName="name", courseDescription="desc", courseDepartment="dept")
@@ -68,7 +85,8 @@ class TestUser(TestCase):
         course = Course(courseID=101, courseName="name", courseDescription="desc", courseDepartment="dept")
         course.save()
         self.supervisor.editCourse(101, "Algebra", "Entry level algebra", "Math")
-        self.assertEqual(Course.objects.filter(courseName="Algebra").count(), 1, msg="Course was not updated in database")
+        self.assertEqual(Course.objects.filter(courseName="Algebra").count(), 1,
+                         msg="Course was not updated in database")
 
     def test_removeCourse(self):
         course = Course(courseID=101, courseName="Algebra", courseDescription="Entry level college algebra",
@@ -77,6 +95,14 @@ class TestUser(TestCase):
         self.supervisor.removeCourse(101)
         self.assertEqual(Course.objects.filter(courseID=101).count(), 0,
                          msg="A record exists with the primary key that should have been deleted")
+
+
+class testSection(TestCase):
+
+    def setUp(self):
+        self.user = User("testemail@uwm.edu", "testpassword", "", 1)
+        self.user.save()
+        self.supervisor = MyUser("testemail@uwm.edu", "testpassword", "", 1)
 
     def test_addSection(self):
         course = Course(courseID=251, courseName="Intermediate Computer Programming",
@@ -98,7 +124,8 @@ class TestUser(TestCase):
                           TA=self.user, courseID=course)
         section.save()
         self.supervisor.editSection(800, "EMS120", "05:00PM", "07:00PM", 30, self.user, course)
-        self.assertEqual(Section.objects.filter(location="EMS120").count(), 1, msg="The section location was not changed")
+        self.assertEqual(Section.objects.filter(location="EMS120").count(), 1,
+                         msg="The section location was not changed")
 
     def test_removeSection(self):
         course = Course(courseID=251, courseName="Intermediate Computer Programming",
