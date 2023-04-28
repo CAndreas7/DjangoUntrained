@@ -68,7 +68,7 @@ class usersInCourse(View):
         course = Course.objects.get(courseID=course_id)
         users = UsersToCourse.objects.filter(courseID=course_id)
         context = {'course': course, 'users': users}
-        return render(request, 'main/courseUsers.html', context)
+        return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
 class userToCourseAdd(View):
@@ -76,7 +76,7 @@ class userToCourseAdd(View):
     def get(self, request, course_id):
         course = Course.objects.get(courseID=course_id)
         form = UserToFrom(initial={'courseID': course})
-        return render(request, 'main/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
@@ -94,7 +94,7 @@ class userToCourseAdd(View):
         else:
             form = UserToFrom(initial={'courseID': course_id})
 
-            return render(request, 'main/editUserInCourse.html', {'form': form})
+            return render(request, 'main/UserToCourse/editUserInCourse.html', {'form': form})
 
 
 class sections(View):
@@ -102,13 +102,13 @@ class sections(View):
         course = Course.objects.get(pk=course_id)
         sections = Section.objects.filter(courseID=course)
         context = {'course': course, 'sections': sections}
-        return render(request, 'main/sections.html', context)
+        return render(request, 'main/Section/sections.html', context)
 
 
 class sectionAdd(View):
     def get(self, request, course_id):
         form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/addSection.html', {'form': form, 'course_id': course_id})
+        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id})
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
@@ -130,7 +130,7 @@ class sectionAdd(View):
         else:
             form = SectionForm(initial={'courseID': course_id})
 
-        return render(request, 'main/addSection.html', {'form': form})
+        return render(request, 'main/Section/addSection.html', {'form': form})
 
 
 class sectionEdit(View):
@@ -138,7 +138,7 @@ class sectionEdit(View):
         section = get_object_or_404(Section, pk=section_id)
         form = SectionForm(instance=section)
         context = {'section': section, 'form': form}
-        return render(request, "main/sectionEdit.html", context)
+        return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
         section = get_object_or_404(Section, pk=section_id)
@@ -148,7 +148,7 @@ class sectionEdit(View):
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
-            return render(request, "main/sectionEdit.html", context)
+            return render(request, "main/Section/sectionEdit.html", context)
 
 
 class sectionDelete(View):
@@ -162,7 +162,7 @@ class users(View):
     def get(self, request):
         users = User.objects.all()
         context = {'users': users}
-        return render(request, "main/accountEdit.html", context)
+        return render(request, "main/Account/accountEdit.html", context)
 
 
 class courses(View):
@@ -170,7 +170,7 @@ class courses(View):
         userRole = request.session['roleSession']
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole}
-        return render(request, "main/courses.html", context)
+        return render(request, "main/Course/courses.html", context)
 
 
 class courseEdit(View):
@@ -178,28 +178,28 @@ class courseEdit(View):
         course = get_object_or_404(Course, pk=course_id)
         form = CourseForm(instance=course)
         context = {'course': course, 'form': form}
-        return render(request, "main/courseEdit.html", context)
+        return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
             if course in Course.objects.all():
-                return render(request, 'main/courseEdit.html',
+                return render(request, 'main/Course/courseEdit.html',
                               {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
             else:
                 form.save()
-                return render(request, 'main/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
+                return render(request, 'main/Course/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
-            return render(request, "main/courseEdit.html", context)
+            return render(request, "main/Course/courseEdit.html", context)
 
 
 class courseAdd(View):
 
     def get(self, request):
         form = CourseForm()
-        return render(request, 'main/courseAdd.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
     def post(self, request):
 
@@ -218,7 +218,7 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return render(request, 'main/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
+            return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
         else:
             form = CourseForm()
 
@@ -233,7 +233,7 @@ class courseDelete(View):
         userRole = request.session['roleSession']
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
-        return render(request, "main/courses.html", context)
+        return render(request, "main/Course/courses.html", context)
 
 
 
@@ -241,12 +241,12 @@ class courseDelete(View):
 class editUserInCourse(View):
 
     def get(self, request):
-        return render(request, "main/editUserInCourse.html", {})
+        return render(request, "main/UserToCourse/editUserInCourse.html", {})
 
 
 class accountEdit(View):
     def get(self, request):
-        return render(request, "main/accountEdit.html", {})
+        return render(request, "main/Account/accountEdit.html", {})
 
 
 class notificationSend(View):
@@ -364,7 +364,7 @@ class userEdit(View):
         user = get_object_or_404(User, pk=email_id)
         form = UserForm(instance=user)
         context = {'user': user, 'form': form}
-        return render(request, "main/userEdit.html", context)
+        return render(request, "main/User/userEdit.html", context)
 
     def post(self, request, email_id):
         user = get_object_or_404(User, pk=email_id)
@@ -374,7 +374,7 @@ class userEdit(View):
             return redirect('users')
         else:
             context = {'user': user, 'form': form}
-            return render(request, "main/userEdit.html", context)
+            return render(request, "main/User/userEdit.html", context)
 
 
 class userDelete(View):
@@ -387,7 +387,7 @@ class userDelete(View):
 class userAdd(View):
     def get(self, request):
         form = UserForm()
-        return render(request, 'main/userAdd.html', {'form': form})
+        return render(request, 'main/User/userAdd.html', {'form': form})
 
     def post(self, request):
         form = UserForm(request.POST)
@@ -402,10 +402,10 @@ class userAdd(View):
             user.save()
 
             #return HttpResponse('User added successfully')
-            return render(request, 'main/userAdd.html', {'form': form, 'message': "User Successfully Added"})
+            return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
 
         else:
             form = UserForm()
 
-        return render(request, 'main/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
+        return render(request, 'main/User/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
                                                                                "Please enter a different email"})
