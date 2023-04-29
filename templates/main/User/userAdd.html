@@ -1,4 +1,4 @@
-
+{% extends 'base.html' %}
 {% block content %}
 
 <h1>Add a User</h1>
@@ -11,8 +11,10 @@
 
 
 
-{% endblock content %}
+
 
  <br><button type="button"><a href="{% url 'users' %}">Account Information Page</a></button>
 
 <br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
+{% endblock content %}

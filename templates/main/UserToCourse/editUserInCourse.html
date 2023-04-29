@@ -1,6 +1,7 @@
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
+
 {% csrf_token %}
 <h1>Add/Remove Users from Courses</h1>
 
@@ -43,3 +44,5 @@
     <button type="HomePage" name="homeButton">Home Page</button>
 
 </html>
+
+{% endblock content %}

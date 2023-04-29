@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <h1>{{ course.courseName }} Users</h1>
 <style>
 table, th, td {
@@ -18,3 +21,5 @@ table, th, td {
 <a href="{% url 'userToCourseAdd' course.courseID_id %}">Add User</a>
 
 <br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
+
+{% endblock content %}
