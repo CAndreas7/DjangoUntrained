@@ -221,7 +221,7 @@ class courseAdd(View):
         else:
             form = CourseForm()
 
-        return User.objects.filter(email=email_id).delete()
+        return render(request, 'main/Course/courses.html', {'form': form})
 
 
 class courseDelete(View):
