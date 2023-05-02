@@ -113,7 +113,7 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if form.is_valid():
-            courseID = form.cleaned_data['courseID']
+            courseID = course_id
             location = form.cleaned_data['location']
             startTime = form.cleaned_data['startTime']
             endTime = form.cleaned_data['endTime']
@@ -123,7 +123,7 @@ class sectionAdd(View):
 
             # Create a new Section object with the extracted data
             section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
-                              courseID=courseID)
+                              courseID=courseID, endTime=endTime)
             section.save()
 
             return redirect('sections', course_id=course_id)
@@ -144,6 +144,7 @@ class sectionEdit(View):
         section = get_object_or_404(Section, pk=section_id)
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
+            form.courseID = course_id
             form.save()
             return redirect('sections', course_id=course_id)
         else:
