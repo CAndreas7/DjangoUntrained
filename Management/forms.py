@@ -13,12 +13,20 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ['courseID', 'courseName', 'courseDescription', 'courseDepartment']
 
+
+class CourseEditForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['courseName', 'courseDescription', 'courseDepartment']
+
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email','password', 'phone', 'role']
+        fields = ['email', 'password', 'phone', 'role']
+
+
 class UserToFrom(forms.ModelForm):
     class Meta:
         model = UsersToCourse
         fields = ['assignment']
-
