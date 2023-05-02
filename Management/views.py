@@ -221,7 +221,7 @@ class courseAdd(View):
         else:
             form = CourseForm()
 
-        return render(request, 'main/Course/courses.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 
 class courseDelete(View):
