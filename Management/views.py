@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import User, Section, Course, UsersToCourse
-from .forms import SectionForm, CourseForm, UserForm, UserToFrom
+from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm
 
 
 # Create your views here.
@@ -113,7 +113,7 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if form.is_valid():
-            courseID = form.cleaned_data['courseID']
+            courseID = course_id
             location = form.cleaned_data['location']
             startTime = form.cleaned_data['startTime']
             endTime = form.cleaned_data['endTime']
@@ -123,7 +123,7 @@ class sectionAdd(View):
 
             # Create a new Section object with the extracted data
             section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
-                              courseID=courseID)
+                              courseID=courseID, endTime=endTime)
             section.save()
 
             return redirect('sections', course_id=course_id)
@@ -144,6 +144,7 @@ class sectionEdit(View):
         section = get_object_or_404(Section, pk=section_id)
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
+            form.courseID = course_id
             form.save()
             return redirect('sections', course_id=course_id)
         else:
@@ -176,7 +177,7 @@ class courses(View):
 class courseEdit(View):
     def get(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(instance=course)
+        form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
@@ -184,12 +185,10 @@ class courseEdit(View):
         course = get_object_or_404(Course, pk=course_id)
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
-            if course in Course.objects.all():
-                return render(request, 'main/Course/courseEdit.html',
-                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
-            else:
-                form.save()
-                return render(request, 'main/Course/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
+
+            form.save()
+            return render(request, 'main/Course/courseEdit.html',
+                          {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
             return render(request, "main/Course/courseEdit.html", context)
@@ -210,7 +209,6 @@ class courseAdd(View):
             courseDescription = form.cleaned_data['courseDescription']
             courseDepartment = form.cleaned_data['courseDepartment']
 
-
             # Create a new Course object with the extracted data
             course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
                             courseDepartment=courseDepartment)
@@ -218,11 +216,12 @@ class courseAdd(View):
             # Save the new course to the database
             course.save()
 
-            return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
+            return render(request, 'main/Course/courseAdd.html',
+                          {'form': form, 'message': "Course Successfully added!"})
         else:
             form = CourseForm()
 
-        return User.objects.filter(email=email_id).delete()
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 
 class courseDelete(View):
@@ -234,8 +233,6 @@ class courseDelete(View):
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
         return render(request, "main/Course/courses.html", context)
-
-
 
 
 class editUserInCourse(View):
@@ -401,11 +398,12 @@ class userAdd(View):
             user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
-            #return HttpResponse('User added successfully')
+            # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
 
         else:
             form = UserForm()
 
-        return render(request, 'main/User/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                                               "Please enter a different email"})
+        return render(request, 'main/User/userAdd.html',
+                      {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                "Please enter a different email"})
