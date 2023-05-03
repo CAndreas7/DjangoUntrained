@@ -111,12 +111,8 @@ class courseEdit(View):
         course = get_object_or_404(Course, pk=course_id)
         form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
-            if course in Course.objects.all():
-                return render(request, 'main/Course/courseEdit.html',
-                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
-            else:
-                form.save()
-                return render(request, 'main/Course/courseEdit.html',
+            form.save()
+            return render(request, 'main/Course/courseEdit.html',
                               {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
