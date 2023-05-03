@@ -7,12 +7,12 @@ class Test_CourseAdd(TestCase):
 
         self.client = Client()
 
-        self.course = Course.objects.create(courseID="1", courseName="CS250",
+        self.course = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
         self.course.save()
 
-        self.client.post('/courseAdd', {
-            'courseID': '2',
+        self.client.post('/courseAdd/', {
+            'courseID': 2,
             'courseName': 'CS350',
             'courseDescription': "Some elementary comp sci class",
             'courseDepartment': "CS"
@@ -20,13 +20,12 @@ class Test_CourseAdd(TestCase):
 
     def test_addNewCourse(self):
 
-        self.client.post('/courseAdd', {
-            'courseID': '1236',
+        self.client.post('/courseAdd/', {
+            'courseID': 1236,
             'courseName': 'CS400',
             'courseDescription': "Some elementary comp sci class",
             'courseDepartment': "CS"
         })
-        response = self.client.get('/courseAdd')
 
         # self.assertEqual(200, response.status_code, "Status code is not 200")
 
@@ -43,14 +42,14 @@ class Test_CourseAdd(TestCase):
                                                                          "adding a course successfully.")"""
 
     def test_addSameCourse(self):
-        self.client.post('/courseAdd', {
-            'courseID': '1',
+        self.client.post('/courseAdd/', {
+            'courseID': 1,
             'courseName': 'CS250',
             'courseDescription': "Some elementary comp sci class",
             'courseDepartment': "CS"
         })
         """Checks to see if the course is correctly added to the database via post"""
-        self.assertEqual(Course.objects.filter(courseID=1).count(), 2,
+        self.assertEqual(Course.objects.filter(courseID=1).count(), 1,
                          msg="there should not be two same courses in the "
                              "data base")
         self.assertEqual(len(Course.objects.all()), 2, "There should be a total of 2 courses in the database.")

@@ -6,20 +6,17 @@ class Test_SectionAdd(TestCase):
     def setUp(self):
 
         self.client = Client()
-        self.TA1 = User.create.objects("SomeUser@user.com", "testpassword", "", 3)
-        self.TA1.save()
+        self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
 
-        self.course1 = Course.objects.create(courseID="1", courseName="CS250",
+        self.course1 = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
-        self.course1.save()
 
-        self.section = Section.objects.create(courseID="1", location="Here", startTime="7:00PM", endTime="7:50PM",
+        self.section = Section.objects.create(courseID=self.course1, location="Here", startTime="7:00PM", endTime="7:50PM",
                                               capacity=100, TA=self.TA1, sectionID=1);
-        self.section.save()
 
 
     def test_addNewSection(self):
-        self.client.post(('/sectionAdd', {
+        self.client.post(('/sectionAdd/', {
             'courseID': 1,
             'location': 'United States',
             'startTime': '7:00AM',
@@ -28,14 +25,15 @@ class Test_SectionAdd(TestCase):
             'TA': self.TA1,
             'sectionID': 2
         }))
+        numSectionsID2 = Section.objects.filter(sectionID=2).count()
         #checks to see if the new section was added to the database.
-        self.assertEqual(Section.objects.filter(sectionID=2).count(), 1,
+        self.assertEqual(numSectionsID2, 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
 
 
     def test_addSameSection(self):
-        self.client.post(('/sectionAdd', {
+        self.client.post(('/sectionAdd/', {
             'courseID': 1,
             'location': 'Here',
             'startTime': '7:00PM',
@@ -51,7 +49,7 @@ class Test_SectionAdd(TestCase):
         #how would someone go about checking the display of the output
 
     def test_addSameID(self):
-        self.client.post(('/sectionAdd', {
+        self.client.post(('/sectionAdd/', {
             'courseID': 1,
             'location': 'United States',
             'startTime': '7:00AM',
