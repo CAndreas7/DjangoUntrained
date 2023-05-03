@@ -97,26 +97,22 @@ class courseAdd(View):
         else:
             form = CourseForm()
 
-        return User.objects.filter(email=email_id).delete()
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 
 class courseEdit(View):
     def get(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(instance=course)
+        form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(request.POST, instance=course)
+        form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
-            if course in Course.objects.all():
-                return render(request, 'main/Course/courseEdit.html',
-                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
-            else:
-                form.save()
-                return render(request, 'main/Course/courseEdit.html',
+            form.save()
+            return render(request, 'main/Course/courseEdit.html',
                               {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
@@ -165,7 +161,7 @@ class userToCourseAdd(View):
         else:
             form = UserToFrom(initial={'courseID': course_id})
 
-            return render(request, 'main/UserToCourse/editUserInCourse.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 class editUserInCourse(View):
 
