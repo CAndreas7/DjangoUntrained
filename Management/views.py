@@ -47,7 +47,6 @@ class Home(View):
             request.session["email"] = m.email
             return redirect("/main/")
 
-
 class MainHome(View):
 
     def get(self, request):
@@ -61,6 +60,78 @@ class MainHome(View):
         userRole = thisUser.role
         request.session['roleSession'] = userRole
         return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
+
+
+class courses(View):
+    def get(self, request):
+        userRole = request.session['roleSession']
+        course = Course.objects.all()
+        context = {'courses': course, 'roleTemplate': userRole}
+        return render(request, "main/Course/courses.html", context)
+
+
+class courseAdd(View):
+
+    def get(self, request):
+        form = CourseForm()
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
+
+    def post(self, request):
+
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            courseID = form.cleaned_data['courseID']
+            courseName = form.cleaned_data['courseName']
+            courseDescription = form.cleaned_data['courseDescription']
+            courseDepartment = form.cleaned_data['courseDepartment']
+
+            # Create a new Course object with the extracted data
+            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
+                            courseDepartment=courseDepartment)
+
+            # Save the new course to the database
+            course.save()
+
+            return render(request, 'main/Course/courseAdd.html',
+                          {'form': form, 'message': "Course Successfully added!"})
+        else:
+            form = CourseForm()
+
+        return User.objects.filter(email=email_id).delete()
+
+
+class courseEdit(View):
+    def get(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        form = CourseForm(instance=course)
+        context = {'course': course, 'form': form}
+        return render(request, "main/Course/courseEdit.html", context)
+
+    def post(self, request, course_id):
+        course = get_object_or_404(Course, pk=course_id)
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            if course in Course.objects.all():
+                return render(request, 'main/Course/courseEdit.html',
+                              {'form': form, 'message': "Cannot reuse the same course ID. Please enter a different ID"})
+            else:
+                form.save()
+                return render(request, 'main/Course/courseEdit.html',
+                              {'form': form, 'message': "Course was successfully edited!"})
+        else:
+            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
+            return render(request, "main/Course/courseEdit.html", context)
+
+
+class courseDelete(View):
+
+    def get(self, request, course_id):
+        Course.objects.filter(courseID=course_id).delete()
+        # Redirect to a success page or back to the list of courses
+        userRole = request.session['roleSession']
+        course = Course.objects.all()
+        context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
+        return render(request, "main/Course/courses.html", context)
 
 
 class usersInCourse(View):
@@ -95,6 +166,11 @@ class userToCourseAdd(View):
             form = UserToFrom(initial={'courseID': course_id})
 
             return render(request, 'main/UserToCourse/editUserInCourse.html', {'form': form})
+
+class editUserInCourse(View):
+
+    def get(self, request):
+        return render(request, "main/UserToCourse/editUserInCourse.html", {})
 
 
 class sections(View):
@@ -157,107 +233,6 @@ class sectionDelete(View):
         Section.objects.filter(sectionID=section_id).delete()
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
-
-
-class users(View):
-    def get(self, request):
-        users = User.objects.all()
-        context = {'users': users}
-        return render(request, "main/Account/accountEdit.html", context)
-
-
-class courses(View):
-    def get(self, request):
-        userRole = request.session['roleSession']
-        course = Course.objects.all()
-        context = {'courses': course, 'roleTemplate': userRole}
-        return render(request, "main/Course/courses.html", context)
-
-
-class courseEdit(View):
-    def get(self, request, course_id):
-        course = get_object_or_404(Course, pk=course_id)
-        form = CourseEditForm(instance=course)
-        context = {'course': course, 'form': form}
-        return render(request, "main/Course/courseEdit.html", context)
-
-    def post(self, request, course_id):
-        course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(request.POST, instance=course)
-        if form.is_valid():
-
-            form.save()
-            return render(request, 'main/Course/courseEdit.html',
-                          {'form': form, 'message': "Course was successfully edited!"})
-        else:
-            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
-            return render(request, "main/Course/courseEdit.html", context)
-
-
-class courseAdd(View):
-
-    def get(self, request):
-        form = CourseForm()
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
-
-    def post(self, request):
-
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            courseID = form.cleaned_data['courseID']
-            courseName = form.cleaned_data['courseName']
-            courseDescription = form.cleaned_data['courseDescription']
-            courseDepartment = form.cleaned_data['courseDepartment']
-
-            # Create a new Course object with the extracted data
-            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
-                            courseDepartment=courseDepartment)
-
-            # Save the new course to the database
-            course.save()
-
-            return render(request, 'main/Course/courseAdd.html',
-                          {'form': form, 'message': "Course Successfully added!"})
-        else:
-            form = CourseForm()
-
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
-
-
-class courseDelete(View):
-
-    def get(self, request, course_id):
-        Course.objects.filter(courseID=course_id).delete()
-        # Redirect to a success page or back to the list of courses
-        userRole = request.session['roleSession']
-        course = Course.objects.all()
-        context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
-        return render(request, "main/Course/courses.html", context)
-
-
-class editUserInCourse(View):
-
-    def get(self, request):
-        return render(request, "main/UserToCourse/editUserInCourse.html", {})
-
-
-class accountEdit(View):
-    def get(self, request):
-        return render(request, "main/Account/accountEdit.html", {})
-
-
-class notificationSend(View):
-
-    def get(self, request):
-        # userEmail = request.session["email"]
-        #
-        # try:
-        #     thisUser = User.objects.get(pk=userEmail)
-        # except ValueError:
-        #     thisUser = None
-        #
-        # roleVariableView = thisUser.role
-        return render(request, "main/notificationSend.html", {})
 
 
 class MyUser(User):
@@ -333,6 +308,7 @@ class MyUser(User):
             item.courseDepartment = courseDepartment
             item.save()
 
+
     def removeCourse(self, courseID):
         Course.objects.filter(courseID=courseID).delete()
 
@@ -356,29 +332,11 @@ class MyUser(User):
         Section.objects.filter(sectionID=sectionID).delete()
 
 
-class userEdit(View):
-    def get(self, request, email_id):
-        user = get_object_or_404(User, pk=email_id)
-        form = UserForm(instance=user)
-        context = {'user': user, 'form': form}
-        return render(request, "main/User/userEdit.html", context)
-
-    def post(self, request, email_id):
-        user = get_object_or_404(User, pk=email_id)
-        form = UserForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('users')
-        else:
-            context = {'user': user, 'form': form}
-            return render(request, "main/User/userEdit.html", context)
-
-
-class userDelete(View):
-    def get(self, request, email_id):
-        User.objects.filter(email=email_id).delete()
-        # Redirect to a success page or back to the list of courses
-        return redirect('users')
+class users(View):
+    def get(self, request):
+        users = User.objects.all()
+        context = {'users': users}
+        return render(request, "main/Account/accountEdit.html", context)
 
 
 class userAdd(View):
@@ -398,12 +356,57 @@ class userAdd(View):
             user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
-            # return HttpResponse('User added successfully')
+            #return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
 
         else:
             form = UserForm()
 
-        return render(request, 'main/User/userAdd.html',
-                      {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                "Please enter a different email"})
+        return render(request, 'main/User/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                                               "Please enter a different email"})
+
+
+class userEdit(View):
+    def get(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(instance=user)
+        context = {'user': user, 'form': form}
+        return render(request, "main/User/userEdit.html", context)
+
+    def post(self, request, email_id):
+        user = get_object_or_404(User, pk=email_id)
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            context = {'user': user, 'form': form}
+            return render(request, "main/User/userEdit.html", context)
+
+
+class accountEdit(View):
+    def get(self, request):
+        return render(request, "main/Account/accountEdit.html", {})
+
+
+class userDelete(View):
+    def get(self, request, email_id):
+        User.objects.filter(email=email_id).delete()
+        # Redirect to a success page or back to the list of courses
+        return redirect('users')
+
+
+class notificationSend(View):
+#I think down the road we may not need this. For example, when adding a user to course or section,
+#we can automate an email to be generated and sent, rendering this view(page) obsolete.
+    def get(self, request):
+        # userEmail = request.session["email"]
+        #
+        # try:
+        #     thisUser = User.objects.get(pk=userEmail)
+        # except ValueError:
+        #     thisUser = None
+        #
+        # roleVariableView = thisUser.role
+        return render(request, "main/notificationSend.html", {})
+
