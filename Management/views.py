@@ -97,7 +97,7 @@ class courseAdd(View):
         else:
             form = CourseForm()
 
-        return User.objects.filter(email=email_id).delete()
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 
 class courseEdit(View):
@@ -165,7 +165,7 @@ class userToCourseAdd(View):
         else:
             form = UserToFrom(initial={'courseID': course_id})
 
-            return render(request, 'main/UserToCourse/editUserInCourse.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html', {'form': form})
 
 class editUserInCourse(View):
 
