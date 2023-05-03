@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
 
 <h1>{{ course.courseName }} Users</h1>
@@ -18,7 +18,7 @@ table, th, td {
   {% endfor %}
 </table> <br>
 
-<a href="{% url 'userToCourseAdd' course.courseID_id %}">Add User</a>
+<button type="addUser"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>
 
 <br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
 

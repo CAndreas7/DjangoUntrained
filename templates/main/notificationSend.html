@@ -1,6 +1,7 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-
+{##I think down the road we may not need this. For example, when adding a user to course or section,#}
+{##we can automate an email to be generated and sent, rendering this view(page) obsolete.#}
 <h1>Send Notification To: </h1>
     {% csrf_token %}
     <button type="button">

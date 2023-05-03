@@ -1,11 +1,12 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+    {% load crispy_forms_tags %}
+    {% load crispy_forms_filters %}
 {% block content %}
-
 <h1>Edit User</h1>
 
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form|crispy }}
   <input type="submit" value="Save changes">
 </form>
  <br><button type="button"><a href="{% url 'users' %}">Account Information Page</a></button>

@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+    {% load crispy_forms_tags %}
+    {% load crispy_forms_filters %}
 {% block content %}
 
 {% csrf_token %}
@@ -41,5 +43,7 @@
 
     <button type="Submit" name="submitAssignments">submit</button> <br> <br> <br> <br>
     <button type="HomePage" name="homeButton">Home Page</button>
+
+</html>
 
 {% endblock content %}
