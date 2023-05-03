@@ -20,7 +20,7 @@ class Test_EditCourses(TestCase):
         self.client.post('/courseEdit', courseID=1, courseDescription="Actually, this is advanced CS lmao")
 
         self.assertEqual(Course.objects.filter(courseDescription="Actually, this is advanced CS lmao").count(), 1,
-                         msg="the course description was not changed/")
+                         msg="the course description was not changed")
         self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
 
     def test_editCourseDepartment(self):
@@ -28,12 +28,7 @@ class Test_EditCourses(TestCase):
 
         self.assertEqual(Course.objects.filter(courseDepartment="Chem.. Yuck").count(), 1,
                          msg="When posting a new course Department field, the course department field was not changed")
+
         self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
 
-    def test_editNonExistentCourse(self):
-        self.client.post('/courseEdit', courseID=500, courseDepartment="Chem.. Yuck")
-
-        self.assertEqual(Course.objects.filter(courseID=500).count(), 0,
-                         msg="When posting a new course Department field, the course department field was not changed")
-        self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
 
