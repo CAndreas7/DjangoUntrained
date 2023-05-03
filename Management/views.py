@@ -26,18 +26,18 @@ class Home(View):
         except:
             noSuchUser = True
         if user == '' and password == '':
-            return render(request, "main/home.html", {"message": "Please enter an email and password."})
+            return render(request, "main/home.html", {"message": "Email and password required."})
         elif user == '':
             return render(request, "main/home.html",
                           {
                               "password": password,
-                              "message": "Please enter an email."
+                              "message": "Email required."
                           })
         elif password == '':
             return render(request, "main/home.html",
                           {
                               "person": user,
-                              "message": "Please enter a password."
+                              "message": "Password required."
                           })
         elif noSuchUser:
             return render(request, "main/home.html", {"message": "Please enter a correct email and password."})

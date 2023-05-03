@@ -7,7 +7,7 @@
      {{ message }} <br>
     <form method="post">
   {% csrf_token %}
-  {{ form|crispy }}
+  {{ form.as_p }}
   <input type="submit" value="Save changes">
 </form>
     <br><button type="button"><a href="{% url 'courses' %}">Courses Page</a></button> <br>
