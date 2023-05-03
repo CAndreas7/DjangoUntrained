@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="LoginPage position-relative" style="height: 1080px">
-        <div class="LoginForm position-absolute top-50 start-50 translate-middle">
+    <div class="LoginHeader position-relative" style="height: 300px">
+        <div class="Header position-absolute bottom-0 start-50 translate-middle text-white">
+            <h1 style="font-size: 60px">TA App Login</h1>
+        </div>
+    </div>
+    <div class="LoginPage position-relative" style="height: 450px">
+        <div class="LoginForm position-absolute top-50 start-50 translate-middle" style="width: 300px">
 
             <form action="/" method="post">
                 {% csrf_token %}
@@ -12,7 +17,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-white">Password</label>
-                    <input type="password" class="form-control" name="password">
+                    <input type="password" class="form-control" name="password" value={{ password }}>
                 </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -31,8 +36,11 @@
 {#                </table>#}
 {#                <input type="submit">#}
 {#            </form>#}
-
-            {{ message }}
+            {% if message != None %}
+                <div class="container p-3 my-5 alert alert-warning alert-dismissible fade show text-black">
+                    <strong>Warning! </strong>{{ message }}
+                </div>
+            {% endif %}
         </div>
     </div>
 
