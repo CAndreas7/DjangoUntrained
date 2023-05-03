@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+
 <h1>{{ course.courseName }} Sections</h1>
 <style>
 table, th, td {
@@ -31,3 +34,5 @@ table, th, td {
 
  <br> <br> <button type="button"><a href="{% url 'courses' %}">Courses Page</a></button>
 <br> <br><button type="home"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
+{% endblock content %}

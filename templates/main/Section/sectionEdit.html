@@ -1,4 +1,5 @@
-
+{% extends "base.html" %}
+{% block content %}
 <h1>Edit Section</h1>
 
 <form method="post">
@@ -8,3 +9,4 @@
 </form>
 
 <br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
+{% endblock content %}

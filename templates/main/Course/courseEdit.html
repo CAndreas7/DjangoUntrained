@@ -1,4 +1,5 @@
-
+{% extends "base.html" %}
+{% block content %}
 <h1>Edit Course</h1>
 {{ message }} <br>
 <form method="post">
@@ -8,3 +9,4 @@
 </form>
 <br><button type="button"><a href="{% url 'courses' %}">Courses Page</a></button> <br>
 <br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home Page</a></button>
+{% endblock content %}

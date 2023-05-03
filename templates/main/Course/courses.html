@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <h1>Courses</h1>
 <style>
 table, th, td {
@@ -34,3 +36,4 @@ table, th, td {
     {% endif %}
 
 <br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>
+{% endblock content %}
