@@ -103,13 +103,13 @@ class courseAdd(View):
 class courseEdit(View):
     def get(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(instance=course)
+        form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        form = CourseForm(request.POST, instance=course)
+        form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
             if course in Course.objects.all():
                 return render(request, 'main/Course/courseEdit.html',
