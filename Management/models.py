@@ -164,20 +164,11 @@ class Section(models.Model):
     #     self.save()
 
 class UsersToCourse(models.Model):
+    assignment = models.CharField(max_length=20)
+    courseID = models.IntegerField()
 
-    assignment = models.ForeignKey(User, on_delete=models.CASCADE)
-    courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
-
-    # Returns User object
     def getUser(self):
-        return self.assignment
+        return User.objects.get(pk=self.assignment)
 
-    # Returns Course object
     def getCourse(self):
-        return self.courseID
-
-    def setUser_Name(self, user):
-        self.assignment = user
-
-    def setCourseName(self, course):
-        self.courseID = course
+        return Course.objects.get(pk=self.courseID)
