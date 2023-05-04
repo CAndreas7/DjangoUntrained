@@ -177,5 +177,6 @@ class UsersToCourse(models.Model):
         return Course.objects.get(pk=self.courseID)
 
     def removeUser(self):
-        UserTo = UsersToCourse.objects.get(couseID=self.courseID, assignment=self.assignment)
+        UserTo = UsersToCourse.objects.get(courseID=self.courseID, assignment=self.assignment)
         UserTo.delete()
+
