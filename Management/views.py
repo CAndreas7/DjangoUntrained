@@ -150,18 +150,18 @@ class userToCourseAdd(View):
 
         if form.is_valid():
 
-            course = Course.objects.get(courseID=course_id)
             # courseID = form.cleaned_data['course']
             user = form.cleaned_data['assignment']
+            email = user.email
 
-            userTo = UsersToCourse(courseID=course, assignment=user)
+            userTo = UsersToCourse(courseID=course_id, assignment=email)
             userTo.save()
 
             return HttpResponse('User added successfully')
         else:
             form = UserToFrom(initial={'courseID': course_id})
 
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
+        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
 class editUserInCourse(View):
 
