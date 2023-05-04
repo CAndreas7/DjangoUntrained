@@ -141,27 +141,28 @@ class usersInCourse(View):
 class userToCourseAdd(View):
 
     def get(self, request, course_id):
-        course = Course.objects.get(courseID=course_id)
-        form = UserToFrom(initial={'courseID': course})
+        form = UserToFrom()
         return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
 
         if form.is_valid():
+            try:
+                email = form.cleaned_data['assignment']
 
-            course = Course.objects.get(courseID=course_id)
-            # courseID = form.cleaned_data['course']
-            user = form.cleaned_data['assignment']
+                userTo = UsersToCourse(courseID=course_id, assignment=email)
+                userTo.save()
 
-            userTo = UsersToCourse(courseID=course, assignment=user)
-            userTo.save()
-
-            return HttpResponse('User added successfully')
+                return redirect('usersInCourse', course_id=course_id)
+            except Exception as e:
+                print(e)
         else:
-            form = UserToFrom(initial={'courseID': course_id})
+            print('Form is not valid')
+            print(form.errors)
+            form = UserToFrom()
 
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
+        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
 class editUserInCourse(View):
 

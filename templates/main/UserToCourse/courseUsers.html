@@ -11,9 +11,9 @@ table, th, td {
   <tr>
     <th>Email</th>
   </tr>
-  {% for section in sections %}
+  {% for assignment in users %}
   <tr>
-    <td>{{ users.email }}</td>
+    <td>{{ assignment.assignment }}</td>
   </tr>
   {% endfor %}
 </table> <br>
