@@ -37,6 +37,7 @@ class User(models.Model):
             (2, "Instructor"),
             (3, "TA")
         ))
+
     def getRole(self):
         role = self.role
         if role == 1:
@@ -152,6 +153,7 @@ class Section(models.Model):
 
     def setCourseID(self, course):
         self.courseID = course
+
     def getCourseName(self):
         return Course.objects.get(courseID=self.courseID).getName()
 
@@ -163,6 +165,7 @@ class Section(models.Model):
     # def add(self):
     #     self.save()
 
+
 class UsersToCourse(models.Model):
     assignment = models.CharField(max_length=20)
     courseID = models.IntegerField()
@@ -172,3 +175,7 @@ class UsersToCourse(models.Model):
 
     def getCourse(self):
         return Course.objects.get(pk=self.courseID)
+
+    def removeUser(self):
+        UserTo = UsersToCourse.objects.get(couseID=self.courseID, assignment=self.assignment)
+        UserTo.delete()
