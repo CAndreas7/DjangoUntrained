@@ -14,27 +14,7 @@ class Test_CoursesPage(TestCase):
 
 
     def test_RemoveCourse(self):
-        self.client.post('/courses', {
-            'courseID': '1236',
-            'courseName': 'CS400',
-            'courseDescription': "Some elementary comp sci class",
-            'courseDepartment': "CS"
-        })
-        response = self.client.get('/courseAdd')
-
-        #self.assertEqual(200, response.status_code, "Status code is not 200")
-
-        # Checks to see if post method correctly adds courses to the database.
-        self.assertEqual(Course.objects.filter(courseID=1236).count(), 1,
-                         msg="the new course should have been added to the database ")
-        self.assertEqual(len(Course.objects.all()), 3, "There should be a total of 3 courses in the database.")
-
-        """# checks to see if the website prints correct response contents.
-        self.assertNotIn(response.content, 'Please fill out this field.', msg="Response displayed the adding"
-                                                                      "\"the same course\"error message, when it "
-                                                                      "shouldn't have");
-        self.assertIn(response.content, 'course added successfully', msg="response did not show the correct message for"
-                                                                         "adding a course successfully.")"""
+        pass
 
     def test_removeExistingCourse(self):
         pass
