@@ -149,17 +149,15 @@ class userToCourseAdd(View):
         form = UserToFrom(request.POST)
 
         if form.is_valid():
-
-            # courseID = form.cleaned_data['course']
             user = form.cleaned_data['assignment']
-            email = user.email
-
-            userTo = UsersToCourse(courseID=course_id, assignment=email)
+            userTo = UsersToCourse(courseID=course_id, assignment=user)
             userTo.save()
 
             return HttpResponse('User added successfully')
         else:
             form = UserToFrom(initial={'courseID': course_id})
+
+        print(form.errors)
 
         return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
