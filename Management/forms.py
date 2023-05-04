@@ -27,6 +27,9 @@ class UserForm(forms.ModelForm):
 
 
 class UserToFrom(forms.ModelForm):
+
+    assignment = forms.ModelChoiceField(queryset=User.objects.all())
+
     class Meta:
         model = UsersToCourse
         fields = ['assignment']
