@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import reverse
 from Management.models import Section,User,Course;
 
 class Test_SectionAdd(TestCase):
@@ -15,26 +16,27 @@ class Test_SectionAdd(TestCase):
                                               capacity=100, TA=self.TA1, sectionID=1);
 
 
+        self.sectionAddURL = reverse('sectionAdd', kwargs={'course_id': self.course1.courseID})
+
+
     def test_addNewSection(self):
-        self.client.post(('/sectionAdd/', {
-            'courseID': 1,
+        self.client.post(self.sectionAddURL, {
             'location': 'United States',
             'startTime': '7:00AM',
             'endTime': '7:50AM',
             'capacity': 100,
             'TA': self.TA1,
             'sectionID': 2
-        }))
-        numSectionsID2 = Section.objects.filter(sectionID=2).count()
+        })
+
         #checks to see if the new section was added to the database.
-        self.assertEqual(numSectionsID2, 1,
+        self.assertEqual(Section.objects.filter(sectionID=2).count(), 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
 
 
     def test_addSameSection(self):
-        self.client.post(('/sectionAdd/', {
-            'courseID': 1,
+        self.client.post((self.sectionAddURL, {
             'location': 'Here',
             'startTime': '7:00PM',
             'endTime': '7:50PM',
@@ -49,16 +51,15 @@ class Test_SectionAdd(TestCase):
         #how would someone go about checking the display of the output
 
     def test_addSameID(self):
-        self.client.post(('/sectionAdd/', {
-            'courseID': 1,
+        self.client.post((self.sectionAddURL, {
             'location': 'United States',
-            'startTime': '7:00AM',
-            'endTime': '7:50AM',
-            'capacity': 100,
+            'startTime': '72:00AM',
+            'endTime': '72:50AM',
+            'capacity': 1002,
             'TA': self.TA1,
             'sectionID': 1
         }))
         # checks to see if the new section was added to the database.
-        self.assertEqual(Section.objects.filter(sectionID=2).count(), 1,
+        self.assertEqual(Section.objects.filter(sectionID=1).count(), 1,
                          msg="the new section should have been added to the database ")
-        self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
+        self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 sections in the database.")
