@@ -35,6 +35,7 @@ urlpatterns = [
     path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete'),
     path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),
     path('usersInCourse/<int:course_id>/', usersInCourse.as_view(), name='usersInCourse'),
+    path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
     path('userAdd/', userAdd.as_view(), name='userAdd'),
     path('users/', users.as_view(), name='users'),
     path('userDelete/<str:email_id>/', userDelete.as_view(), name='userDelete'),
