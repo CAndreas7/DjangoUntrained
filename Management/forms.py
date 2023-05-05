@@ -23,7 +23,7 @@ class CourseEditForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'password', 'phone', 'role']
+        fields = ['email', 'lName', 'fName', 'password', 'phone', 'role']
 
 
 class UserToFrom(forms.ModelForm):

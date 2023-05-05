@@ -7,9 +7,10 @@ from Management.models import *
 class TestUser(TestCase):
 
     def setUp(self):
-        self.user = User("testemail@uwm.edu", "testpassword", "", 1)
+        self.user = User("testemail@uwm.edu", "Wayne", "Bruce", "testpassword", "", 1)
         self.user.save()
-        self.supervisor = MyUser("testemail@uwm.edu", "testpassword", "", 1)
+        self.supervisor = MyUser("testemail@uwm.edu", "Kent", "Clark", "testpassword", "", 1)
+
         # self.instructor = MyUser("secondemail@uwm.edu", "secret", "", 2)
         # self.ta = MyUser("taemail@uwm.edu", "mypass", "", 3)
 
@@ -20,6 +21,23 @@ class TestUser(TestCase):
     def test_setEmail(self):
         self.supervisor.setEmail("myemail@uwm.edu")
         self.assertEqual(self.supervisor.email, "myemail@uwm.edu", msg="Username was not changed")
+
+    def test_getlName(self):
+        name = self.user.getlName()
+        self.assertEqual(self.user.lName, name, msg="Returned last name was not the user's last name")
+
+    def test_setlName(self):
+        self.user.setlName("Dickinson")
+        self.assertEqual("Dickinson", self.user.lName, msg="Last name was not set correctly.")
+
+    def test_getfName(self):
+        name = self.user.getfName()
+        self.assertEqual(self.user.fName, name, msg="Returned first name was not the user's first name")
+
+    def test_setfName(self):
+
+        self.user.setfName("Thomas")
+        self.assertEqual("Thomas", self.user.fName, msg="First name was not set correctly.")
 
     def test_getPassword(self):
         password = self.supervisor.getPassword()

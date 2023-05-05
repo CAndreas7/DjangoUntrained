@@ -132,8 +132,14 @@ class courseDelete(View):
 
 class usersInCourse(View):
     def get(self, request, course_id):
+
+        users = []
         course = Course.objects.get(courseID=course_id)
-        users = UsersToCourse.objects.filter(courseID=course_id)
+        usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
+
+        for x in usersToCourses:
+            users.append(x.getUser())
+
         context = {'course': course, 'users': users}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
@@ -164,10 +170,20 @@ class userToCourseAdd(View):
 
         return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
-class editUserInCourse(View):
+class userToCourseDelete(View):
 
-    def get(self, request):
-        return render(request, "main/UserToCourse/editUserInCourse.html", {})
+    def get(self, request, email_id, course_id):
+        user = UsersToCourse.objects.filter(assignment=email_id, courseID=course_id)
+        try:
+            for x in user:
+                x.removeUser()
+
+        except:
+            not isinstance(user, UsersToCourse)
+
+        # Redirect to a success page or back to the list of courses
+
+        return redirect("usersInCourse", course_id=course_id)
 
 
 class sections(View):
@@ -234,8 +250,10 @@ class sectionDelete(View):
 
 class MyUser(User):
 
-    def __init__(self, email, password, phone, role):
+    def __init__(self, email, lName, fName, password, phone, role):
         self.email = email
+        self.lName = lName
+        self.fName = fName
         self.password = password
         self.phone = phone
         self.role = role
