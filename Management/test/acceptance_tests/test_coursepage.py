@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import reverse
 from Management.models import Course
 
 
@@ -6,22 +7,28 @@ class Test_CoursesPage(TestCase):
     def setUp(self):
         self.client = Client()
 
-        self.course = Course.objects.create(courseID="1", courseName="CS250",
+        self.course1 = Course.objects.create(courseID="1", courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
-        self.course = Course.objects.create(courseID="2", courseName="CS350",
+        self.course2 = Course.objects.create(courseID="2", courseName="CS350",
                                             courseDescription="Some class", courseDepartment="CS")
-        self.course.save()
+
+        #grabs all URLS for the page.
+        self.coursesURL = reverse('courses')
+        self.course1DeleteURL = reverse('courseDelete', kwargs={'course_id': self.course1.courseID})
+        self.sectionsOfCourse2URL = reverse('sections', kwargs={'course_id': self.course2.courseID})
+        self.course1EditURL = reverse('courseedit', kwargs={'course_id': self.course1.courseID})
+
+    def test_RemoveCourse1(self):
+        self.client.get(self.course1DeleteURL)
+
+        self.assertEqual(Course.objects.filter(courseID=1).count(), 0, "course1 was not deleted from the database")
 
 
-    def test_RemoveCourse(self):
-        pass
+    def test_goToCourse2Sections(self):
+        response = self.client.get(self.sectionsOfCourse2URL)
 
-    def test_removeExistingCourse(self):
-        pass
+        self.assertEqual(response.status_code, 200, "response status code is not 200")
+    def test_goToEditCourses1Page(self):
+        response = self.client.get(self.course1EditURL)
 
-    def test_removeNonExistingCourse(self):
-        pass
-    def test_goToSectionsPage(self):
-        pass
-    def test_goToEditCoursesPage(self):
-        pass
+        self.assertEqual(response.status_code, 200, "response status code is not 200")

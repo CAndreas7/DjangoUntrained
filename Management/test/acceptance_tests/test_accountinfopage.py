@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import reverse
 from Management.models import User
 
 class Test_AccountInfoPage(TestCase):
@@ -8,9 +9,20 @@ class Test_AccountInfoPage(TestCase):
         self.Supervisor1 = User.objects.create(email="SomeUser2@user.com", password="testpassword", phone="", role=1)
         self.Instructor1 = User.objects.create(email="SomeUser3@user.com", password="testpassword", phone="", role=2)
 
+        self.userAddURL = reverse('userAdd')
+        self.TA1EditURL = reverse('userEdit', kwargs={'email_id': self.TA1.email})
+        self.deleteInstr1 = reverse('userDelete', kwargs={'email_id': self.Instructor1.email})
+
     def test_add_user_link(self):
-        pass
+        response = self.client.get(self.userAddURL)
+
+        self.assertEqual(response.status_code, 200, "Status code is not 200")
     def test_edit_user_link(self):
-        pass
-    def test_delete_user_link(self):
-        pass
+        response = self.client.get(self.TA1EditURL)
+
+        self.assertEqual(response.status_code, 200, "Status code is not 200")
+    def test_deleteInstructor1(self):
+        self.client.get(self.deleteInstr1)
+
+        self.assertEqual(0, User.objects.filter(email="SomeUser3@user.com").count(), "The user was not deleted from the"
+                                                                                     "database")
