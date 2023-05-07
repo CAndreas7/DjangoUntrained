@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import reverse
 from Management.models import User
 
 class Test_UserEdit(TestCase):
@@ -6,13 +7,17 @@ class Test_UserEdit(TestCase):
     def setUp(self):
 
         self.client = Client()
-        self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
+        self.TA1 = User.objects.create(email="SomeUser1@user.com", password="testpassword", phone="", role=3)
+        self.editURL = reverse('userEdit', kwargs={'email_id': self.TA1.email})
 
     def test_editEmail(self):
-        self.client.post('/userEdit/', {
-            'email': 'newEmail@user.com'
+        self.client.post(self.editURL, {
+            'email': "newEmail@user.com",
+            'password': "testpassword",
+            'phone': "",
+            'role': 3,
         })
-        self.assertEqual(User.objects.filter(email="SomeUser@user.com").count(), 0,
+        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 0,
                          "The previous unique email ID still exists.")
         self.assertEqual(User.objects.filter(email="newEmail@user.com").count(), 1,
                          "There are more than 1 user object with this unique ID")
@@ -20,31 +25,42 @@ class Test_UserEdit(TestCase):
 
 
     def test_editPassword(self):
-        self.client.post('/userEdit/', {
-            'password': 'newpass'
+        self.client.post(self.editURL, {
+            'email': 'SomeUser1@user.com',
+            'password': "newpass",
+            'phone': "123",
+            'role': 3,
         })
-        #checks to see if there is one user object with its Unique ID
-        self.assertEqual(User.objects.filter(email="newEmail@user.com").count(), 1,
+
+        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 1,
                          "There are more than 1 user object with this unique ID")
-        self.assertEqual(User.objects.get(email="newEmail@user.com").password, "newpass", "Password was not changed in"
+
+        self.assertEqual("newpass", User.objects.get(email="SomeUser1@user.com").password, "Password was not changed in"
                                                                                           "the forms correctly.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
     def test_editPhone(self):
-        self.client.post('/userEdit/', {
-            'phone': '414-345-1234'
+        self.client.post(self.editURL, {
+            'email': 'SomeUser1@user.com',
+            'password': "testpassword",
+            'phone': '4143451234',
+            'role': 3,
         })
-        self.assertEqual(User.objects.filter(email="newEmail@user.com").count(), 1,
+
+        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 1,
                          "There are more than 1 user object with this unique ID")
-        self.assertEqual(User.objects.get(email="newEmail@user.com").phone, "414-345-1234", "Phone was not changed in"
+        self.assertEqual(User.objects.get(email="SomeUser1@user.com").phone, "4143451234", "Phone was not changed in"
                                                                                           "the forms correctly.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
     def test_editRole(self):
-        self.client.post('/userEdit/', {
-            'role': '1'
+        self.client.post(self.editURL, {
+            'email': 'SomeUser1@user.com',
+            'password': "testpassword",
+            'phone': '4143451234',
+            'role': 1,
         })
-        self.assertEqual(User.objects.filter(email="newEmail@user.com").count(), 1,
+        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 1,
                          "There are more than 1 user object with this unique ID")
-        self.assertEqual(User.objects.get(email="newEmail@user.com").role, "1", "Role was not changed via "
+        self.assertEqual(User.objects.get(email="SomeUser1@user.com").role, 1, "Role was not changed via "
                                                                                 "forms correctly.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
 

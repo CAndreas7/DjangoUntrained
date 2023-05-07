@@ -26,6 +26,8 @@ class User(models.Model):
 class User(models.Model):
     # specifying primary_key=True disables the default ID field
     email = models.CharField(max_length=20, primary_key=True)
+    lName = models.CharField(max_length=30, null=True, default=False)
+    fName = models.CharField(max_length=30, null=True, default=False)
     password = models.CharField(max_length=20)
     phone = models.CharField(max_length=15)
     # this is a way I found of representing in the DB the role a user is
@@ -47,6 +49,15 @@ class User(models.Model):
         elif role == 3:
             return "TA"
         return
+
+    def getlName(self):
+        return self.lName
+    def setlName(self, name):
+        self.lName = name
+    def getfName(self):
+        return self.fName
+    def setfName(self, name):
+        self.fName = name
     # def __init__(self, email, password, phone, role):
     #     self.email = email
     #     self.password = password
@@ -177,5 +188,5 @@ class UsersToCourse(models.Model):
         return Course.objects.get(pk=self.courseID)
 
     def removeUser(self):
-        UserTo = UsersToCourse.objects.get(couseID=self.courseID, assignment=self.assignment)
+        UserTo = UsersToCourse.objects.get(courseID=self.courseID, assignment=self.assignment)
         UserTo.delete()

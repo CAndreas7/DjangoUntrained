@@ -5,7 +5,7 @@ from .models import User, Course, Section, UsersToCourse
 # Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("email", "password", "phone", "role")
+    list_display = ("email", "lName", "fName", "password", "phone", "role")
 
 
 class CourseAdmin(admin.ModelAdmin):
