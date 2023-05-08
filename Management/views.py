@@ -45,7 +45,11 @@ class Home(View):
         elif noSuchUser:
             return render(request, "main/home.html", {"message": "Please enter a correct email and password."})
         elif badPassword:
-            return render(request, "main/home.html", {"message": "bad password"})
+            return render(request, "main/home.html",
+                          {
+                              "message": "Incorrect Password",
+                              "person": user
+                          })
         else:
             request.session["email"] = m.email
             return redirect("/main/")
