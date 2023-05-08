@@ -1,6 +1,9 @@
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.generic import ListView
+
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm
 
@@ -400,15 +403,29 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
-class accounts(View):
-    def get(self, request):
-        return render(request, "main/Account/accounts.html", {})
+class accounts(ListView):
+    model = User
+    template_name = 'main/Account/accounts.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        queryset = super().get_queryset()
+        if query:
+            queryset = queryset.filter(Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
+
+
 
 
 class accountAdd(View):
     def get(self, request):
         return render(request, "main/Account/accountAdd.html", {})
-
 
 class userDelete(View):
     def get(self, request, email_id):
