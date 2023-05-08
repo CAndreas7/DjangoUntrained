@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+    {% load crispy_forms_tags %}
+    {% load crispy_forms_filters %}
+{% block content %}
+
+<h1>Create an Account</h1>
+     {{ message }} <br>
+    <form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Save changes">
+</form>
+    <br><button type="button"><a href="{% url 'accounts' %}">Accounts</a></button> <br>
+    <br><button type="button"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
+
+
+{% endblock content %}

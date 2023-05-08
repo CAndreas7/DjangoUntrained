@@ -370,12 +370,14 @@ class userAdd(View):
         form = UserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            fname = form.cleaned_data['fName']
+            lname = form.cleaned_data['lName']
             password = form.cleaned_data['password']
             phone = form.cleaned_data['phone']
             role = form.cleaned_data['role']
 
             # Create a new User object with the extracted data
-            user = User(email=email, password=password, phone=phone, role=role)
+            user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
             user.save()
 
             # return HttpResponse('User added successfully')
@@ -416,7 +418,8 @@ class accounts(ListView):
         query = self.request.GET.get('q', '')
         queryset = super().get_queryset()
         if query:
-            queryset = queryset.filter(Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query))
+            queryset = queryset.filter(
+                Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query))
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -425,11 +428,10 @@ class accounts(ListView):
         return context
 
 
-
-
 class accountAdd(View):
     def get(self, request):
         return render(request, "main/Account/accountAdd.html", {})
+
 
 class userDelete(View):
     def get(self, request, email_id):
