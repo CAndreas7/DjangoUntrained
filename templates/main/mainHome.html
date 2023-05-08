@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="AppHome position-relative" style="height: 300px">
+
+</div>
+
 <h1>TA Scheduler App</h1>
     {% csrf_token %}
     <button type="button"><a href="{% url 'courses' %}">Courses</a></button>
