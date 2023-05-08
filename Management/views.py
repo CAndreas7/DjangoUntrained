@@ -47,6 +47,7 @@ class Home(View):
             request.session["email"] = m.email
             return redirect("/main/")
 
+
 class MainHome(View):
 
     def get(self, request):
@@ -113,7 +114,7 @@ class courseEdit(View):
         if form.is_valid():
             form.save()
             return render(request, 'main/Course/courseEdit.html',
-                              {'form': form, 'message': "Course was successfully edited!"})
+                          {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
             return render(request, "main/Course/courseEdit.html", context)
@@ -132,7 +133,6 @@ class courseDelete(View):
 
 class usersInCourse(View):
     def get(self, request, course_id):
-
         users = []
         course = Course.objects.get(courseID=course_id)
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
@@ -169,6 +169,7 @@ class userToCourseAdd(View):
             form = UserToFrom()
 
         return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+
 
 class userToCourseDelete(View):
 
@@ -323,7 +324,6 @@ class MyUser(User):
             item.courseDepartment = courseDepartment
             item.save()
 
-
     def removeCourse(self, courseID):
         Course.objects.filter(courseID=courseID).delete()
 
@@ -351,7 +351,7 @@ class users(View):
     def get(self, request):
         users = User.objects.all()
         context = {'users': users}
-        return render(request, "main/Account/accountEdit.html", context)
+        return render(request, "main/Account/accounts.html", context)
 
 
 class userAdd(View):
@@ -371,14 +371,15 @@ class userAdd(View):
             user = User(email=email, password=password, phone=phone, role=role)
             user.save()
 
-            #return HttpResponse('User added successfully')
+            # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
 
         else:
             form = UserForm()
 
-        return render(request, 'main/User/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                                               "Please enter a different email"})
+        return render(request, 'main/User/userAdd.html',
+                      {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                "Please enter a different email"})
 
 
 class userEdit(View):
@@ -399,9 +400,14 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
-class accountEdit(View):
+class accounts(View):
     def get(self, request):
-        return render(request, "main/Account/accountEdit.html", {})
+        return render(request, "main/Account/accounts.html", {})
+
+
+class accountAdd(View):
+    def get(self, request):
+        return render(request, "main/Account/accountAdd.html", {})
 
 
 class userDelete(View):
@@ -412,8 +418,8 @@ class userDelete(View):
 
 
 class notificationSend(View):
-#I think down the road we may not need this. For example, when adding a user to course or section,
-#we can automate an email to be generated and sent, rendering this view(page) obsolete.
+    # I think down the road we may not need this. For example, when adding a user to course or section,
+    # we can automate an email to be generated and sent, rendering this view(page) obsolete.
     def get(self, request):
         # userEmail = request.session["email"]
         #
@@ -424,4 +430,3 @@ class notificationSend(View):
         #
         # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
-
