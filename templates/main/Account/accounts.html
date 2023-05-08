@@ -16,12 +16,14 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Phone Number</th>
         </tr>
         {% for result in results %}
             <tr>
                 <td>{{ result.getfName }}</td>
                 <td>{{ result.getlName }}</td>
                 <td>{{ result.email }}</td>
+                <td>{{ result.phone }}</td>
                 {# <td> <button type="button"><a href="{% url 'AccountEdit' user.email course.courseID  %}">Edit Information</a></button></td> #}
                 <td> <button onclick="result.delete()">Delete</button></td>
             </tr>
