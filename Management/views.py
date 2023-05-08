@@ -354,13 +354,6 @@ class MyUser(User):
         Section.objects.filter(sectionID=sectionID).delete()
 
 
-class users(View):
-    def get(self, request):
-        users = User.objects.all()
-        context = {'users': users}
-        return render(request, "main/Account/accounts.html", context)
-
-
 class userAdd(View):
     def get(self, request):
         form = UserForm()
@@ -409,9 +402,9 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
-class accounts(ListView):
+class users(ListView):
     model = User
-    template_name = 'main/Account/accounts.html'
+    template_name = 'main/User/users.html'
     context_object_name = 'results'
 
     def get_queryset(self):
