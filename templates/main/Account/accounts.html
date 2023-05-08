@@ -24,7 +24,7 @@
                 <td>{{ result.getlName }}</td>
                 <td>{{ result.email }}</td>
                 <td>{{ result.phone }}</td>
-                {# <td> <button type="button"><a href="{% url 'AccountEdit' user.email course.courseID  %}">Edit Information</a></button></td> #}
+                <td> <button type="button"><a href="{% url 'userEdit' result.email  %}">Edit Information</a></button></td>
                 <td> <button onclick="result.delete()">Delete</button></td>
             </tr>
         {% endfor %}

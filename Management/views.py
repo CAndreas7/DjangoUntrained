@@ -428,11 +428,6 @@ class accounts(ListView):
         return context
 
 
-class accountAdd(View):
-    def get(self, request):
-        return render(request, "main/Account/accountAdd.html", {})
-
-
 class userDelete(View):
     def get(self, request, email_id):
         User.objects.filter(email=email_id).delete()

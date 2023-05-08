@@ -29,7 +29,6 @@ urlpatterns = [
     path('sectionDelete/<int:course_id>/<int:section_id>/', sectionDelete.as_view(), name='sectionDelete'),
     path('sectionAdd/<int:course_id>/', sectionAdd.as_view(), name='sectionAdd'),
     path('accounts/', accounts.as_view(), name='accounts'),
-    path('accountAdd/', accountAdd.as_view(), name='accountAdd'),
     path('courseedit/<int:course_id>/', courseEdit.as_view(), name='courseedit'),
     path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
     path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
