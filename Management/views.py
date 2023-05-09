@@ -149,7 +149,6 @@ class usersInCourse(View):
         for y in usersToCourses:
             users.append(y.getUser())
 
-
         sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
         # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
         context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
@@ -243,9 +242,13 @@ class sectionEdit(View):
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
+
+        # could be a get method
         section = get_object_or_404(Section, pk=section_id)
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
+
+            # could be a set method
             form.courseID = course_id
             form.save()
             return redirect('sections', course_id=course_id)
@@ -256,107 +259,12 @@ class sectionEdit(View):
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
+
+        # could be a get and a delete method
+
         Section.objects.filter(sectionID=section_id).delete()
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
-
-
-class MyUser(User):
-
-    def __init__(self, email, lName, fName, password, phone, role):
-        self.email = email
-        self.lName = lName
-        self.fName = fName
-        self.password = password
-        self.phone = phone
-        self.role = role
-
-    def addAccount(self, email, password, phone, role):
-        user = User(email=email, password=password, phone=phone, role=role)
-        user.save()
-
-    def getEmail(self):
-        return self.email
-
-    def setEmail(self, email):
-        users = User.objects.filter(email=self.email)
-        for user in users:
-            user.email = email
-            user.save()
-        self.email = email
-
-    def getPassword(self):
-        return self.password
-
-    def setPassword(self, password):
-        passwords = User.objects.filter(password=self.password)
-        for word in passwords:
-            word.password = password
-            word.save()
-        self.password = password
-
-    def getPhone(self):
-        return self.phone
-
-    def setPhone(self, phoneNum):
-        phones = User.objects.filter(phone=phoneNum)
-        for item in phones:
-            item.phone = phoneNum
-            item.save()
-        self.phone = phoneNum
-
-    def editAccount(self, email, password, phoneNum, role):
-        user = User.objects.filter(email=email)
-        for item in user:
-            item.password = password
-            item.phone = phoneNum
-            item.role = role
-            item.save()
-        self.password = password
-        self.phone = phoneNum
-        self.role = role
-
-    def removeAccount(self, email):
-        User.objects.filter(email=email).delete()
-        self.email = None
-        self.password = None
-        self.phone = None
-        self.role = None
-
-    def addCourse(self, courseID, courseName, courseDesc, courseDept):
-        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDesc,
-                        courseDepartment=courseDept)
-        course.save()
-
-    def editCourse(self, courseID, courseName, courseDescription, courseDepartment):
-        courses = Course.objects.filter(courseID=courseID)
-        for item in courses:
-            item.courseName = courseName
-            item.courseDescription = courseDescription
-            item.courseDepartment = courseDepartment
-            item.save()
-
-    def removeCourse(self, courseID):
-        Course.objects.filter(courseID=courseID).delete()
-
-    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
-                          capacity=capacity, TA=ta, courseID=courseID)
-        section.save()
-
-    def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        sections = Section.objects.filter(sectionID=sectionID)
-        for item in sections:
-            item.location = location
-            item.startTime = startTime
-            item.endTime = endTime
-            item.capacity = capacity
-            item.TA_id = ta
-            item.courseID_id = courseID
-            item.save()
-
-    def removeSection(self, sectionID):
-        Section.objects.filter(sectionID=sectionID).delete()
 
 
 class userAdd(View):
@@ -367,6 +275,9 @@ class userAdd(View):
     def post(self, request):
         form = UserForm(request.POST)
         if form.is_valid():
+
+            # could be set methods
+
             email = form.cleaned_data['email']
             fname = form.cleaned_data['fName']
             lname = form.cleaned_data['lName']
@@ -391,12 +302,16 @@ class userAdd(View):
 
 class userEdit(View):
     def get(self, request, email_id):
+
+        # could be a get method
         user = get_object_or_404(User, pk=email_id)
         form = UserForm(instance=user)
         context = {'user': user, 'form': form}
         return render(request, "main/User/userEdit.html", context)
 
     def post(self, request, email_id):
+
+        # could be a get method
         user = get_object_or_404(User, pk=email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
@@ -430,9 +345,14 @@ class users(ListView):
 
 class userDelete(View):
     def get(self, request, email_id):
+
+        # could be a delete method
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
-        return redirect('users')
+        userRole = request.session['roleSession']
+        user = Course.objects.all()
+        # context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
+        return render(request, "main/User/users.html")
 
 
 class notificationSend(View):
