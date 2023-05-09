@@ -4,7 +4,6 @@ from django.test import TestCase
 from Management.models import *
 
 
-
 # For whomever reads this:
 # assertRaises can take in a tuple of exceptions rather than just asserting 1
 # However, in order to determine WHICH exception is being raised, we split the tests
@@ -33,6 +32,44 @@ class TestUser(TestCase):
         self.supervisor.setEmail("myemail@uwm.edu")
         self.assertEqual(self.supervisor.email, "myemail@uwm.edu", msg="Username was not changed")
 
+    def test_getFName(self):
+        fName = self.supervisor.getfName()
+        self.assertEqual(fName, self.supervisor.fName,
+                         msg="First name field returned did not match the user's first name")
+
+    def test_setNewFName(self):
+        self.supervisor.setfName("Bo")
+        self.assertEqual(self.supervisor.fName, "Bo", msg="User's first name was not updated")
+
+    def test_setFName1(self):
+        with self.assertRaises(ValidationError, msg="First name cannot be None"):
+            self.supervisor.setfName(None)
+
+    def test_setFName2(self):
+        with self.assertRaises(ValidationError, msg="First name must be a String"):
+            self.supervisor.setfName(1)
+
+    def test_setFName3(self):
+        with self.assertRaises(ValueError, msg="First name cannot be empty"):
+            self.supervisor.setfName('')
+
+    def test_getLName(self):
+        lName = self.supervisor.getlName()
+        self.assertEqual(lName, self.supervisor.lName,
+                         msg="Last name field returned did not match the user's first name")
+
+    def test_setLName1(self):
+        pass
+
+    def test_setLName2(self):
+        pass
+
+    def test_setLName3(self):
+        pass
+
+    def test_setLName4(self):
+        pass
+
     def test_getPassword(self):
         password = self.supervisor.getPassword()
         self.assertEqual(self.supervisor.password, password, msg="getPassword did not grab the user's password")
@@ -60,14 +97,17 @@ class testAccount(TestCase):
 
     def test_addAccount1(self):
         self.supervisor.addAccount("email@uwm.edu", "User", "New", "pass", "333-499-2791", 3)
-        self.assertEqual(User.objects.filter(email="email@uwm.edu").count(), 1, msg="No user exists with the given email")
+        self.assertEqual(User.objects.filter(email="email@uwm.edu").count(), 1,
+                         msg="No user exists with the given email")
 
     def test_addAccount2(self):
         self.supervisor.addAccount("testemail@uwm.edu", "Aid", "Teaching", "testpassword", "433-291-1173", 1)
-        self.assertEqual(User.objects.filter(email="testemail@uwm.edu").count(), 1, msg="this account already exists and should not have bee")
+        self.assertEqual(User.objects.filter(email="testemail@uwm.edu").count(), 1,
+                         msg="this account already exists and should not have bee")
 
     def test_removeAccount1(self):
-        user = User(email="deleteme@uwm.edu", lName="Bye", fName="Good", password="goodbye", phone="111-867-5309", role=3)
+        user = User(email="deleteme@uwm.edu", lName="Bye", fName="Good", password="goodbye", phone="111-867-5309",
+                    role=3)
         user.save()
         self.supervisor.removeAccount("deleteme@uwm.edu")
         self.assertEqual(User.objects.filter(email="deleteme@uwm.edu", password="goodbye").count(), 0,
@@ -76,6 +116,7 @@ class testAccount(TestCase):
     def test_removeAccount2(self):
         with self.assertRaises(ObjectDoesNotExist, msg="No such account exists"):
             self.supervisor.removeAccount("myfakeemail@uwm.edu")
+
 
 class editAccount(TestCase):
 
@@ -203,7 +244,6 @@ class testEditCourse(TestCase):
         self.assertEqual(Course.objects.filter(courseDescription="An entry level college math class").count(), 1,
                          msg="No course exists with the given description")
 
-
     def test_editCourseDesc2(self):
         with self.assertRaises(ValidationError, msg="Course Description cannot be None"):
             self.supervisor.editCourse(101, "Algebra", None, "dept")
@@ -290,7 +330,7 @@ class editSection(TestCase):
     def test_editLocation2(self):
         with self.assertRaises(ValidationError, msg="Location cannot be None"):
             self.supervisor.editSection(self.section.sectionID, None, self.section.startTime, self.section.endTime,
-                                    self.section.capacity, self.user, self.course)
+                                        self.section.capacity, self.user, self.course)
 
     def test_editLocation3(self):
         with self.assertRaises(ValidationError, msg="Location must be a String"):
@@ -425,5 +465,4 @@ class editSection(TestCase):
             self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
                                         self.section.endTime,
                                         self.section.capacity, self.section.TA, "1")
-
 
