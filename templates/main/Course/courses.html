@@ -20,12 +20,11 @@ table, th, td {
     <td>{{ course.courseName }}</td>
     <td>{{ course.courseDescription }}</td>
     <td>{{ course.courseDepartment }}</td>
-    <td>
-        <button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button>
-        <button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button>
-        <button type="button"><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></button>
-        <button type="button"><a href="{% url 'courseDelete' course.courseID %}">Delete Course</a></button>
-    </td>
+    <td><button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button></td>
+      <td><button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button></td>
+      <td><button type="button"><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></button></td>
+      <td><button onclick="course.delete(); location.reload();">Delete</button></td>
+
   </tr>
   {% endfor %}
 </table> <br>
