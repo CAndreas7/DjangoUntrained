@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="AppHome position-relative" style="height: 300px">
+    <div class="FlexContainer d-flex flex-column">
+        <div class="AppHome position-relative" style="height: 200px">
+            <div class="Header position-absolute bottom-0 start-50 translate-middle">
+                <h1 style="font-size: 60px">TA Scheduler App - Home</h1>
+            </div>
+        </div>
+        <div class="Spacer" style="height: 100px"></div>
+        <div class="CenterButtons" style="margin: auto; width: 60%">
+            <div class="HomeButtons d-flex justify-content-evenly">
+                {% csrf_token %}
+                <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Courses</a>
+                <a class="btn" href="{% url 'users' %}" role="button" style="color: white; background-color: #494b5f">Account Information</a>
+                {% if roleVariableTemplate == 1 or roleVariableTemplate == 2 %}
+                    <a class="btn" href="{% url 'notificationSend' %}" role="button" style="color: white; background-color: #494b5f">Send Notification</a>
+                {% endif %}
+            </div>
+        </div>
 
-</div>
-
-<h1>TA Scheduler App</h1>
-    {% csrf_token %}
-    <button type="button"><a href="{% url 'courses' %}">Courses</a></button>
-    <button type="button"><a href="{% url 'users' %}">Account Information</a></button>
-
-{#    If user role is 1 (supervisor) or 2 (instructor) then they will see the following button.#}
-    {% if roleVariableTemplate == 1 or roleVariableTemplate == 2 %}
-        <button type="button"><a href="{% url 'notificationSend' %}">Send Notification</a></button>
-    {% endif %}
+    </div>
 
 {% endblock content %}

@@ -1,39 +1,58 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
+
+{% block header %}
+    Courses
+{% endblock header %}
+
+{#    <style>#}
+{#    table, th, td {#}
+{#      border:1px solid black;#}
+{#    }#}
+{#    </style>#}
+
+{#        message for successfully deleting a course#}
 {% block content %}
-<h1>Courses</h1>
-<style>
-table, th, td {
-  border:1px solid black;
-}
-</style>
-{{ message }} <br>
-<table style="width:100%">
-  <tr>
-      <th>Course ID</th>
-    <th>Course Name</th>
-    <th>Course Description</th>
-    <th>Department</th>
-  </tr>
-  {% for course in courses %}
-  <tr>
-    <td>{{ course.courseID }}</td>
-    <td>{{ course.courseName }}</td>
-    <td>{{ course.courseDescription }}</td>
-    <td>{{ course.courseDepartment }}</td>
-    <td>
-        <button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button>
-        <button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button>
-        <button type="button"><a href="{% url 'courseedit' course.courseID %}">Edit Course</a></button>
-        <button type="button"><a href="{% url 'courseDelete' course.courseID %}">Delete Course</a></button>
-    </td>
-  </tr>
-  {% endfor %}
-</table> <br>
+    <div class="container">
+        <table class="table table-dark table-striped" style="color: white">
+            <thead>
+                <th scope="col">Course ID</th>
+                <th scope="col">Course Name</th>
+                <th scope="col">Course Description</th>
+                <th scope="col">Department</th>
+                <th scope="col"></th>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                    <tr>
+                        <td>{{ course.courseID }}</td>
+                        <td>{{ course.courseName }}</td>
+                        <td>{{ course.courseDescription }}</td>
+                        <td>{{ course.courseDepartment }}</td>
+                        <td>
+                            <a class="btn" href="{% url 'sections' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Sections</a>
+                            <a class="btn" href="{% url 'usersInCourse' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Users</a>
+                            <a class="btn" href="{% url 'courseedit' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Edit Course</a>
+                            <a class="btn" href="{% url 'courseDelete' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Delete Course</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-{#If user is of role 1 (supervisor) this button available to add a course#}
-    {% if roleTemplate == 1 %}
-        <button type="button"><a href="{% url 'courseAdd' %}">Add Course</a></button>
-    {% endif %}
+    <div class="AddCourseButton container">
+        {#If user is of role 1 (supervisor) this button available to add a course#}
+        {% if roleTemplate == 1 %}
+            <a class="btn" href="{% url 'courseAdd' %}" role="button" style="color: white; background-color: #494b5f">Add Course</a>
+        {% endif %}
+    </div>
+    <div class="CourseDeleted">
+        {% if message != None %}
+            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                <strong>Successful! </strong>{{ message }}
+            </div>
+        {% endif %}
+    </div>
 
-<br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>
+{#    <br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>#}
 {% endblock content %}
