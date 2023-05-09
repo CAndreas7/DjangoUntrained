@@ -67,6 +67,7 @@ class MainHome(View):
 
         userRole = thisUser.role
         request.session['roleSession'] = userRole
+
         return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
 
 
@@ -144,10 +145,13 @@ class usersInCourse(View):
         course = Course.objects.get(courseID=course_id)
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
 
-        for x in usersToCourses:
-            users.append(x.getUser())
+        for y in usersToCourses:
+            users.append(y.getUser())
 
-        context = {'course': course, 'users': users}
+
+        sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
+        # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
+        context = {'course': course, 'users': sortedUsers}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
@@ -432,12 +436,4 @@ class notificationSend(View):
     # I think down the road we may not need this. For example, when adding a user to course or section,
     # we can automate an email to be generated and sent, rendering this view(page) obsolete.
     def get(self, request):
-        # userEmail = request.session["email"]
-        #
-        # try:
-        #     thisUser = User.objects.get(pk=userEmail)
-        # except ValueError:
-        #     thisUser = None
-        #
-        # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
