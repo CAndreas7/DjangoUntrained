@@ -429,8 +429,10 @@ class userDelete(View):
     def get(self, request, email_id):
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
-        return redirect('users')
-
+        userRole = request.session['roleSession']
+        user = Course.objects.all()
+        # context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
+        return render(request, "main/User/users.html")
 
 class notificationSend(View):
     # I think down the road we may not need this. For example, when adding a user to course or section,

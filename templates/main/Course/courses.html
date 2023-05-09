@@ -23,7 +23,7 @@ table, th, td {
     <td><button type="button"><a href="{% url 'sections' course.courseID %}">Sections</a></button></td>
       <td><button type="button"><a href="{% url 'usersInCourse' course.courseID %}">Users</a></button></td>
       <td><button type="button"><a href="{% url 'courseEdit' course.courseID %}">Edit Course</a></button></td>
-      <td><button type="button"><a href="{% url 'courseDelete' course %}"> Delete</a></button> </td>
+      <td><button type="button"><a href="{% url 'courseDelete' course.courseID %}"> Delete</a></button> </td>
 
   </tr>
   {% endfor %}

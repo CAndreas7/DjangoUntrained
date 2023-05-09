@@ -25,7 +25,7 @@
                 <td>{{ result.email }}</td>
                 <td>{{ result.phone }}</td>
                 <td> <button type="button"><a href="{% url 'userEdit' result.email  %}">Edit Information</a></button></td>
-                <td> <button onclick="result.delete()">Delete</button></td>
+                <td> <button type="button"><a href="{% url 'userDelete' result.email  %}">Delete</a></button></td>
             </tr>
         {% endfor %}
     </table>
@@ -34,45 +34,4 @@
 {% endif %}
 <button onclick="window.location.href='{% url 'userAdd' %}'">Add Account</button>
 
-{#<h1>Account Information</h1>#}
-{#    <p>{{message}}</p>#}
-{##}
-{#    <style>#}
-{#table, th, td {#}
-{#  border:1px solid black;#}
-{#}#}
-{#</style>#}
-{#<table style="width:100%">#}
-{#  <tr>#}
-{#      <th>Email</th>#}
-{#      <th>Password</th>#}
-{#    <th>Phone Number</th>#}
-{#    <th>Role</th>#}
-{#  </tr>#}
-{#  {% for user in users %}#}
-{#  <tr>#}
-{#    <td>{{ user.email }}</td>#}
-{#      <td>{{ user.password }}</td>#}
-{#    <td>{{ user.phone }}</td>#}
-{#    <td>{{ user.getRole}}</td>#}
-{#    <td>#}
-{#        <button type="button"><a href="{% url 'userEdit' user.email%}">Edit User</a></button>#}
-{#        <button type="button"><a href="{% url 'userDelete' user.email %}">Delete User</a></button>#}
-{#    </td>#}
-{#  </tr>#}
-{#  {% endfor %}#}
-{#</table> <br>#}
-{##}
-{#     <button type="button"><a href="{% url 'userAdd' %}">Add User</a></button> <br> <br>#}
-{##}
-    {#  <table>#}
-    {#    <tr><th>Name</th><th>Number</th></tr>#}
-    {#    {% for i in myList %}#}
-    {#    <tr><td>{{i.0}}</td><td>{{i.1}}</td></tr>#}
-    {#    {% endfor %}#}
-    {#  </table>#}
-    {#{% endblock content %}#}
-{##}
-{#    <br><br><button type="button"><a href="{% url 'mainHome' %}">Home</a></button>#}
-{##}
 {% endblock content %}
