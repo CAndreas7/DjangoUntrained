@@ -1,37 +1,45 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
+
+{% block header %}
+    <h1>Account Information</h1>
+{% endblock header %}
+
 {% block content %}
-<h1>Account Information</h1>
-    <p>{{message}}</p>
 
-    <style>
-table, th, td {
-  border:1px solid navajowhite;
-}
-</style>
-<table style="width:100%">
-  <tr>
-      <th>Email</th>
-      <th>Password</th>
-    <th>Phone Number</th>
-    <th>Role</th>
-  </tr>
-  {% for user in users %}
-  <tr>
-    <td>{{ user.email }}</td>
-      <td>{{ user.password }}</td>
-    <td>{{ user.phone }}</td>
-    <td>{{ user.getRole}}</td>
-    <td>
-        <button type="button"><a href="{% url 'userEdit' user.email%}">Edit User</a></button>
-        <button type="button"><a href="{% url 'userDelete' user.email %}">Delete User</a></button>
-    </td>
-  </tr>
-  {% endfor %}
-</table> <br>
-
-     <button type="button"><a href="{% url 'userAdd' %}">Add User</a></button> <br> <br>
+    <div class="container">
+        <table class="table table-dark table-striped" style="color: white">
+            <thead>
+                <th scope="col">Email</th>
+                <th scope="col">Password</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Role</th>
+                <th scope="col"></th>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.password }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.getRole }}</td>
+                    <td>
+                        {% if roleTemplate == 1 %}
+                            <a class="btn" href="{% url 'userEdit' user.email%}" role="button" style="color: white; background-color: #494b5f">Edit User</a>
+                            <a class="btn" href="{% url 'userDelete' user.email %}" role="button" style="color: white; background-color: #494b5f">Delete User</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="AddUserButton container">
+        {% if roleTemplate == 1 %}
+            <a class="btn" href="{% url 'userAdd' %}" role="button" style="color: white; background-color: #494b5f">Add User</a>
+        {% endif %}
+    </div>
 
     {#  <table>#}
     {#    <tr><th>Name</th><th>Number</th></tr>#}
@@ -40,7 +48,5 @@ table, th, td {
     {#    {% endfor %}#}
     {#  </table>#}
     {#{% endblock content %}#}
-
-    <br><br><button type="Home"><a href="{% url 'mainHome' %}">Home</a></button>
 
 {% endblock content %}
