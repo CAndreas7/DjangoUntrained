@@ -1,6 +1,9 @@
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.generic import ListView
+
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm
 
@@ -51,6 +54,7 @@ class Home(View):
             request.session["email"] = m.email
             return redirect("/main/")
 
+
 class MainHome(View):
 
     def get(self, request):
@@ -63,6 +67,7 @@ class MainHome(View):
 
         userRole = thisUser.role
         request.session['roleSession'] = userRole
+
         return render(request, "main/mainHome.html", {"roleVariableTemplate": userRole})
 
 
@@ -117,7 +122,7 @@ class courseEdit(View):
         if form.is_valid():
             form.save()
             return render(request, 'main/Course/courseEdit.html',
-                              {'form': form, 'message': "Course was successfully edited!"})
+                          {'form': form, 'message': "Course was successfully edited!"})
         else:
             context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
             return render(request, "main/Course/courseEdit.html", context)
@@ -136,15 +141,17 @@ class courseDelete(View):
 
 class usersInCourse(View):
     def get(self, request, course_id):
-
         users = []
         course = Course.objects.get(courseID=course_id)
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
 
-        for x in usersToCourses:
-            users.append(x.getUser())
+        for y in usersToCourses:
+            users.append(y.getUser())
 
-        context = {'course': course, 'users': users}
+
+        sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
+        # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
+        context = {'course': course, 'users': sortedUsers}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
@@ -173,6 +180,7 @@ class userToCourseAdd(View):
             form = UserToFrom()
 
         return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+
 
 class userToCourseDelete(View):
 
@@ -327,7 +335,6 @@ class MyUser(User):
             item.courseDepartment = courseDepartment
             item.save()
 
-
     def removeCourse(self, courseID):
         Course.objects.filter(courseID=courseID).delete()
 
@@ -351,14 +358,6 @@ class MyUser(User):
         Section.objects.filter(sectionID=sectionID).delete()
 
 
-class users(View):
-    def get(self, request):
-        users = User.objects.all()
-        userRole = request.session['roleSession']
-        context = {'users': users, 'roleTemplate': userRole}
-        return render(request, "main/Account/accountEdit.html", context)
-
-
 class userAdd(View):
     def get(self, request):
         form = UserForm()
@@ -368,22 +367,25 @@ class userAdd(View):
         form = UserForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            fname = form.cleaned_data['fName']
+            lname = form.cleaned_data['lName']
             password = form.cleaned_data['password']
             phone = form.cleaned_data['phone']
             role = form.cleaned_data['role']
 
             # Create a new User object with the extracted data
-            user = User(email=email, password=password, phone=phone, role=role)
+            user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
             user.save()
 
-            #return HttpResponse('User added successfully')
+            # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
 
         else:
             form = UserForm()
 
-        return render(request, 'main/User/userAdd.html', {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                                               "Please enter a different email"})
+        return render(request, 'main/User/userAdd.html',
+                      {'form': form, 'message': "Cannot use an email already owned by another user. "
+                                                "Please enter a different email"})
 
 
 class userEdit(View):
@@ -404,9 +406,23 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
-class accountEdit(View):
-    def get(self, request):
-        return render(request, "main/Account/accountEdit.html", {})
+class users(ListView):
+    model = User
+    template_name = 'main/User/users.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        queryset = super().get_queryset()
+        if query:
+            queryset = queryset.filter(
+                Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
 
 
 class userDelete(View):
@@ -417,16 +433,7 @@ class userDelete(View):
 
 
 class notificationSend(View):
-#I think down the road we may not need this. For example, when adding a user to course or section,
-#we can automate an email to be generated and sent, rendering this view(page) obsolete.
+    # I think down the road we may not need this. For example, when adding a user to course or section,
+    # we can automate an email to be generated and sent, rendering this view(page) obsolete.
     def get(self, request):
-        # userEmail = request.session["email"]
-        #
-        # try:
-        #     thisUser = User.objects.get(pk=userEmail)
-        # except ValueError:
-        #     thisUser = None
-        #
-        # roleVariableView = thisUser.role
         return render(request, "main/notificationSend.html", {})
-

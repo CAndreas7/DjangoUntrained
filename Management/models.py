@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import EmailValidator
 from django.db import models
 
 # Create your models here.
@@ -25,9 +27,9 @@ class User(models.Model):
 # the password field to the correct email
 class User(models.Model):
     # specifying primary_key=True disables the default ID field
-    email = models.CharField(max_length=20, primary_key=True)
-    lName = models.CharField(max_length=30, null=True, default=False)
-    fName = models.CharField(max_length=30, null=True, default=False)
+    email = models.EmailField(max_length=20, primary_key=True)
+    lName = models.CharField(max_length=30, null=True, default='')
+    fName = models.CharField(max_length=30, null=True, default='')
     password = models.CharField(max_length=20)
     phone = models.CharField(max_length=15)
     # this is a way I found of representing in the DB the role a user is
@@ -40,6 +42,96 @@ class User(models.Model):
             (3, "TA")
         ))
 
+    def addAccount(self, email, lname, fname, password, phone, role):
+        if User.objects.filter(email=email).count() == 0:
+            if email is None or password is None or phone is None or role is None:
+                raise ValidationError("Email cannot be None")
+            if not isinstance(email, str):
+                raise ValidationError("Email must be of type String")  # split
+            if not isinstance(lname, str):
+                raise ValidationError("Last Name must be a String")
+            if not isinstance(fname, str):
+                raise ValidationError("First Name must be a String")
+            if not isinstance(password, str):
+                raise ValidationError("Password must by a String")
+            if not isinstance(phone, str):
+                raise ValidationError("Phone number must be a String")
+            if not isinstance(role, int):
+                raise ValidationError("Role must be entered as an Integer")
+            if password.__len__() < 1:
+                raise ValidationError("Password cannot be empty")
+            email_validator = EmailValidator(allowlist="uwm.edu")
+            email_validator.__call__(email)
+            user = User(email=email, lName=lname, fName=fname, password=password, phone=phone, role=role)
+            user.save()
+
+    def getEmail(self):
+        return self.email
+
+    def setEmail(self, email):
+        if email is None:
+            raise ValidationError("Email cannot be None")
+        if not isinstance(email, str):
+            raise ValidationError("Email must be of type String")
+        email_validator = EmailValidator(allowlist="uwm.edu")
+        email_validator.__call__(email)
+
+        # user = User.objects.get(email=self.email)
+        # user.email = email
+        # user.save()
+        # for user in users:
+        #     user.email = email
+        #     user.save()
+        self.email = email
+
+    def getlName(self):
+        return self.lName
+
+    def setlName(self, name):
+        if name is None:
+            raise ValidationError("name cannot be None")
+        if not isinstance(name, str):
+            raise ValidationError("Name must be of type String")
+        if name.__len__() == 0:
+            raise ValueError("Name cannot be empty")
+
+        self.lName = name
+
+    def getfName(self):
+        return self.fName
+
+    def setfName(self, name):
+        self.fName = name
+
+    def getPassword(self):
+        return self.password
+
+    def setPassword(self, password):
+        if password is None:
+            raise ValidationError("password cannot be None")
+        if not isinstance(password, str):
+            raise ValidationError("password must be type String")
+        if password.__len__() < 1:
+            raise ValidationError("password cannot be empty")
+
+        user = User.objects.get(password=self.password)
+        user.password = password
+        user.save()
+        self.password = password
+
+    def getPhone(self):
+        return self.phone
+
+    def setPhone(self, phoneNum):
+        if phoneNum is None:
+            raise ValidationError("New PhoneNum cannot be None")
+        if not isinstance(phoneNum, str):
+            raise ValidationError("New PhoneNum must be type String")
+        user = User.objects.get(phone=self.phone)
+        user.phone = phoneNum
+        user.save()
+        self.phone = phoneNum
+
     def getRole(self):
         role = self.role
         if role == 1:
@@ -50,19 +142,140 @@ class User(models.Model):
             return "TA"
         return
 
-    def getlName(self):
-        return self.lName
-    def setlName(self, name):
-        self.lName = name
-    def getfName(self):
-        return self.fName
-    def setfName(self, name):
-        self.fName = name
-    # def __init__(self, email, password, phone, role):
-    #     self.email = email
-    #     self.password = password
-    #     self.phone = phone
-    #     self.role = role
+    def setRole(self, role):
+        if role is None:
+            raise ValidationError("Role cannot be None")
+        if not isinstance(role, int):
+            raise ValidationError("Role must be of type int")
+        if role < 1 or role > 3:
+            raise ValueError("Role must be in the range 1 through 3")
+
+        user = User.objects.get(email=self.email)
+        user.role = role
+        user.save()
+        self.role = role
+
+    def editAccount(self, email, password, phoneNum, role):
+        if User.objects.filter(email=email):
+            user = User.objects.get(email=email)
+            user.setPassword(password)
+            user.setPhone(phoneNum)
+            user.setRole(role)
+            self.password = password
+            self.phone = phoneNum
+            self.role = role
+        else:
+            raise ObjectDoesNotExist("No such account to edit")
+
+    def removeAccount(self, email):
+        if User.objects.filter(email=email).count() == 0:
+            raise ObjectDoesNotExist("No such account to remove")
+        else:
+            User.objects.get(email=email).delete()
+            # self.email = None
+            # self.password = None
+            # self.phone = None
+            # self.role = None
+
+    def addCourse(self, courseID, courseName, courseDesc, courseDept):
+        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDesc,
+                        courseDepartment=courseDept)
+        course.save()
+
+    def editCourse(self, courseID, courseName, courseDescription, courseDepartment):
+        #       courses = Course.objects.filter(courseID=courseID)
+        if Course.objects.filter(courseID=courseID).count() == 1:
+            if courseName is None:
+                raise ValidationError("Course Name cannot be None")
+            if not isinstance(courseName, str):
+                raise ValidationError("Course Name must be a String")
+            if courseName.__len__() == 0:
+                raise ValidationError("Course Name cannot be empty")
+            if courseDescription is None:
+                raise ValidationError("Course Description cannot be None")
+            if not isinstance(courseDescription, str):
+                raise ValidationError("Course Description must be a String")
+            if courseDescription.__len__() == 0:
+                raise ValidationError("Course Description cannot be empty")
+            if courseDepartment is None:
+                raise ValidationError("Course Department cannot be None")
+            if not isinstance(courseDepartment, str):
+                raise ValidationError("Course Department must be a String")
+            if courseDepartment.__len__() == 0:
+                raise ValidationError("Course Department cannot be empty")
+
+            courses = Course.objects.get(courseID=courseID)
+            courses.courseName = courseName
+            courses.courseDescription = courseDescription
+            courses.courseDepartment = courseDepartment
+            courses.save()
+
+        # for item in courses:
+        #     item.courseName = courseName
+        #     item.courseDescription = courseDescription
+        #     item.courseDepartment = courseDepartment
+        #     item.save()
+
+    def removeCourse(self, courseID):
+        Course.objects.filter(courseID=courseID).delete()
+
+    def addSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, endTime=endTime,
+                          capacity=capacity, TA=ta, courseID=courseID)
+        section.save()
+
+    def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
+        if Section.objects.filter(sectionID=sectionID).count() == 1:
+            if location is None:
+                raise ValidationError("Location cannot be None")
+            if not isinstance(location, str):
+                raise ValidationError("Location must be of type String")
+            if startTime is None:
+                raise ValidationError("StartTime cannot be None")
+            if not isinstance(startTime, str):
+                raise ValidationError("StartTime must be of type String")
+            if startTime.__len__() == 0:
+                raise ValidationError("StartTime cannot be empty")
+            if endTime is None:
+                raise ValidationError("EndTime cannot be None")
+            if not isinstance(endTime, str):
+                raise ValidationError("EndTime must be of type ")
+            if endTime.__len__() == 0:
+                raise ValidationError("EndTime cannot be empty")
+            if capacity is None:
+                raise ValidationError("Capacity cannot be None")
+            if not isinstance(capacity, int):
+                raise ValidationError(" must be of type ")
+            if capacity < 1:
+                raise ValidationError("Capacity must be greater than 1")
+            if ta is None:
+                raise ValidationError("TA cannot be None")
+            if not isinstance(ta, User):
+                raise ValidationError("TA must be of type ")
+            if courseID is None:
+                raise ValidationError("CourseID cannot be None")
+            if not isinstance(courseID, Course):
+                raise ValidationError("CourseID must be of type ")
+            section = Section.objects.get(sectionID=sectionID)
+            section.location = location
+            section.startTime = startTime
+            section.endTime = endTime
+            section.capacity = capacity
+            section.TA = ta
+            section.courseID = courseID
+            section.save()
+
+        # for item in sections:
+        #     item.location = location
+        #     item.startTime = startTime
+        #     item.endTime = endTime
+        #     item.capacity = capacity
+        #     item.TA_id = ta
+        #     item.courseID_id = courseID
+        #     item.save()
+
+    def removeSection(self, sectionID):
+        Section.objects.filter(sectionID=sectionID).delete()
 
 
 # This is the Course table, which stores information about a Course at a university
@@ -85,18 +298,38 @@ class Course(models.Model):
         return self.courseName
 
     def setName(self, name):
+        if name is None:
+            raise ValidationError("Course Name cannot be None")
+        if not isinstance(name, str):
+            raise ValidationError("Course Name must be type String")
+        if name.__len__() == 0:
+            raise ValidationError("Course Name cannot be empty")
+
         self.courseName = name
 
     def getDescription(self):
         return self.courseDescription
 
     def setDescription(self, description):
+        if description is None:
+            raise ValidationError("Description cannot be None")
+        if not isinstance(description, str):
+            raise ValidationError("Description must be type String")
+        if description.__len__() == 0:
+            raise ValidationError("Description cannot be empty")
+
         self.courseDescription = description
 
     def getDepartment(self):
         return self.courseDepartment
 
     def setDepartment(self, department):
+        if department is None:
+            raise ValidationError("Department cannot be None")
+        if not isinstance(department, str):
+            raise ValidationError("Department must be type String")
+        if department.__len__() == 0:
+            raise ValidationError("Department entry cannot be empty")
         self.courseDepartment = department
 
     # def addSection(self):
