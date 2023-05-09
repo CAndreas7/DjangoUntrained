@@ -22,21 +22,30 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Home.as_view()),
     path('main/', MainHome.as_view(), name='mainHome'),
+
     path('courses/', courses.as_view(), name='courses'),
-    path('courseEdit/', courseEdit.as_view()),
+    path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
+    path('courseEdit/<int:course_id>/', courseEdit.as_view(), name='courseEdit'),
+    path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete'),
+
     path('sections/<int:course_id>/', sections.as_view(), name='sections'),
+    path('sectionAdd/<int:course_id>/', sectionAdd.as_view(), name='sectionAdd'),
     path('sectionEdit/<int:course_id>/<int:section_id>/', sectionEdit.as_view(), name='sectionEdit'),
     path('sectionDelete/<int:course_id>/<int:section_id>/', sectionDelete.as_view(), name='sectionDelete'),
-    path('sectionAdd/<int:course_id>/', sectionAdd.as_view(), name='sectionAdd'),
-    path('courseedit/<int:course_id>/', courseEdit.as_view(), name='courseedit'),
-    path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
-    path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
-    path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete'),
-    path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),
-    path('usersInCourse/<int:course_id>/', usersInCourse.as_view(), name='usersInCourse'),
-    path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
-    path('userAdd/', userAdd.as_view(), name='userAdd'),
+
     path('users/', users.as_view(), name='users'),
+    path('userAdd/', userAdd.as_view(), name='userAdd'),
+    path('userEdit/<str:email_id>/', userEdit.as_view(), name='userEdit'),
     path('userDelete/<str:email_id>/', userDelete.as_view(), name='userDelete'),
-    path('userEdit/<str:email_id>/', userEdit.as_view(), name='userEdit')
+
+    path('usersInCourse/<int:course_id>/', usersInCourse.as_view(), name='usersInCourse'),
+    path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),
+    path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
+
+    path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
+
+
+
+
+
 ]
