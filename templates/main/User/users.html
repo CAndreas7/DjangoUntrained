@@ -1,9 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
+{% block header %}
+
+    Account Information
+
+{% endblock header %}
+
 {% block content %}
 
-    <h1>Account Information</h1>
 
 <form method="get" action="{% url 'users' %}">
     <input type="text" name="q" value="{{ query }}" placeholder="Search...">
@@ -33,5 +38,6 @@
     <p>No results found.</p>
 {% endif %}
 <button onclick="window.location.href='{% url 'userAdd' %}'">Add Account</button>
+
 
 {% endblock content %}
