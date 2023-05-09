@@ -43,9 +43,4 @@ urlpatterns = [
     path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
 
     path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
-
-
-
-
-
 ]
