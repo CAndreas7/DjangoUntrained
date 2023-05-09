@@ -101,6 +101,13 @@ class User(models.Model):
         return self.fName
 
     def setfName(self, name):
+        if name is None:
+            raise ValidationError("Last name cannot be None")
+        if not isinstance(name, str):
+            raise ValidationError("Last Name must be of type String")
+        if name.__len__() == 0:
+            raise ValueError("Last Name cannot be empty")
+
         self.fName = name
 
     def getPassword(self):
