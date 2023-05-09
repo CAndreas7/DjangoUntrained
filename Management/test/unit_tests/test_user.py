@@ -186,15 +186,52 @@ class testEditCourse(TestCase):
         self.assertEqual(Course.objects.filter(courseName="Algebra").count(), 1,
                          msg="Course was not updated in database")
 
+    def test_editCourseName2(self):
+        with self.assertRaises(ValidationError, msg="Course Name cannot be None"):
+            self.supervisor.editCourse(101, None, "Entry level algebra", "Math")
+
+    def test_editCourseName3(self):
+        with self.assertRaises(ValidationError, msg="Course Name must be a String"):
+            self.supervisor.editCourse(101, 1, "Entry level algebra", "Math")
+
+    def test_editCourseName4(self):
+        with self.assertRaises(ValidationError, msg="Course Name cannot be empty"):
+            self.supervisor.editCourse(101, '', "Entry level algebra", "Math")
+
     def test_editCourseDesc(self):
         self.supervisor.editCourse(101, "Algebra", "An entry level college math class", "dept")
         self.assertEqual(Course.objects.filter(courseDescription="An entry level college math class").count(), 1,
                          msg="No course exists with the given description")
 
-    def test_editCourseDept(self):
+
+    def test_editCourseDesc2(self):
+        with self.assertRaises(ValidationError, msg="Course Description cannot be None"):
+            self.supervisor.editCourse(101, "Algebra", None, "dept")
+
+    def test_editCourseDesc3(self):
+        with self.assertRaises(ValidationError, msg="Course Description must be a String"):
+            self.supervisor.editCourse(101, "Algebra", 1, "dept")
+
+    def test_editCourseDesc4(self):
+        with self.assertRaises(ValidationError, msg="Course Description cannot be empty"):
+            self.supervisor.editCourse(101, "Algebra", '', "dept")
+
+    def test_editCourseDepartment(self):
         self.supervisor.editCourse(101, "Algebra", "desc", "Math")
         self.assertEqual(Course.objects.filter(courseDepartment="Math").count(), 1,
                          msg="No such course with in the Math dept")
+
+    def test_editCourseDepartment2(self):
+        with self.assertRaises(ValidationError, msg="Course Department cannot be None"):
+            self.supervisor.editCourse(101, "Algebra", "desc", None)
+
+    def test_editCourseDepartment3(self):
+        with self.assertRaises(ValidationError, msg="Course Department must be a String"):
+            self.supervisor.editCourse(101, "Algebra", "desc", 1)
+
+    def test_editCourseDepartment4(self):
+        with self.assertRaises(ValidationError, msg="Course Department cannot be empty"):
+            self.supervisor.editCourse(101, "Algebra", "desc", '')
 
 
 class addRemoveSection(TestCase):
@@ -220,10 +257,11 @@ class addRemoveSection(TestCase):
                         courseDescription="A more advanced class that covers "
                                           "programming topics in greater "
                                           "depth", courseDepartment="CS")
-        course.save(0)
+        course.save()
         section = Section(sectionID=101, location="EMS100", startTime="05:00PM", endTime="07:00PM", capacity=30,
                           TA_id=self.supervisor.email, courseID_id=251)
-        self.supervisor.removeSection(800)
+        section.save()
+        self.supervisor.removeSection(101)
         self.assertEqual(Section.objects.filter(sectionID=800).count(), 0,
                          msg="A section exists with the given sectionID")
 
@@ -249,11 +287,40 @@ class editSection(TestCase):
         self.assertEqual(Section.objects.filter(location="EMS120").count(), 1,
                          msg="The section location was not changed")
 
+    def test_editLocation2(self):
+        with self.assertRaises(ValidationError, msg="Location cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, None, self.section.startTime, self.section.endTime,
+                                    self.section.capacity, self.user, self.course)
+
+    def test_editLocation3(self):
+        with self.assertRaises(ValidationError, msg="Location must be a String"):
+            self.supervisor.editSection(self.section.sectionID, 1, self.section.startTime, self.section.endTime,
+                                        self.section.capacity, self.user, self.course)
+
+    def test_editLocation4(self):
+        self.supervisor.editSection(self.section.sectionID, '', self.section.startTime, self.section.endTime,
+                                    self.section.capacity, self.user, self.course)
+
     def test_editStartTime(self):
         self.supervisor.editSection(self.section.sectionID, self.section.location, "02:00PM", self.section.endTime,
                                     self.section.capacity, self.user, self.course)
         self.assertEqual(Section.objects.filter(startTime="02:00PM").count(), 1,
                          msg="The start time was not changed")
+
+    def test_editStartTime2(self):
+        with self.assertRaises(ValidationError, msg="StartTime cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, None, self.section.endTime,
+                                        self.section.capacity, self.user, self.course)
+
+    def test_editStartTime3(self):
+        with self.assertRaises(ValidationError, msg="StartTime must be a String"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, 1, self.section.endTime,
+                                        self.section.capacity, self.user, self.course)
+
+    def test_editStartTime4(self):
+        with self.assertRaises(ValidationError, msg="StartTime cannot be empty"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, '', self.section.endTime,
+                                        self.section.capacity, self.user, self.course)
 
     def test_editEndTime(self):
         self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime, "07:30PM",
@@ -261,12 +328,48 @@ class editSection(TestCase):
         self.assertEqual(Section.objects.filter(endTime="07:30PM").count(), 1,
                          msg="The end time was not changed")
 
+    def test_editEndTime2(self):
+        with self.assertRaises(ValidationError, msg="EndTime cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        None,
+                                        self.section.capacity, self.user, self.course)
+
+    def test_editEndTime3(self):
+        with self.assertRaises(ValidationError, msg="EndTime must be a String"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        1,
+                                        self.section.capacity, self.user, self.course)
+
+    def test_editEndTime4(self):
+        with self.assertRaises(ValidationError, msg="EndTime cannot be empty"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        '',
+                                        self.section.capacity, self.user, self.course)
+
     def test_editCapacity(self):
         self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
                                     self.section.endTime,
                                     20, self.user, self.course)
         self.assertEqual(Section.objects.filter(capacity=20).count(), 1,
                          msg="The capacity was not changed")
+
+    def test_editCapacity2(self):
+        with self.assertRaises(ValidationError, msg="Capacity cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        None, self.user, self.course)
+
+    def test_editCapacity3(self):
+        with self.assertRaises(ValidationError, msg="Capacity must be an Integer"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        "20", self.user, self.course)
+
+    def test_editCapacity4(self):
+        with self.assertRaises(ValidationError, msg="Capacity cannot be 0"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        0, self.user, self.course)
 
     def test_editTA(self):
         newUser = User("taemail@uwm.edu", "Assistant", "Teaching", "tapass", "292-661-7322", 3)
@@ -277,7 +380,25 @@ class editSection(TestCase):
         self.assertEqual(Section.objects.filter(TA=newUser).count(), 1,
                          msg="The TA was not changed")
 
-    def test_newCourseID(self):
+    def test_editTA2(self):
+        with self.assertRaises(ValidationError, msg="TA cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        20, None, self.course)
+
+    def test_editTA3(self):
+        with self.assertRaises(ValidationError, msg="TA must be a User object"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        20, 1, self.course)
+
+    def test_editTA4(self):
+        with self.assertRaises(ValidationError, msg="TA must be a User object"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        20, "taemail@uwm.edu", self.course)
+
+    def test_editCourseID(self):
         newCourse = Course(361, "Intro to Software Development",
                            "A class that teaches the basics of software development", "CS")
         newCourse.save()
@@ -286,4 +407,23 @@ class editSection(TestCase):
                                     self.section.capacity, self.section.TA, newCourse)
         self.assertEqual(Section.objects.filter(courseID=newCourse).count(), 1,
                          msg="No section exists with the new courseID")
+
+    def test_editCourseID2(self):
+        with self.assertRaises(ValidationError, msg="CourseID cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        self.section.capacity, self.section.TA, None)
+
+    def test_editCourseID3(self):
+        with self.assertRaises(ValidationError, msg="CourseID must be a Course Object"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        self.section.capacity, self.section.TA, 1)
+
+    def test_editCourseID4(self):
+        with self.assertRaises(ValidationError, msg="CourseID cannot be None"):
+            self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
+                                        self.section.endTime,
+                                        self.section.capacity, self.section.TA, "1")
+
 

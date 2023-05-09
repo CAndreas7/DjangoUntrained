@@ -184,11 +184,32 @@ class User(models.Model):
 
     def editCourse(self, courseID, courseName, courseDescription, courseDepartment):
         #       courses = Course.objects.filter(courseID=courseID)
-        courses = Course.objects.get(courseID=courseID)
-        courses.courseName = courseName
-        courses.courseDescription = courseDescription
-        courses.courseDepartment = courseDepartment
-        courses.save()
+        if Course.objects.filter(courseID=courseID).count() == 1:
+            if courseName is None:
+                raise ValidationError("Course Name cannot be None")
+            if not isinstance(courseName, str):
+                raise ValidationError("Course Name must be a String")
+            if courseName.__len__() == 0:
+                raise ValidationError("Course Name cannot be empty")
+            if courseDescription is None:
+                raise ValidationError("Course Description cannot be None")
+            if not isinstance(courseDescription, str):
+                raise ValidationError("Course Description must be a String")
+            if courseDescription.__len__() == 0:
+                raise ValidationError("Course Description cannot be empty")
+            if courseDepartment is None:
+                raise ValidationError("Course Department cannot be None")
+            if not isinstance(courseDepartment, str):
+                raise ValidationError("Course Department must be a String")
+            if courseDepartment.__len__() == 0:
+                raise ValidationError("Course Department cannot be empty")
+
+            courses = Course.objects.get(courseID=courseID)
+            courses.courseName = courseName
+            courses.courseDescription = courseDescription
+            courses.courseDepartment = courseDepartment
+            courses.save()
+
         # for item in courses:
         #     item.courseName = courseName
         #     item.courseDescription = courseDescription
@@ -204,14 +225,46 @@ class User(models.Model):
         section.save()
 
     def editSection(self, sectionID, location, startTime, endTime, capacity, ta, courseID):
-        section = Section.objects.get(sectionID=sectionID)
-        section.location = location
-        section.startTime = startTime
-        section.endTime = endTime
-        section.capacity = capacity
-        section.TA = ta
-        section.courseID = courseID
-        section.save()
+        if Section.objects.filter(sectionID=sectionID).count() == 1:
+            if location is None:
+                raise ValidationError("Location cannot be None")
+            if not isinstance(location, str):
+                raise ValidationError("Location must be of type String")
+            if startTime is None:
+                raise ValidationError("StartTime cannot be None")
+            if not isinstance(startTime, str):
+                raise ValidationError("StartTime must be of type String")
+            if startTime.__len__() == 0:
+                raise ValidationError("StartTime cannot be empty")
+            if endTime is None:
+                raise ValidationError("EndTime cannot be None")
+            if not isinstance(endTime, str):
+                raise ValidationError("EndTime must be of type ")
+            if endTime.__len__() == 0:
+                raise ValidationError("EndTime cannot be empty")
+            if capacity is None:
+                raise ValidationError("Capacity cannot be None")
+            if not isinstance(capacity, int):
+                raise ValidationError(" must be of type ")
+            if capacity < 1:
+                raise ValidationError("Capacity must be greater than 1")
+            if ta is None:
+                raise ValidationError("TA cannot be None")
+            if not isinstance(ta, User):
+                raise ValidationError("TA must be of type ")
+            if courseID is None:
+                raise ValidationError("CourseID cannot be None")
+            if not isinstance(courseID, Course):
+                raise ValidationError("CourseID must be of type ")
+            section = Section.objects.get(sectionID=sectionID)
+            section.location = location
+            section.startTime = startTime
+            section.endTime = endTime
+            section.capacity = capacity
+            section.TA = ta
+            section.courseID = courseID
+            section.save()
+
         # for item in sections:
         #     item.location = location
         #     item.startTime = startTime
@@ -246,9 +299,11 @@ class Course(models.Model):
 
     def setName(self, name):
         if name is None:
-            raise ValidationError("Name cannot be None")
+            raise ValidationError("Course Name cannot be None")
         if not isinstance(name, str):
-            raise ValidationError("Name must be type String")
+            raise ValidationError("Course Name must be type String")
+        if name.__len__() == 0:
+            raise ValidationError("Course Name cannot be empty")
 
         self.courseName = name
 
@@ -260,6 +315,8 @@ class Course(models.Model):
             raise ValidationError("Description cannot be None")
         if not isinstance(description, str):
             raise ValidationError("Description must be type String")
+        if description.__len__() == 0:
+            raise ValidationError("Description cannot be empty")
 
         self.courseDescription = description
 
@@ -271,6 +328,8 @@ class Course(models.Model):
             raise ValidationError("Department cannot be None")
         if not isinstance(department, str):
             raise ValidationError("Department must be type String")
+        if department.__len__() == 0:
+            raise ValidationError("Department entry cannot be empty")
         self.courseDepartment = department
 
     # def addSection(self):
