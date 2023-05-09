@@ -354,7 +354,8 @@ class MyUser(User):
 class users(View):
     def get(self, request):
         users = User.objects.all()
-        context = {'users': users}
+        userRole = request.session['roleSession']
+        context = {'users': users, 'roleTemplate': userRole}
         return render(request, "main/Account/accountEdit.html", context)
 
 
