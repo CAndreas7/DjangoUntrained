@@ -1,3 +1,31 @@
+
+
+th, td, h1 {
+        height: 50px;
+          color: navajowhite;:}
 body {
-    background: navajowhite;
+    background-color: #282934;
+    color: white;
 }
+
+
+
+/*.main-container {*/
+/*    display: flex;*/
+/*    height: 100vh;*/
+/*    flex-direction: column;*/
+/*}*/
+/*.info-container {*/
+/*    display: flex;*/
+/*    height: 66vh;*/
+/*}*/
+
+/*.nav-container {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    height: 33vh;*/
+/*    justify-self: start;*/
+/*    justify-content: center;*/
+/*    !*justify-items: center;*!*/
+
+/*}*/
