@@ -242,9 +242,13 @@ class sectionEdit(View):
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
+
+        # could be a get method
         section = get_object_or_404(Section, pk=section_id)
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
+
+            # could be a set method
             form.courseID = course_id
             form.save()
             return redirect('sections', course_id=course_id)
@@ -255,6 +259,9 @@ class sectionEdit(View):
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
+
+        # could be a get and a delete method
+
         Section.objects.filter(sectionID=section_id).delete()
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
@@ -268,6 +275,9 @@ class userAdd(View):
     def post(self, request):
         form = UserForm(request.POST)
         if form.is_valid():
+
+            # could be set methods
+
             email = form.cleaned_data['email']
             fname = form.cleaned_data['fName']
             lname = form.cleaned_data['lName']
@@ -292,12 +302,16 @@ class userAdd(View):
 
 class userEdit(View):
     def get(self, request, email_id):
+
+        # could be a get method
         user = get_object_or_404(User, pk=email_id)
         form = UserForm(instance=user)
         context = {'user': user, 'form': form}
         return render(request, "main/User/userEdit.html", context)
 
     def post(self, request, email_id):
+
+        # could be a get method
         user = get_object_or_404(User, pk=email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
@@ -331,6 +345,8 @@ class users(ListView):
 
 class userDelete(View):
     def get(self, request, email_id):
+
+        # could be a delete method
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
