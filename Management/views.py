@@ -144,6 +144,7 @@ class usersInCourse(View):
         users = []
         course = Course.objects.get(courseID=course_id)
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
+        userRole = request.session['roleSession']
 
         for y in usersToCourses:
             users.append(y.getUser())
@@ -151,7 +152,7 @@ class usersInCourse(View):
 
         sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
         # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
-        context = {'course': course, 'users': sortedUsers}
+        context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
@@ -420,8 +421,10 @@ class users(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        userRole = self.request.session['roleSession']
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q', '')
+        context['roleTemplate'] = userRole
         return context
 
 
