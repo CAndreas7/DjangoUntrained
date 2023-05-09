@@ -2,7 +2,10 @@
 
 th, td, h1 {
         height: 50px;
-          color: navajowhite;
+          color: navajowhite;:}
+body {
+    background-color: #282934;
+    color: white;
 }
 
 
