@@ -8,11 +8,14 @@
 <h1>TA Scheduler App</h1>
     {% csrf_token %}
     <button type="button"><a href="{% url 'courses' %}">Courses</a></button>
-    <button type="button"><a href="{% url 'users' %}">Account Information</a></button>
 
 {#    If user role is 1 (supervisor) or 2 (instructor) then they will see the following button.#}
     {% if roleVariableTemplate == 1 or roleVariableTemplate == 2 %}
         <button type="button"><a href="{% url 'notificationSend' %}">Send Notification</a></button>
+        {% if roleVariableTemplate == 1 %}
+            <button type="button"><a href="{% url 'users' %}">Account Management</a></button>
+        {% endif %}
     {% endif %}
+
 
 {% endblock content %}
