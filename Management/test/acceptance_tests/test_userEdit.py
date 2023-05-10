@@ -14,6 +14,8 @@ class Test_UserEdit(TestCase):
         self.client.post(self.editURL, {
             'email': "newEmail@user.com",
             'password': "testpassword",
+            'fName': "Me",
+            'lName': "not me",
             'phone': "",
             'role': 3,
         })
@@ -27,6 +29,8 @@ class Test_UserEdit(TestCase):
     def test_editPassword(self):
         self.client.post(self.editURL, {
             'email': 'SomeUser1@user.com',
+            'fName': "Me",
+            'lName': "not me",
             'password': "newpass",
             'phone': "123",
             'role': 3,
@@ -41,6 +45,8 @@ class Test_UserEdit(TestCase):
     def test_editPhone(self):
         self.client.post(self.editURL, {
             'email': 'SomeUser1@user.com',
+            'fName': "Me",
+            'lName': "not me",
             'password': "testpassword",
             'phone': '4143451234',
             'role': 3,
@@ -54,6 +60,8 @@ class Test_UserEdit(TestCase):
     def test_editRole(self):
         self.client.post(self.editURL, {
             'email': 'SomeUser1@user.com',
+            'fName': "Me",
+            'lName': "not me",
             'password': "testpassword",
             'phone': '4143451234',
             'role': 1,
