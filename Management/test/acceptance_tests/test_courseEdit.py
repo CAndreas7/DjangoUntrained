@@ -9,7 +9,7 @@ class Test_EditCourses(TestCase):
         self.client = Client()
         self.course = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
-        self.editURL = reverse('courseedit', kwargs={'course_id': self.course.courseID})
+        self.editURL = reverse('courseEdit', kwargs={'course_id': self.course.courseID})
 
     def test_editCourseName(self):
         self.client.post(self.editURL, {
