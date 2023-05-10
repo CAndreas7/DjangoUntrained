@@ -89,6 +89,8 @@ class courseAdd(View):
 
         form = CourseForm(request.POST)
         if form.is_valid():
+
+            # all of this assigning could be a method
             courseID = form.cleaned_data['courseID']
             courseName = form.cleaned_data['courseName']
             courseDescription = form.cleaned_data['courseDescription']
@@ -111,15 +113,23 @@ class courseAdd(View):
 
 class courseEdit(View):
     def get(self, request, course_id):
+
+        # could be a get call
         course = get_object_or_404(Course, pk=course_id)
+
+        # could be a Course From method??
         form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
+
+        # get method
         course = get_object_or_404(Course, pk=course_id)
         form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
+
+            # save method
             form.save()
             return render(request, 'main/Course/courseEdit.html',
                           {'form': form, 'message': "Course was successfully edited!"})
@@ -134,6 +144,8 @@ class courseDelete(View):
         Course.objects.filter(courseID=course_id).delete()
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
+
+        # get all method
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
         return render(request, "main/Course/courses.html", context)
@@ -191,6 +203,7 @@ class userToCourseDelete(View):
                 x.removeUser()
 
         except:
+
             not isinstance(user, UsersToCourse)
 
         # Redirect to a success page or back to the list of courses
@@ -259,7 +272,6 @@ class sectionEdit(View):
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
-
         # could be a get and a delete method
 
         Section.objects.filter(sectionID=section_id).delete()
@@ -345,7 +357,6 @@ class users(ListView):
 
 class userDelete(View):
     def get(self, request, email_id):
-
         # could be a delete method
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
