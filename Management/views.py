@@ -155,15 +155,18 @@ class courseDelete(View):
 
 class usersInCourse(View):
     def get(self, request, course_id):
-        users = []
+        userList = []
+
+        # Get method
         course = Course.objects.get(courseID=course_id)
+        # get method
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
         userRole = request.session['roleSession']
 
         for y in usersToCourses:
-            users.append(y.getUser())
+            userList.append(y.getUser())
 
-        sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
+        sortedUsers = sorted(userList, key=lambda user: (user.role, user.lName))
         # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
         context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
@@ -182,6 +185,7 @@ class userToCourseAdd(View):
             try:
                 email = form.cleaned_data['assignment']
 
+                # add method
                 userTo = UsersToCourse(courseID=course_id, assignment=email)
                 userTo.save()
 
@@ -215,9 +219,12 @@ class userToCourseDelete(View):
 
 class sections(View):
     def get(self, request, course_id):
+
+        # get method
         course = Course.objects.get(pk=course_id)
-        sections = Section.objects.filter(courseID=course)
-        context = {'course': course, 'sections': sections}
+        # get method
+        sectionList = Section.objects.filter(courseID=course)
+        context = {'course': course, 'sections': sectionList}
         return render(request, 'main/Section/sections.html', context)
 
 
@@ -229,6 +236,8 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if form.is_valid():
+
+            # add method
             courseID = course_id
             location = form.cleaned_data['location']
             startTime = form.cleaned_data['startTime']
