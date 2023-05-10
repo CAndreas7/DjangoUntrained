@@ -25,12 +25,15 @@ class Test_SectionPage(TestCase):
         response = self.client.get(self.sectionEditURL)
 
         self.assertEqual(response.status_code, 200, "status code is not 200.")
-
+        self.assertTemplateUsed(response, 'main/Section/sectionEdit.html')
     def test_deleteSection(self):
-        self.client.get(self.sectionDeleteURL)
+        response = self.client.get(self.sectionDeleteURL)
+
         self.assertEqual(Section.objects.filter(sectionID=2).count(), 0, "Section was not properly deleted")
+        self.assertRedirects(response, 'main/Section/sections.html')
 
     def test_goToAddSection(self):
         response = self.client.get(self.sectionAddURL)
 
         self.assertEqual(response.status_code, 200, "status code is not 200.")
+        self.assertTemplateUsed(response, 'main/Section/addSection.html')

@@ -14,14 +14,20 @@ class Test_CoursesPage(TestCase):
 
         #grabs all URLS for the page.
         self.coursesURL = reverse('courses')
+
+        #This page doesn't exist?
         self.course1DeleteURL = reverse('courseDelete', kwargs={'course_id': self.course1.courseID})
+        #these pages exists.
         self.sectionsOfCourse2URL = reverse('sections', kwargs={'course_id': self.course2.courseID})
         self.course1EditURL = reverse('courseEdit', kwargs={'course_id': self.course1.courseID})
+
+        #for some reason, this page doesn't exist?
         self.course1UserURL = reverse('usersInCourse', kwargs={'course_id': self.course1.courseID})
 
     def test_RemoveCourse1(self):
-        self.client.get(self.course1DeleteURL)
+        response = self.client.get(self.course1DeleteURL)
 
+        self.assertTemplateUsed(response, 'main/Course/courses.html')
         self.assertEqual(Course.objects.filter(courseID=1).count(), 0, "course1 was not deleted from the database")
 
 
@@ -29,12 +35,16 @@ class Test_CoursesPage(TestCase):
         response = self.client.get(self.sectionsOfCourse2URL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
+        self.assertTemplateUsed(response, 'main/Section/sections.html')
+
     def test_goToEditCourses1Page(self):
         response = self.client.get(self.course1EditURL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
+        self.assertTemplateUsed(response, 'main/Course/courseEdit.html')
 
     def test_go_to_Course1_Users_page(self):
         response = self.client.get(self.course1UserURL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
+        self.assertTemplateUsed(response, 'main/UserToCourse/courseUsers.html')
