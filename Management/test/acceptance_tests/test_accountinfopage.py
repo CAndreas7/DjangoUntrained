@@ -11,18 +11,23 @@ class Test_AccountInfoPage(TestCase):
 
         self.userAddURL = reverse('userAdd')
         self.TA1EditURL = reverse('userEdit', kwargs={'email_id': self.TA1.email})
-        self.deleteInstr1 = reverse('userDelete', kwargs={'email_id': self.Instructor1.email})
+        #this page doesn't exist, You get a role error.
+        self.deleteInstr1URL = reverse('userDelete', kwargs={'email_id': self.Instructor1.email})
+
 
     def test_add_user_link(self):
         response = self.client.get(self.userAddURL)
 
         self.assertEqual(response.status_code, 200, "Status code is not 200")
-    def test_edit_user_link(self):
-        response = self.client.get(self.TA1EditURL)
+        self.assertTemplateUsed(response, 'main/User/userAdd.html')
 
+    def test_edit_user_link(self):
+        response = self.client.get('/userEdit/SomeUser1@user.com/')
+        print(self.TA1EditURL)
         self.assertEqual(response.status_code, 200, "Status code is not 200")
+        self.assertTemplateUsed(response, 'main/User/userEdit.html')
     def test_deleteInstructor1(self):
-        self.client.get(self.deleteInstr1)
+        self.client.get(self.deleteInstr1URL)
 
         self.assertEqual(0, User.objects.filter(email="SomeUser3@user.com").count(), "The user was not deleted from the"
                                                                                      "database")

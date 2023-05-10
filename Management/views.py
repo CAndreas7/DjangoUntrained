@@ -372,7 +372,7 @@ class userDelete(View):
         # could be a delete method
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
-        userRole = request.session['roleSession']
+        # userRole = request.session['roleSession']
         user = Course.objects.all()
         # context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
         return render(request, "main/User/users.html")
