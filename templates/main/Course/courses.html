@@ -32,7 +32,7 @@
                             <a class="btn" href="{% url 'sections' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Sections</a>
                             <a class="btn" href="{% url 'usersInCourse' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Users</a>
                             {% if roleTemplate == 1 %}
-                                <a class="btn" href="{% url 'courseedit' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Edit Course</a>
+                                <a class="btn" href="{% url 'courseEdit' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Edit Course</a>
                                 <a class="btn" href="{% url 'courseDelete' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Delete Course</a>
                             {% endif %}
                         </td>
