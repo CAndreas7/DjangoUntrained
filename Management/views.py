@@ -74,6 +74,8 @@ class MainHome(View):
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
+
+        # should be a get all method
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole}
         return render(request, "main/Course/courses.html", context)
@@ -89,6 +91,8 @@ class courseAdd(View):
 
         form = CourseForm(request.POST)
         if form.is_valid():
+
+            # all of this assigning could be a method
             courseID = form.cleaned_data['courseID']
             courseName = form.cleaned_data['courseName']
             courseDescription = form.cleaned_data['courseDescription']
@@ -111,15 +115,23 @@ class courseAdd(View):
 
 class courseEdit(View):
     def get(self, request, course_id):
+
+        # could be a get call
         course = get_object_or_404(Course, pk=course_id)
+
+        # could be a Course From method??
         form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
+
+        # get method
         course = get_object_or_404(Course, pk=course_id)
         form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
+
+            # save method
             form.save()
             return render(request, 'main/Course/courseEdit.html',
                           {'form': form, 'message': "Course was successfully edited!"})
@@ -134,6 +146,8 @@ class courseDelete(View):
         Course.objects.filter(courseID=course_id).delete()
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
+
+        # get all method
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
         return render(request, "main/Course/courses.html", context)
@@ -141,15 +155,18 @@ class courseDelete(View):
 
 class usersInCourse(View):
     def get(self, request, course_id):
-        users = []
+        userList = []
+
+        # Get method
         course = Course.objects.get(courseID=course_id)
+        # get method
         usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
         userRole = request.session['roleSession']
 
         for y in usersToCourses:
-            users.append(y.getUser())
+            userList.append(y.getUser())
 
-        sortedUsers = sorted(users, key=lambda user: (user.role, user.lName))
+        sortedUsers = sorted(userList, key=lambda user: (user.role, user.lName))
         # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
         context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
@@ -168,6 +185,7 @@ class userToCourseAdd(View):
             try:
                 email = form.cleaned_data['assignment']
 
+                # add method
                 userTo = UsersToCourse(courseID=course_id, assignment=email)
                 userTo.save()
 
@@ -191,6 +209,7 @@ class userToCourseDelete(View):
                 x.removeUser()
 
         except:
+
             not isinstance(user, UsersToCourse)
 
         # Redirect to a success page or back to the list of courses
@@ -200,9 +219,12 @@ class userToCourseDelete(View):
 
 class sections(View):
     def get(self, request, course_id):
+
+        # get method
         course = Course.objects.get(pk=course_id)
-        sections = Section.objects.filter(courseID=course)
-        context = {'course': course, 'sections': sections}
+        # get method
+        sectionList = Section.objects.filter(courseID=course)
+        context = {'course': course, 'sections': sectionList}
         return render(request, 'main/Section/sections.html', context)
 
 
@@ -214,6 +236,8 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if form.is_valid():
+
+            # add method
             courseID = course_id
             location = form.cleaned_data['location']
             startTime = form.cleaned_data['startTime']
@@ -259,7 +283,6 @@ class sectionEdit(View):
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
-
         # could be a get and a delete method
 
         Section.objects.filter(sectionID=section_id).delete()
@@ -322,6 +345,7 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
+# I feel like i could break this into a search class somehow
 class users(ListView):
     model = User
     template_name = 'main/User/users.html'
@@ -345,7 +369,6 @@ class users(ListView):
 
 class userDelete(View):
     def get(self, request, email_id):
-
         # could be a delete method
         User.objects.filter(email=email_id).delete()
         # Redirect to a success page or back to the list of courses
