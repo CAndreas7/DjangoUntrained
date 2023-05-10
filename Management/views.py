@@ -345,6 +345,7 @@ class userEdit(View):
             return render(request, "main/User/userEdit.html", context)
 
 
+# I feel like i could break this into a search class somehow
 class users(ListView):
     model = User
     template_name = 'main/User/users.html'
