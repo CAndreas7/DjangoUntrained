@@ -74,6 +74,8 @@ class MainHome(View):
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
+
+        # should be a get all method
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole}
         return render(request, "main/Course/courses.html", context)
