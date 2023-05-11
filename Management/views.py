@@ -231,8 +231,9 @@ class sections(View):
 
 class sectionAdd(View):
     def get(self, request, course_id):
+        user = User.objects.all()
         form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id})
+        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id, 'people': user})
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)

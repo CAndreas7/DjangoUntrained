@@ -26,7 +26,6 @@
                         <td>{{ section.capacity }}</td>
                         {% if roleTemplate == 1 %}
                             <td>
-                                <a class="btn" href="{% url 'sectionAdd' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Add Section</a>
                                 <a class="btn" href="{% url 'sectionEdit' course.courseID section.sectionID %}" role="button" style="color: white; background-color: #494b5f">Edit Section</a>
                                 <a class="btn" href="{% url 'sectionDelete' course.courseID section.sectionID %}" role="button" style="color: white; background-color: #494b5f">Delete Section</a>
                             </td>
@@ -38,6 +37,7 @@
     </div>
     <div class="container">
         <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
+        <a class="btn" href="{% url 'sectionAdd' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Add Section</a>
     </div>
 
 {% endblock content %}

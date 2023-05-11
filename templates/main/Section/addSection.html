@@ -1,14 +1,84 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
 
-{% block content %}
-  <h2>Add Section</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Section</button>
-  </form>
-{% endblock %}
+{% block header %}
+    Add Section
+{% endblock header %}
 
-<br> <br> <button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
+{% block content %}
+
+{#  <form method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ form.as_p }}#}
+{#    <button type="submit">Add Section</button>#}
+{#  </form>#}
+
+    <div class="container position-relative" style="height: 500px">
+        <div class="CourseAddForm position-absolute top-50 start-50 translate-middle">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Location</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="location">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Start Time</label>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control" name="startTime">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">End Time</label>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control" name="endTime">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Capacity</label>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="form-control" name="capacity">
+                    </div>
+                </div>
+{#                look back at this to figure out dropdown with TA options#}
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">TA</label>
+                    </div>
+                    <div class="col">
+{#                        <input class="form-control" name="TA">#}
+                        <select name="TA">
+                            {% for u in people %}
+                                {% if u.role == 3 %}
+                                    <option value=u>{{ u.getFullName }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Section ID</label>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="form-control" name="sectionID">
+                    </div>
+                </div>
+                <br>
+                <button class="btn" type="submit" style="color: white; background-color: #494b5f">Save Changes</button>
+                <button class="btn" href="{% url 'sections' course_id %}" role="button" style="color: white; background-color: #494b5f">Back To Sections</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
