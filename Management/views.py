@@ -80,7 +80,6 @@ class courses(View):
         context = {'courses': course, 'roleTemplate': userRole}
         return render(request, "main/Course/courses.html", context)
 
-
 class courseAdd(View):
 
     def get(self, request):
@@ -92,18 +91,9 @@ class courseAdd(View):
         form = CourseForm(request.POST)
         if form.is_valid():
 
-            # all of this assigning could be a method
-            courseID = form.cleaned_data['courseID']
-            courseName = form.cleaned_data['courseName']
-            courseDescription = form.cleaned_data['courseDescription']
-            courseDepartment = form.cleaned_data['courseDepartment']
+            # returns the rendered form and displays on template
 
-            # Create a new Course object with the extracted data
-            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
-                            courseDepartment=courseDepartment)
-
-            # Save the new course to the database
-            course.save()
+            Course.formAdd(self, form)
 
             return render(request, 'main/Course/courseAdd.html',
                           {'form': form, 'message': "Course Successfully added!"})
@@ -117,7 +107,7 @@ class courseEdit(View):
     def get(self, request, course_id):
 
         # could be a get call
-        course = get_object_or_404(Course, pk=course_id)
+        course = Course.getCourse(self,course_id)
 
         # could be a Course From method??
         form = CourseEditForm(instance=course)
@@ -127,12 +117,12 @@ class courseEdit(View):
     def post(self, request, course_id):
 
         # get method
-        course = get_object_or_404(Course, pk=course_id)
+        course = Course.getCourse(self,course_id)
         form = CourseEditForm(request.POST, instance=course)
         if form.is_valid():
 
             # save method
-            form.save()
+            Course.formSave(self, form)
             return render(request, 'main/Course/courseEdit.html',
                           {'form': form, 'message': "Course was successfully edited!"})
         else:
@@ -158,9 +148,9 @@ class usersInCourse(View):
         userList = []
 
         # Get method
-        course = Course.objects.get(courseID=course_id)
+        course = Course.getCourse(self, course_id)
         # get method
-        usersToCourses = UsersToCourse.objects.filter(courseID=course_id)
+        usersToCourses = UsersToCourse.getUserToCourse(self, course_id)
         userRole = request.session['roleSession']
 
         for y in usersToCourses:
@@ -186,8 +176,7 @@ class userToCourseAdd(View):
                 email = form.cleaned_data['assignment']
 
                 # add method
-                userTo = UsersToCourse(courseID=course_id, assignment=email)
-                userTo.save()
+                userTo = UsersToCourse.addUserToCourse(self, email, course_id)
 
                 return redirect('usersInCourse', course_id=course_id)
             except Exception as e:
@@ -221,9 +210,9 @@ class sections(View):
     def get(self, request, course_id):
 
         # get method
-        course = Course.objects.get(pk=course_id)
+        course = Course.getCourse(self, course_id)
         # get method
-        sectionList = Section.objects.filter(courseID=course)
+        sectionList = Section.getSectionsFromCourse(self, course_id)
         context = {'course': course, 'sections': sectionList}
         return render(request, 'main/Section/sections.html', context)
 
@@ -238,18 +227,7 @@ class sectionAdd(View):
         if form.is_valid():
 
             # add method
-            courseID = course_id
-            location = form.cleaned_data['location']
-            startTime = form.cleaned_data['startTime']
-            endTime = form.cleaned_data['endTime']
-            capacity = form.cleaned_data['capacity']
-            TA = form.cleaned_data['TA']
-            sectionID = form.cleaned_data['sectionID']
-
-            # Create a new Section object with the extracted data
-            section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
-                              courseID=courseID, endTime=endTime)
-            section.save()
+            Section.formAdd(self, form, course_id)
 
             return redirect('sections', course_id=course_id)
         else:
@@ -260,7 +238,7 @@ class sectionAdd(View):
 
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
-        section = get_object_or_404(Section, pk=section_id)
+        section = Section.getSection(self, section_id)
         form = SectionForm(instance=section)
         context = {'section': section, 'form': form}
         return render(request, "main/Section/sectionEdit.html", context)
@@ -268,7 +246,7 @@ class sectionEdit(View):
     def post(self, request, section_id, course_id):
 
         # could be a get method
-        section = get_object_or_404(Section, pk=section_id)
+        section = Section.getSection(self,section_id)
         form = SectionForm(request.POST, instance=section)
         if form.is_valid():
 
@@ -285,7 +263,7 @@ class sectionDelete(View):
     def get(self, request, course_id, section_id):
         # could be a get and a delete method
 
-        Section.objects.filter(sectionID=section_id).delete()
+        Section.deleteSection(self, course_id)
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
 
@@ -297,22 +275,11 @@ class userAdd(View):
 
     def post(self, request):
         form = UserForm(request.POST)
-        if User.formAdd(form):
+        if form.is_valid():
 
             # could be set methods
 
-            # email = form.cleaned_data['email']
-            # fname = form.cleaned_data['fName']
-            # lname = form.cleaned_data['lName']
-            # password = form.cleaned_data['password']
-            # phone = form.cleaned_data['phone']
-            # role = form.cleaned_data['role']
-            #
-            # # Create a new User object with the extracted data
-            # user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
-            # user.save()
-
-            # User.formAdd(form)
+            User.formAdd(self, form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
@@ -329,7 +296,7 @@ class userEdit(View):
     def get(self, request, email_id):
 
         # could be a get method
-        user = get_object_or_404(User, pk=email_id)
+        user = User.getUser(self, email_id)
         form = UserForm(instance=user)
         context = {'user': user, 'form': form}
         return render(request, "main/User/userEdit.html", context)
@@ -337,7 +304,7 @@ class userEdit(View):
     def post(self, request, email_id):
 
         # could be a get method
-        user = get_object_or_404(User, pk=email_id)
+        user = User.getUser(self, email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
@@ -372,7 +339,7 @@ class users(ListView):
 class userDelete(View):
     def get(self, request, email_id):
         # could be a delete method
-        User.objects.filter(email=email_id).delete()
+        User.deleteUser(self, email_id)
         # Redirect to a success page or back to the list of courses
         # userRole = request.session['roleSession']
         user = Course.objects.all()
