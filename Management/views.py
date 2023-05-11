@@ -134,9 +134,9 @@ class courseEdit(View):
             # save method
             form.save()
             return render(request, 'main/Course/courseEdit.html',
-                          {'form': form, 'message': "Course was successfully edited!"})
+                          {'form': form, 'message': "Course was successfully edited!", 'success': 1})
         else:
-            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
+            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID.", 'success': 0}
             return render(request, "main/Course/courseEdit.html", context)
 
 
