@@ -222,9 +222,10 @@ class sections(View):
 
         # get method
         course = Course.objects.get(pk=course_id)
+        userRole = request.session['roleSession']
         # get method
         sectionList = Section.objects.filter(courseID=course)
-        context = {'course': course, 'sections': sectionList}
+        context = {'course': course, 'sections': sectionList, 'roleTemplate': userRole}
         return render(request, 'main/Section/sections.html', context)
 
 
