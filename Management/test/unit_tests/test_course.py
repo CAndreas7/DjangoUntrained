@@ -12,6 +12,9 @@ class TestCourse(TestCase):
         self.courseCS250 = Course(1, "CS250", "Some elementary comp sci class", "CS")
         self.courseCS350 = Course(2, "CS350", "Some mediumentary comp sci class", "CS")
         self.courseNotCS = Course(3, "Chemistry 100", "Yuck, some natural science class", "Chemistry")
+        self.courseCS250.save()
+        self.courseCS350.save()
+        self.courseNotCS.save()
 
     def test_getName(self):
         name = self.courseCS250.getName()
@@ -96,3 +99,5 @@ class TestCourse(TestCase):
     #     self.assertEqual(None, self.courseCS350.Section[0],
     #                      msg="Added section is not removed from the section array in "
     #                          "courses")
+
+

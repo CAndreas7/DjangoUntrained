@@ -1,6 +1,8 @@
 import unittest
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
+
+from Management.forms import UserForm
 from Management.models import *
 
 
@@ -96,12 +98,12 @@ class testAccount(TestCase):
         self.supervisor.save()
 
     def test_addAccount1(self):
-        self.supervisor.addAccount("email@uwm.edu", "User", "New", "pass", "333-499-2791", 3)
+        User.addAccount("email@uwm.edu", "User", "New", "pass", "333-499-2791", 3)
         self.assertEqual(User.objects.filter(email="email@uwm.edu").count(), 1,
                          msg="No user exists with the given email")
 
     def test_addAccount2(self):
-        self.supervisor.addAccount("testemail@uwm.edu", "Aid", "Teaching", "testpassword", "433-291-1173", 1)
+        User.addAccount("testemail@uwm.edu", "Aid", "Teaching", "testpassword", "433-291-1173", 1)
         self.assertEqual(User.objects.filter(email="testemail@uwm.edu").count(), 1,
                          msg="this account already exists and should not have bee")
 
@@ -465,4 +467,40 @@ class editSection(TestCase):
             self.supervisor.editSection(self.section.sectionID, self.section.location, self.section.startTime,
                                         self.section.endTime,
                                         self.section.capacity, self.section.TA, "1")
+
+    # def test_getAllCourses(self):
+    #     all_courses = User.getAllCourses()
+    #     self.assertEqual(all_courses, Course.objects.all(), msg="All courses should have been returned, but were not")
+
+
+class testAddUserFromForm(TestCase):
+    # class UserForm(forms.ModelForm):
+    #     class Meta:
+    #         model = User
+    #         fields = ['email', 'lName', 'fName', 'password', 'phone', 'role']
+    def setUp(self):
+        self.form = UserForm({'email': "user@uwm.edu", 'lName': 'Boyland', 'fName': 'John', 'password': 'secret',
+                              'phone': '299-341-7843', 'role': 2})
+        self.badForm = UserForm({'email': "bozo", 'lName': 'Guy', 'fName': 'Random', 'password': 'nftethusiaust',
+                              'phone': '999-867-5309', 'role': 3})
+        self.user = User("testemail@uwm.edu", "test", "experiment", "testpassword", "", 1)
+        self.user.save()
+        # self.course = Course(courseID=251, courseName="Intermediate Computer Programming",
+        #                      courseDescription="A more advanced class that covers "
+        #                                        "programming topics in greater "
+        #                                        "depth", courseDepartment="CS")
+        # self.course.save()
+        # self.section = Section(sectionID=800, location="EMS100", startTime="05:00PM", endTime="07:00PM", capacity=30,
+        #                        TA=self.user, courseID=self.course)
+        # self.section.save()
+        self.supervisor = User("testemail@uwm.edu", "visor", "super", "testpassword", "", 1)
+        self.supervisor.save()
+
+    def test_userFromForm(self):
+        # User.formAdd(self.form)
+        self.assertEqual(User.formAdd(self.form), True, msg="User was not added from a form")
+
+    def test_userFromFormBad(self):
+        self.assertEqual(User.formAdd(self.badForm), False, msg="User is invalid, wasn't listed as such")
+
 

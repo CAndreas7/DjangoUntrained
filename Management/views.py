@@ -297,20 +297,22 @@ class userAdd(View):
 
     def post(self, request):
         form = UserForm(request.POST)
-        if form.is_valid():
+        if User.formAdd(form):
 
             # could be set methods
 
-            email = form.cleaned_data['email']
-            fname = form.cleaned_data['fName']
-            lname = form.cleaned_data['lName']
-            password = form.cleaned_data['password']
-            phone = form.cleaned_data['phone']
-            role = form.cleaned_data['role']
+            # email = form.cleaned_data['email']
+            # fname = form.cleaned_data['fName']
+            # lname = form.cleaned_data['lName']
+            # password = form.cleaned_data['password']
+            # phone = form.cleaned_data['phone']
+            # role = form.cleaned_data['role']
+            #
+            # # Create a new User object with the extracted data
+            # user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
+            # user.save()
 
-            # Create a new User object with the extracted data
-            user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
-            user.save()
+            # User.formAdd(form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})

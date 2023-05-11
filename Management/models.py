@@ -42,7 +42,7 @@ class User(models.Model):
             (3, "TA")
         ))
 
-    def addAccount(self, email, lname, fname, password, phone, role):
+    def addAccount(email, lname, fname, password, phone, role):
         if User.objects.filter(email=email).count() == 0:
             if email is None or password is None or phone is None or role is None:
                 raise ValidationError("Email cannot be None")
@@ -281,6 +281,25 @@ class User(models.Model):
         #     item.courseID_id = courseID
         #     item.save()
 
+    def formAdd(form):
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            lname = form.cleaned_data['lName']
+            fname = form.cleaned_data['fName']
+            password = form.cleaned_data['password']
+            phone = form.cleaned_data['phone']
+            role = form.cleaned_data['role']
+
+            # Create a new User object with the extracted data
+            User.addAccount(email, lname, fname, password, phone, role)
+            # user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
+            # user.save()
+
+            return True
+        else:
+            return False
+
+
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
@@ -340,6 +359,7 @@ class Course(models.Model):
         self.courseDepartment = department
 
     # def addSection(self):
+
 
 
 # This is the Section table, to reference a LAB section for a course.
