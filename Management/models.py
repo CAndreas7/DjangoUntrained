@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import EmailValidator
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 
 # Create your models here.
@@ -283,7 +284,21 @@ class User(models.Model):
 
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
+    def formAdd(self, form):
+        email = form.cleaned_data['email']
+        fname = form.cleaned_data['fName']
+        lname = form.cleaned_data['lName']
+        password = form.cleaned_data['password']
+        phone = form.cleaned_data['phone']
+        role = form.cleaned_data['role']
 
+        # Create a new User object with the extracted data
+        user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
+        user.save()
+    def getUser(self, email):
+        return get_object_or_404(User, pk=email)
+    def deleteUser(self, email):
+        User.objects.filter(email=email_id).delete()
 
 # This is the Course table, which stores information about a Course at a university
 # The only necessary field is: courseID
@@ -338,6 +353,24 @@ class Course(models.Model):
         if department.__len__() == 0:
             raise ValidationError("Department entry cannot be empty")
         self.courseDepartment = department
+    def formAdd(self, form):
+        courseID = form.cleaned_data['courseID']
+        courseName = form.cleaned_data['courseName']
+        courseDescription = form.cleaned_data['courseDescription']
+        courseDepartment = form.cleaned_data['courseDepartment']
+
+        # Create a new Course object with the extracted data
+        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
+                        courseDepartment=courseDepartment)
+
+        # Save the new course to the database
+        course.save()
+    def formSave(self, form):
+        form.save()
+    def getCourse(self, courseID):
+        return get_object_or_404(Course, pk=courseID)
+
+
 
     # def addSection(self):
 
@@ -407,7 +440,8 @@ class Section(models.Model):
 
     def getCourseName(self):
         return Course.objects.get(courseID=self.courseID).getName()
-
+    def getSectionsFromCourse(self, courseID):
+        return Section.objects.filter(courseID=courseID)
     # def setID(self, new_id):
     #     # Update the section ID
     #     self.sectionID = new_id
@@ -415,6 +449,24 @@ class Section(models.Model):
 
     # def add(self):
     #     self.save()
+    def formAdd(self, form, courseID):
+
+        location = form.cleaned_data['location']
+        startTime = form.cleaned_data['startTime']
+        endTime = form.cleaned_data['endTime']
+        capacity = form.cleaned_data['capacity']
+        TA = form.cleaned_data['TA']
+        sectionID = form.cleaned_data['sectionID']
+
+        # Create a new Section object with the extracted data
+        section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
+                          courseID=Course.objects.get(pk=courseID), endTime=endTime)
+        section.save()
+
+    def getSection(self, sectionID):
+        return get_object_or_404(Section, pk=sectionID)
+    def deleteSection(self, sectionID):
+        Section.objects.filter(sectionID=section_id).delete()
 
 
 class UsersToCourse(models.Model):
@@ -430,3 +482,8 @@ class UsersToCourse(models.Model):
     def removeUser(self):
         UserTo = UsersToCourse.objects.get(courseID=self.courseID, assignment=self.assignment)
         UserTo.delete()
+    def getUserToCourse(self, courseID):
+        return UsersToCourse.objects.filter(courseID=courseID)
+    def addUserToCourse(self, email, courseID):
+        userTo = UsersToCourse(courseID=courseID, assignment=email)
+        userTo.save()
