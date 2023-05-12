@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import ListView
 
 from .models import User, Section, Course, UsersToCourse
-from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm
+from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm, SectionEditForm
 
 
 # Create your views here.
@@ -74,11 +74,10 @@ class MainHome(View):
 class courses(View):
     def get(self, request):
         userRole = request.session['roleSession']
-
-        # should be a get all method
         course = Course.objects.all()
         context = {'courses': course, 'roleTemplate': userRole}
         return render(request, "main/Course/courses.html", context)
+
 
 class courseAdd(View):
 
@@ -89,11 +88,7 @@ class courseAdd(View):
     def post(self, request):
 
         form = CourseForm(request.POST)
-        if form.is_valid():
-
-            # returns the rendered form and displays on template
-
-            Course.formAdd(self, form)
+        if Course.formAdd(form):
 
             return render(request, 'main/Course/courseAdd.html',
                           {'form': form, 'message': "Course Successfully added!"})
@@ -106,27 +101,21 @@ class courseAdd(View):
 class courseEdit(View):
     def get(self, request, course_id):
 
-        # could be a get call
-        course = Course.getCourse(self,course_id)
+        course = Course.getCourse(course_id)
 
-        # could be a Course From method??
         form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
 
     def post(self, request, course_id):
 
-        # get method
-        course = Course.getCourse(self,course_id)
+        course = Course.getCourse(course_id)
         form = CourseEditForm(request.POST, instance=course)
-        if form.is_valid():
-
-            # save method
-            Course.formSave(self, form)
+        if course.formSave(form):
             return render(request, 'main/Course/courseEdit.html',
                           {'form': form, 'message': "Course was successfully edited!"})
         else:
-            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID."}
+            context = {'course': course, 'form': form}
             return render(request, "main/Course/courseEdit.html", context)
 
 
@@ -148,9 +137,9 @@ class usersInCourse(View):
         userList = []
 
         # Get method
-        course = Course.getCourse(self, course_id)
+        course = Course.getCourse(course_id)
         # get method
-        usersToCourses = UsersToCourse.getUserToCourse(self, course_id)
+        usersToCourses = UsersToCourse.getUserToCourse(course_id)
         userRole = request.session['roleSession']
 
         for y in usersToCourses:
@@ -170,23 +159,12 @@ class userToCourseAdd(View):
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
+        email = form.cleaned_data['assignment']
 
-        if form.is_valid():
-            try:
-                email = form.cleaned_data['assignment']
-
-                # add method
-                userTo = UsersToCourse.addUserToCourse(self, email, course_id)
-
-                return redirect('usersInCourse', course_id=course_id)
-            except Exception as e:
-                print(e)
+        if UsersToCourse.addUserToCourse(email, course_id):
+            return redirect('usersInCourse', course_id=course_id)
         else:
-            print('Form is not valid')
-            print(form.errors)
-            form = UserToFrom()
-
-        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+            return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
 
 class userToCourseDelete(View):
@@ -208,11 +186,10 @@ class userToCourseDelete(View):
 
 class sections(View):
     def get(self, request, course_id):
-
         # get method
-        course = Course.getCourse(self, course_id)
+        course = Course.getCourse(course_id)
         # get method
-        sectionList = Section.getSectionsFromCourse(self, course_id)
+        sectionList = Section.getSectionsFromCourse(course_id)
         context = {'course': course, 'sections': sectionList}
         return render(request, 'main/Section/sections.html', context)
 
@@ -224,35 +201,26 @@ class sectionAdd(View):
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
-        if form.is_valid():
-
-            # add method
-            Section.formAdd(self, form, course_id)
-
+        if Section.formAdd(form, course_id):
             return redirect('sections', course_id=course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
-
         return render(request, 'main/Section/addSection.html', {'form': form})
 
 
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
-        section = Section.getSection(self, section_id)
-        form = SectionForm(instance=section)
-        context = {'section': section, 'form': form}
+        section = Section.getSection(section_id)
+        form = SectionEditForm(instance=section, initial={'courseID': course_id})
+        context = {'section': section, 'form': form, 'course_id': course_id}
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
 
         # could be a get method
-        section = Section.getSection(self,section_id)
-        form = SectionForm(request.POST, instance=section)
-        if form.is_valid():
-
-            # could be a set method
-            form.courseID = course_id
-            form.save()
+        section = Section.getSection(section_id)
+        form = SectionEditForm(request.POST)
+        if section.formAdd(form, course_id):
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
@@ -263,7 +231,7 @@ class sectionDelete(View):
     def get(self, request, course_id, section_id):
         # could be a get and a delete method
 
-        Section.deleteSection(self, course_id)
+        Section.deleteSection(section_id)
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
 
@@ -296,7 +264,7 @@ class userEdit(View):
     def get(self, request, email_id):
 
         # could be a get method
-        user = User.getUser(self, email_id)
+        user = User.getUser(email_id)
         form = UserForm(instance=user)
         context = {'user': user, 'form': form}
         return render(request, "main/User/userEdit.html", context)
@@ -304,7 +272,7 @@ class userEdit(View):
     def post(self, request, email_id):
 
         # could be a get method
-        user = User.getUser(self, email_id)
+        user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
@@ -339,12 +307,12 @@ class users(ListView):
 class userDelete(View):
     def get(self, request, email_id):
         # could be a delete method
-        User.deleteUser(self, email_id)
+        User.deleteUser(email_id)
         # Redirect to a success page or back to the list of courses
-        # userRole = request.session['roleSession']
+        userRole = request.session['roleSession']
         user = Course.objects.all()
-        # context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
-        return render(request, "main/User/users.html")
+        context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
+        return render(request, "main/User/users.html", context)
 
 
 class notificationSend(View):
