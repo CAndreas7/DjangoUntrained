@@ -303,21 +303,32 @@ class User(models.Model):
 
     def removeSection(self, sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
-    def formAdd(self, form):
-        email = form.cleaned_data['email']
-        fname = form.cleaned_data['fName']
-        lname = form.cleaned_data['lName']
-        password = form.cleaned_data['password']
-        phone = form.cleaned_data['phone']
-        role = form.cleaned_data['role']
 
-        # Create a new User object with the extracted data
-        user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
-        user.save()
-    def getUser(self, email):
+    @staticmethod
+    def formAdd(form):
+
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            fname = form.cleaned_data['fName']
+            lname = form.cleaned_data['lName']
+            password = form.cleaned_data['password']
+            phone = form.cleaned_data['phone']
+            role = form.cleaned_data['role']
+
+            # Create a new User object with the extracted data
+            user = User(email=email, fName=fname, lName=lname, password=password, phone=phone, role=role)
+            user.save()
+            return True
+        return False
+
+    @staticmethod
+    def getUser(email):
         return get_object_or_404(User, pk=email)
-    def deleteUser(self, email):
-        User.objects.filter(email=email_id).delete()
+
+    @staticmethod
+    def deleteUser(email):
+        User.objects.filter(email=email).delete()
+
 
 # This is the Course table, which stores information about a Course at a university
 # The only necessary field is: courseID
@@ -372,24 +383,38 @@ class Course(models.Model):
         if department.__len__() == 0:
             raise ValidationError("Department entry cannot be empty")
         self.courseDepartment = department
-    def formAdd(self, form):
-        courseID = form.cleaned_data['courseID']
-        courseName = form.cleaned_data['courseName']
-        courseDescription = form.cleaned_data['courseDescription']
-        courseDepartment = form.cleaned_data['courseDepartment']
 
-        # Create a new Course object with the extracted data
-        course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
-                        courseDepartment=courseDepartment)
+    @staticmethod
+    def formAdd(form):
 
-        # Save the new course to the database
-        course.save()
-    def formSave(self, form):
-        form.save()
-    def getCourse(self, courseID):
+        if form.is_valid():
+            courseID = form.cleaned_data['courseID']
+            courseName = form.cleaned_data['courseName']
+            courseDescription = form.cleaned_data['courseDescription']
+            courseDepartment = form.cleaned_data['courseDepartment']
+
+            # Create a new Course object with the extracted data
+            course = Course(courseID=courseID, courseName=courseName, courseDescription=courseDescription,
+                            courseDepartment=courseDepartment)
+
+            # Save the new course to the database
+            course.save()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def formSave(form):
+
+        if form.is_valid():
+            form.save()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def getCourse(courseID):
         return get_object_or_404(Course, pk=courseID)
-
-
 
     # def addSection(self):
 
@@ -460,8 +485,10 @@ class Section(models.Model):
 
     def getCourseName(self):
         return Course.objects.get(courseID=self.courseID).getName()
-    def getSectionsFromCourse(self, courseID):
+    @staticmethod
+    def getSectionsFromCourse(courseID):
         return Section.objects.filter(courseID=courseID)
+
     # def setID(self, new_id):
     #     # Update the section ID
     #     self.sectionID = new_id
@@ -469,24 +496,31 @@ class Section(models.Model):
 
     # def add(self):
     #     self.save()
-    def formAdd(self, form, courseID):
+    @staticmethod
+    def formAdd(form, courseID):
+        if form.is_valid():
+            location = form.cleaned_data['location']
+            startTime = form.cleaned_data['startTime']
+            endTime = form.cleaned_data['endTime']
+            capacity = form.cleaned_data['capacity']
+            TA = form.cleaned_data['TA']
+            sectionID = form.cleaned_data['sectionID']
 
-        location = form.cleaned_data['location']
-        startTime = form.cleaned_data['startTime']
-        endTime = form.cleaned_data['endTime']
-        capacity = form.cleaned_data['capacity']
-        TA = form.cleaned_data['TA']
-        sectionID = form.cleaned_data['sectionID']
+            # Create a new Section object with the extracted data
+            section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
+                              courseID=Course.objects.get(pk=courseID), endTime=endTime)
+            section.save()
+            return True
+        else:
+            return False, form.errors
 
-        # Create a new Section object with the extracted data
-        section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
-                          courseID=Course.objects.get(pk=courseID), endTime=endTime)
-        section.save()
-
-    def getSection(self, sectionID):
+    @staticmethod
+    def getSection(sectionID):
         return get_object_or_404(Section, pk=sectionID)
-    def deleteSection(self, sectionID):
-        Section.objects.filter(sectionID=section_id).delete()
+
+    @staticmethod
+    def deleteSection(sectionID):
+        Section.objects.filter(sectionID=sectionID).delete()
 
 
 class UsersToCourse(models.Model):
@@ -502,8 +536,12 @@ class UsersToCourse(models.Model):
     def removeUser(self):
         UserTo = UsersToCourse.objects.get(courseID=self.courseID, assignment=self.assignment)
         UserTo.delete()
-    def getUserToCourse(self, courseID):
+
+    @staticmethod
+    def getUserToCourse(courseID):
         return UsersToCourse.objects.filter(courseID=courseID)
-    def addUserToCourse(self, email, courseID):
+
+    @staticmethod
+    def addUserToCourse(email, courseID):
         userTo = UsersToCourse(courseID=courseID, assignment=email)
         userTo.save()
