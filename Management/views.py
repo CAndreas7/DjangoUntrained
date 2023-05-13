@@ -173,7 +173,7 @@ class userToCourseDelete(View):
         user = UsersToCourse.objects.filter(assignment=email_id, courseID=course_id)
         try:
             for x in user:
-                x.removeUser()
+                x.delete()
 
         except:
 

@@ -40,5 +40,8 @@ class UserToFrom(forms.ModelForm):
         fields = ['assignment']
 
     def clean_assignment(self):
-        user = self.cleaned_data['assignment']
-        return user.email
+        if self.is_valid():
+            user = self.cleaned_data['assignment']
+            return user.email
+        else:
+            pass
