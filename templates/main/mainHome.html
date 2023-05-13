@@ -13,9 +13,6 @@
                 {% csrf_token %}
                 <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Courses</a>
                 <a class="btn" href="{% url 'users' %}" role="button" style="color: white; background-color: #494b5f">Account Information</a>
-                {% if roleVariableTemplate == 1 or roleVariableTemplate == 2 %}
-                    <a class="btn" href="{% url 'notificationSend' %}" role="button" style="color: white; background-color: #494b5f">Send Notification</a>
-                {% endif %}
             </div>
         </div>
 
