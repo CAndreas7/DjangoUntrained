@@ -315,8 +315,8 @@ class userDelete(View):
         return render(request, "main/User/users.html", context)
 
 
-class notificationSend(View):
-    # I think down the road we may not need this. For example, when adding a user to course or section,
-    # we can automate an email to be generated and sent, rendering this view(page) obsolete.
-    def get(self, request):
-        return render(request, "main/notificationSend.html", {})
+def userLogout(request):
+    # username = UserLoggedIn(request)
+    # if username is not None:
+    logout(request)
+
