@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
-
+from .email import Email
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm, SectionEditForm
 
@@ -159,9 +159,11 @@ class userToCourseAdd(View):
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
-        email = form.cleaned_data['assignment']
+        email = form.clean_assignment()
+        name = User.objects.get(pk=email).getfName()
 
         if UsersToCourse.addUserToCourse(email, course_id):
+            Email.emailGen(name, email, course_id)
             return redirect('usersInCourse', course_id=course_id)
         else:
             return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
@@ -206,6 +208,7 @@ class sectionAdd(View):
         else:
             form = SectionForm(initial={'courseID': course_id})
         return render(request, 'main/Section/addSection.html', {'form': form})
+
 
 
 class sectionEdit(View):
