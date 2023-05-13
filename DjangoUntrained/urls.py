@@ -29,7 +29,7 @@ urlpatterns = [
     path('sectionDelete/<int:course_id>/<int:section_id>/', sectionDelete.as_view(), name='sectionDelete'),
 
     path('sectionAdd/<int:course_id>/', sectionAdd.as_view(), name='sectionAdd'),
-    path('courseedit/<int:course_id>/', courseEdit.as_view(), name='courseedit'),
+    path('courseEdit/<int:course_id>/', courseEdit.as_view(), name='courseEdit'),
     path('courseAdd/', courseAdd.as_view(), name='courseAdd'),
     path('courseDelete/<int:course_id>/', courseDelete.as_view(), name='courseDelete'),
     path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),

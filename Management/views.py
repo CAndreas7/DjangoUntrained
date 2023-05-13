@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from .email import Email
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm, SectionEditForm
-
+from django.contrib.auth import logout
 
 # Create your views here.
 # Need to create a landing page after login
@@ -176,9 +176,7 @@ class userToCourseDelete(View):
         try:
             for x in user:
                 x.delete()
-
         except:
-
             not isinstance(user, UsersToCourse)
 
         # Redirect to a success page or back to the list of courses

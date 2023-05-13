@@ -33,15 +33,15 @@ class UserForm(forms.ModelForm):
 
 
 class UserToFrom(forms.ModelForm):
-    assignment = forms.ModelChoiceField(queryset=User.objects.all())
+    Assignment = forms.ModelChoiceField(queryset=User.objects.all())
 
     class Meta:
         model = UsersToCourse
-        fields = ['assignment']
+        fields = ['Assignment']
 
     def clean_assignment(self):
         if self.is_valid():
-            user = self.cleaned_data['assignment']
+            user = self.cleaned_data['Assignment']
             return user.email
         else:
             pass
