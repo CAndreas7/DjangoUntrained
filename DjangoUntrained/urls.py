@@ -43,6 +43,6 @@ urlpatterns = [
     path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),
     path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
 
-    path('', userLogout, name='logout')
+    path('userLogout/', userLogout, name='logout')
 
 ]

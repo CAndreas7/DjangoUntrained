@@ -317,7 +317,6 @@ class userDelete(View):
 
 
 def userLogout(request):
-    # username = UserLoggedIn(request)
-    # if username is not None:
     logout(request)
+    return redirect('login')
 
