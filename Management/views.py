@@ -253,7 +253,7 @@ class userAdd(View):
 
             # could be set methods
 
-            User.formAdd(self, form)
+            User.formAdd(form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})

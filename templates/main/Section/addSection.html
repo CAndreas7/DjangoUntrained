@@ -56,11 +56,11 @@
                         <label class="form-label text-white">TA</label>
                     </div>
                     <div class="col">
-                        <input class="form-control" name="TA">
+{#                        <input class="form-control" name="TA">#}
                         <select name="TA">
                             {% for u in people %}
                                 {% if u.role == 3 %}
-                                    <option value="u">{{ u.getFullName }}</option>
+                                    <option value="{{ u }}">{{ u.getFullName }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
