@@ -88,6 +88,15 @@ DATABASES = {
     }
 }
 
+#backend email sending information
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '482'
+EMAIL_HOST_USER = 'djangountrained361@gmail.com'
+EMAIL_HOST_PASSWORD = 'zkluwvgdthegymgf'
+
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -123,15 +132,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
+
+#Add this in your settings.py file:
 STATICFILES_DIRS = [
-    BASE_DIR / "static", 'static/css'
+    BASE_DIR / "static"
 ]
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "mainHome"
+LOGOUT_REDIRECT_URL = "login"

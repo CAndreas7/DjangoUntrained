@@ -5,7 +5,13 @@ from .models import *
 class SectionForm(forms.ModelForm):
     class Meta:
         model = Section
-        fields = ['location', 'startTime', 'endTime', 'capacity', 'TA', 'sectionID']
+        fields = ['sectionID', 'location', 'startTime', 'endTime', 'capacity', 'TA']
+
+
+class SectionEditForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = ['location', 'startTime', 'endTime', 'capacity', 'TA']
 
 
 class CourseForm(forms.ModelForm):
@@ -27,12 +33,15 @@ class UserForm(forms.ModelForm):
 
 
 class UserToFrom(forms.ModelForm):
-    assignment = forms.ModelChoiceField(queryset=User.objects.all())
+    Assignment = forms.ModelChoiceField(queryset=User.objects.all())
 
     class Meta:
         model = UsersToCourse
-        fields = ['assignment']
+        fields = ['Assignment']
 
     def clean_assignment(self):
-        user = self.cleaned_data['assignment']
-        return user.email
+        if self.is_valid():
+            user = self.cleaned_data['Assignment']
+            return user.email
+        else:
+            pass
