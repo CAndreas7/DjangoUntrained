@@ -19,8 +19,9 @@ from django.urls import path
 from Management.views import *
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
-    path('', Home.as_view()),
+    path('', Home.as_view(), name='login'),
     path('main/', MainHome.as_view(), name='mainHome'),
 
     path('courses/', courses.as_view(), name='courses'),
@@ -42,5 +43,6 @@ urlpatterns = [
     path('userToCourseAdd/<int:course_id>/', userToCourseAdd.as_view(), name='userToCourseAdd'),
     path('userToCourseDelete/<str:email_id>/<int:course_id>', userToCourseDelete.as_view(), name='userToCourseDelete'),
 
-    path('notificationSend/', notificationSend.as_view(), name='notificationSend'),
+    path('userLogout/', userLogout, name='logout')
+
 ]

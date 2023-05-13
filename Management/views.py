@@ -3,10 +3,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
-
+from .email import Email
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm, SectionEditForm
-
+from django.contrib.auth import logout
 
 # Create your views here.
 # Need to create a landing page after login
@@ -159,9 +159,11 @@ class userToCourseAdd(View):
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
-        email = form.cleaned_data['assignment']
+        email = form.clean_assignment()
+        name = User.objects.get(pk=email).getfName()
 
         if UsersToCourse.addUserToCourse(email, course_id):
+            Email.emailGen(name, email, course_id)
             return redirect('usersInCourse', course_id=course_id)
         else:
             return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
@@ -173,10 +175,8 @@ class userToCourseDelete(View):
         user = UsersToCourse.objects.filter(assignment=email_id, courseID=course_id)
         try:
             for x in user:
-                x.removeUser()
-
+                x.delete()
         except:
-
             not isinstance(user, UsersToCourse)
 
         # Redirect to a success page or back to the list of courses
@@ -206,6 +206,7 @@ class sectionAdd(View):
         else:
             form = SectionForm(initial={'courseID': course_id})
         return render(request, 'main/Section/addSection.html', {'form': form})
+
 
 
 class sectionEdit(View):
@@ -315,8 +316,7 @@ class userDelete(View):
         return render(request, "main/User/users.html", context)
 
 
-class notificationSend(View):
-    # I think down the road we may not need this. For example, when adding a user to course or section,
-    # we can automate an email to be generated and sent, rendering this view(page) obsolete.
-    def get(self, request):
-        return render(request, "main/notificationSend.html", {})
+def userLogout(request):
+    logout(request)
+    return redirect('login')
+

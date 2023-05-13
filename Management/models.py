@@ -525,3 +525,4 @@ class UsersToCourse(models.Model):
     def addUserToCourse(email, courseID):
         userTo = UsersToCourse(courseID=courseID, assignment=email)
         userTo.save()
+        return True
