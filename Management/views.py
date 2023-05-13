@@ -235,7 +235,7 @@ class sectionAdd(View):
         else:
             form = SectionForm(initial={'courseID': course_id})
 
-        return render(request, 'main/Section/addSection.html', {'form': form})
+        return render(request, 'main/Section/addSection.html', {'form': form}, {'course_id': course_id})
 
 
 class sectionEdit(View):

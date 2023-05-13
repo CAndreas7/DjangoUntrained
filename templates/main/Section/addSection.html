@@ -31,7 +31,7 @@
                         <label class="form-label text-white">Start Time</label>
                     </div>
                     <div class="col">
-                        <input type="time" class="form-control" name="startTime">
+                        <input type="text" class="form-control" name="startTime">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -39,7 +39,7 @@
                         <label class="form-label text-white">End Time</label>
                     </div>
                     <div class="col">
-                        <input type="time" class="form-control" name="endTime">
+                        <input type="text" class="form-control" name="endTime">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -56,11 +56,11 @@
                         <label class="form-label text-white">TA</label>
                     </div>
                     <div class="col">
-{#                        <input class="form-control" name="TA">#}
+                        <input class="form-control" name="TA">
                         <select name="TA">
                             {% for u in people %}
                                 {% if u.role == 3 %}
-                                    <option value=u>{{ u.getFullName }}</option>
+                                    <option value="u">{{ u.getFullName }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -75,8 +75,9 @@
                     </div>
                 </div>
                 <br>
-                <button class="btn" type="submit" style="color: white; background-color: #494b5f">Save Changes</button>
+                <a class="btn" type="submit" style="color: white; background-color: #494b5f">Save Changes</a>
                 <button class="btn" href="{% url 'sections' course_id %}" role="button" style="color: white; background-color: #494b5f">Back To Sections</button>
+                <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
             </form>
         </div>
     </div>
