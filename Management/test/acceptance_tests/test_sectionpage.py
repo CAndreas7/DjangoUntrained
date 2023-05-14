@@ -30,7 +30,7 @@ class Test_SectionPage(TestCase):
         response = self.client.get(self.sectionDeleteURL)
 
         self.assertEqual(Section.objects.filter(sectionID=2).count(), 0, "Section was not properly deleted")
-        self.assertRedirects(response, 'main/Section/sections.html')
+        self.assertRedirects(response, '/sections/2/')
 
     def test_goToAddSection(self):
         response = self.client.get(self.sectionAddURL)

@@ -24,10 +24,26 @@ class Test_CoursesPage(TestCase):
         #for some reason, this page doesn't exist?
         self.course1UserURL = reverse('usersInCourse', kwargs={'course_id': self.course1.courseID})
 
+    def test_display(self):
+        response = self.client.get(self.coursesURL)
+        """ ROLE SEESSION ERROR YAY!
+        
+        session = self.client.session
+        session['roleSession'] = 1
+        session.save()
+        """
+        #Kevin helped display courses
+        queryset_courses = response.context['courses']
+        list = []
+        for x in queryset_courses:
+            list.append(x)
+        self.assertEqual(list[0].courseID, 1, "Course 1 is not being displayed")
+        self.assertEqual(list[1].courseID, 2, "Course 2 is not being displayed")
+
     def test_RemoveCourse1(self):
         response = self.client.get(self.course1DeleteURL)
 
-        self.assertTemplateUsed(response, 'main/Course/courses.html')
+        self.assertEqual(response.url, '/courses/')
         self.assertEqual(Course.objects.filter(courseID=1).count(), 0, "course1 was not deleted from the database")
 
 
