@@ -32,6 +32,14 @@ table, th, td {
 
 <a href="{% url 'sectionAdd' course.courseID %}">Add Section</a>
 
+<div class="CourseDeleted">
+{% if message != "" %}
+    <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+        <strong>Successful! </strong>{{ message }}
+    </div>
+{% endif %}
+</div>
+
  <br> <br> <button type="button"><a href="{% url 'courses' %}">Courses Page</a></button>
-<br> <br><button type="button"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
 {% endblock content %}

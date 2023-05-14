@@ -9,6 +9,11 @@
     <button type="submit">Add User</button>
   </form>
 
-<br> <br> </br><button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
-
+<div class="CourseDeleted">
+{% if message == "That user is already assigned to this course." %}
+<div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+    <strong>Error! </strong>{{ message }}
+</div>
+{% endif %}
+</div>
 {% endblock content %}

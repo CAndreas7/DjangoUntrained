@@ -9,6 +9,12 @@
     {{ form.as_p }}
     <button type="submit">Add Section</button>
   </form>
+    <div class="CourseDeleted">
+    {% if message == "Something went wrong." %}
+    <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+        <strong>Error! </strong>{{ message }}
+    </div>
+    {% endif %}
+    </div>
 {% endblock %}
 
-<br> <br> <button type="home"><a href="{% url 'mainHome' %}">Home</a></button>
