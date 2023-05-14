@@ -321,12 +321,6 @@ class Course(models.Model):
     courseDescription = models.CharField(max_length=140)
     courseDepartment = models.CharField(max_length=16)
 
-    # def __init__(self, cID, name, descr, dep):
-    #     self.courseID = cID
-    #     self.courseName = name
-    #     self.courseDescription = descr
-    #     self.courseDepartment = dep
-
     def getName(self):
         return self.courseName
 
@@ -384,8 +378,7 @@ class Course(models.Model):
         else:
             return False
 
-    @staticmethod
-    def formSave(form):
+    def formSave(self, form):
 
         if form.is_valid():
             form.save()
@@ -396,6 +389,14 @@ class Course(models.Model):
     @staticmethod
     def getCourse(courseID):
         return get_object_or_404(Course, pk=courseID)
+
+    def removeCourse(self):
+        ThisCourse = Course.objects.get(courseID=self.courseID)
+        ThisCourse.delete()
+
+    @staticmethod
+    def getAll():
+        return Course.objects.all()
 
     # def addSection(self):
 
@@ -418,11 +419,7 @@ class Section(models.Model):
     # the section shouldn't exist anymore, so we delete this section
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
 
-    # this is a junction table, showing a user assigned to a course
-    # A user can be assigned multiple courses, and a course can have multiple users assigned
-    # this should have an intrinsic, auto incrementing ID field in Django
-    # When a course is deleted, the assignment doesn't exist anymore
-    # When a user is deleted, the assignment doesn't exist anymore
+
     def getID(self):
         # Return the section ID
         return self.sectionID
@@ -494,6 +491,18 @@ class Section(models.Model):
         else:
             return False, form.errors
 
+    def formSave(self, form):
+        if form.is_valid():
+            self.setLocation(form.cleaned_data['location'])
+            self.setStart(form.cleaned_data['startTime'])
+            self.setEnd(form.cleaned_data['endTime'])
+            self.setCapacity(form.cleaned_data['capacity'])
+            self.setTA(form.cleaned_data['TA'])
+            self.save()
+            return True
+        else:
+            return False, form.errors
+
     @staticmethod
     def getSection(sectionID):
         return get_object_or_404(Section, pk=sectionID)
@@ -502,7 +511,11 @@ class Section(models.Model):
     def deleteSection(sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
 
-
+# this is a junction table, showing a user assigned to a course
+# A user can be assigned multiple courses, and a course can have multiple users assigned
+# this should have an intrinsic, auto incrementing ID field in Django
+# When a course is deleted, the assignment doesn't exist anymore
+# When a user is deleted, the assignment doesn't exist anymore
 class UsersToCourse(models.Model):
     assignment = models.CharField(max_length=20)
     courseID = models.IntegerField()
@@ -525,4 +538,4 @@ class UsersToCourse(models.Model):
     def addUserToCourse(email, courseID):
         userTo = UsersToCourse(courseID=courseID, assignment=email)
         userTo.save()
-        return True
+        return userTo

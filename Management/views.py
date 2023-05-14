@@ -7,11 +7,16 @@ from .email import Email
 from .models import User, Section, Course, UsersToCourse
 from .forms import SectionForm, CourseForm, UserForm, UserToFrom, CourseEditForm, SectionEditForm
 from django.contrib.auth import logout
+from importlib import import_module
+from django.conf import settings
 
 # Create your views here.
 # Need to create a landing page after login
 # replace temp paths with proper url
 
+def getSession():
+    SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+    return SessionStore()
 
 class Home(View):
 
@@ -51,6 +56,7 @@ class Home(View):
                               "person": user
                           })
         else:
+            request.session["message"] = ""
             request.session["email"] = m.email
             return redirect("/main/")
 
@@ -59,7 +65,6 @@ class MainHome(View):
 
     def get(self, request):
         userEmail = request.session["email"]
-
         try:
             thisUser = User.objects.get(pk=userEmail)
         except ValueError:
@@ -73,9 +78,15 @@ class MainHome(View):
 
 class courses(View):
     def get(self, request):
+
+        if 'messageC' not in request.session:
+            request.session['messageC'] = ""
+        msg = request.session['messageC']
+        request.session['messageC'] = ''
+
         userRole = request.session['roleSession']
         course = Course.objects.all()
-        context = {'courses': course, 'roleTemplate': userRole}
+        context = {'courses': course, 'roleTemplate': userRole, 'message': msg}
         return render(request, "main/Course/courses.html", context)
 
 
@@ -89,20 +100,18 @@ class courseAdd(View):
 
         form = CourseForm(request.POST)
         if Course.formAdd(form):
-
-            return render(request, 'main/Course/courseAdd.html',
-                          {'form': form, 'message': "Course Successfully added!"})
+            request.session['messageC'] = "Course Successfully Added!"
+            return redirect('courses')
         else:
             form = CourseForm()
-
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html',
+                      {'form': form, 'message': "Course ID Already Exists."})
 
 
 class courseEdit(View):
     def get(self, request, course_id):
 
         course = Course.getCourse(course_id)
-
         form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
         return render(request, "main/Course/courseEdit.html", context)
@@ -112,28 +121,29 @@ class courseEdit(View):
         course = Course.getCourse(course_id)
         form = CourseEditForm(request.POST, instance=course)
         if course.formSave(form):
-            return render(request, 'main/Course/courseEdit.html',
-                          {'form': form, 'message': "Course was successfully edited!"})
+            request.session['messageC'] = "Course Successfully Edited!"
+            return redirect('courses')
         else:
-            context = {'course': course, 'form': form}
+            context = {'course': course, 'form': form, "message": "Something went wrong."}
             return render(request, "main/Course/courseEdit.html", context)
 
 
 class courseDelete(View):
 
     def get(self, request, course_id):
-        Course.objects.filter(courseID=course_id).delete()
-        # Redirect to a success page or back to the list of courses
-        userRole = request.session['roleSession']
-
-        # get all method
-        course = Course.objects.all()
-        context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
-        return render(request, "main/Course/courses.html", context)
+        thisCourse = Course.objects.get(courseID=course_id)
+        thisCourse.removeCourse()
+        request.session['messageC'] = "Course Successfully Deleted!"
+        return redirect('courses')
 
 
 class usersInCourse(View):
     def get(self, request, course_id):
+
+        if 'messageUTC' not in request.session:
+            request.session['messageUTC'] = ""
+        msg = request.session['messageUTC']
+        request.session['messageUTC'] = ""
         userList = []
 
         # Get method
@@ -146,8 +156,7 @@ class usersInCourse(View):
             userList.append(y.getUser())
 
         sortedUsers = sorted(userList, key=lambda user: (user.role, user.lName))
-        # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
-        context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
+        context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole, 'message': msg}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
@@ -160,37 +169,43 @@ class userToCourseAdd(View):
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
         email = form.clean_assignment()
-        name = User.objects.get(pk=email).getfName()
+        utcCheck = UsersToCourse.objects.filter(assignment=email, courseID=course_id)
 
-        if UsersToCourse.addUserToCourse(email, course_id):
+        # Ensure user is not yet assigned to course
+        if utcCheck.count() == 0 or utcCheck is None:
+            UsersToCourse.addUserToCourse(email, course_id)
+            # Send email notification
+            name = User.objects.get(pk=email).getfName()
             Email.emailGen(name, email, course_id)
+            request.session['messageUTC'] = "User Added to Course and Email Sent To User."
             return redirect('usersInCourse', course_id=course_id)
         else:
-            return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+            msg = "That user is already assigned to this course."
+            return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id, 'message': msg})
 
 
 class userToCourseDelete(View):
 
     def get(self, request, email_id, course_id):
-        user = UsersToCourse.objects.filter(assignment=email_id, courseID=course_id)
-        try:
-            for x in user:
-                x.delete()
-        except:
-            not isinstance(user, UsersToCourse)
-
-        # Redirect to a success page or back to the list of courses
-
+        user = UsersToCourse.objects.get(assignment=email_id, courseID=course_id)
+        user.removeUser()
+        request.session['messageUTC'] = "User Removed."
         return redirect("usersInCourse", course_id=course_id)
 
 
 class sections(View):
     def get(self, request, course_id):
+
+        if 'messageS' not in request.session:
+            request.session['messageS'] = ""
+        msg = request.session['messageS']
+        request.session['messageS'] = ''
+
         # get method
         course = Course.getCourse(course_id)
         # get method
         sectionList = Section.getSectionsFromCourse(course_id)
-        context = {'course': course, 'sections': sectionList}
+        context = {'course': course, 'sections': sectionList, 'message': msg}
         return render(request, 'main/Section/sections.html', context)
 
 
@@ -202,11 +217,12 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if Section.formAdd(form, course_id):
+            #This does not account for sections already existing within course
+            request.session['messageS'] = "Section Added."
             return redirect('sections', course_id=course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form})
-
+        return render(request, 'main/Section/addSection.html', {'form': form, "message": "Something went wrong."})
 
 
 class sectionEdit(View):
@@ -221,19 +237,19 @@ class sectionEdit(View):
         # could be a get method
         section = Section.getSection(section_id)
         form = SectionEditForm(request.POST)
-        if section.formAdd(form, course_id):
+        if section.formSave(form):
+            request.session['messageS'] = "Section Edited."
             return redirect('sections', course_id=course_id)
         else:
-            context = {'section': section, 'form': form}
+            context = {'section': section, 'form': form, "message": "Something went wrong."}
             return render(request, "main/Section/sectionEdit.html", context)
 
 
 class sectionDelete(View):
     def get(self, request, course_id, section_id):
-        # could be a get and a delete method
 
         Section.deleteSection(section_id)
-        # Redirect to a success page or back to the list of sections
+        request.session['messageS'] = "Section Deleted."
         return redirect('sections', course_id=course_id)
 
 
@@ -248,7 +264,7 @@ class userAdd(View):
 
             # could be set methods
 
-            User.formAdd(self, form)
+            User.formAdd(form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
@@ -277,9 +293,10 @@ class userEdit(View):
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            request.session['messageU'] = "User Edited."
             return redirect('users')
         else:
-            context = {'user': user, 'form': form}
+            context = {'user': user, 'form': form, 'message': "Something went wrong."}
             return render(request, "main/User/userEdit.html", context)
 
 
@@ -288,6 +305,7 @@ class users(ListView):
     model = User
     template_name = 'main/User/users.html'
     context_object_name = 'results'
+
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
@@ -312,6 +330,8 @@ class userDelete(View):
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
         user = Course.objects.all()
+        request.session['messageU'] = "User Deleted."
+
         context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
         return render(request, "main/User/users.html", context)
 
