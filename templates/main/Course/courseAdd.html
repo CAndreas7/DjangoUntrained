@@ -12,11 +12,11 @@
     <br><button type="button"><a href="{% url 'courses' %}">Courses Page</a></button> <br>
 
 <div class="CourseDeleted">
-{% if message == "Course ID Already Exists." %}
+{#{% if message == "Course ID Already Exists." %}#}
     <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-        <strong>Error! </strong>{{ message }}
+        <strong>{{ message }}</strong>
     </div>
-{% endif %}
+{#{% endif %}#}
 </div>
 
 
