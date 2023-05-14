@@ -133,6 +133,7 @@ class courseDelete(View):
     def get(self, request, course_id):
         thisCourse = Course.objects.get(courseID=course_id)
         thisCourse.removeCourse()
+        UsersToCourse.delCourseUsers(course_id)
         request.session['messageC'] = "Course Successfully Deleted!"
         return redirect('courses')
 
@@ -327,6 +328,7 @@ class userDelete(View):
     def get(self, request, email_id):
         # could be a delete method
         User.deleteUser(email_id)
+        UsersToCourse.delUserCourses(email_id)
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
         user = Course.objects.all()
