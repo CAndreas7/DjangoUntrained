@@ -59,6 +59,8 @@ class User(models.Model):
                 raise ValidationError("Phone number must be a String")
             if not isinstance(role, int):
                 raise ValidationError("Role must be entered as an Integer")
+            if role < 1 or role > 3:
+                raise ValueError("Role must be between the range 1 and 3")
             if password.__len__() < 1:
                 raise ValidationError("Password cannot be empty")
             email_validator = EmailValidator(allowlist="uwm.edu")
@@ -164,7 +166,7 @@ class User(models.Model):
         self.role = role
 
     def editAccount(self, email, password, phoneNum, role):
-        if User.objects.filter(email=email):
+        if User.objects.filter(email=email).count() == 1:
             user = User.objects.get(email=email)
             user.setPassword(password)
             user.setPhone(phoneNum)
