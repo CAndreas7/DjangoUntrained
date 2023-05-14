@@ -390,6 +390,7 @@ class Course(models.Model):
     def getCourse(courseID):
         return get_object_or_404(Course, pk=courseID)
 
+
     def removeCourse(self):
         ThisCourse = Course.objects.get(courseID=self.courseID)
         ThisCourse.delete()
@@ -535,7 +536,23 @@ class UsersToCourse(models.Model):
         return UsersToCourse.objects.filter(courseID=courseID)
 
     @staticmethod
+    def getUserCourses(email):
+        return UsersToCourse.objects.filter(assignment=email)
+
+    @staticmethod
     def addUserToCourse(email, courseID):
         userTo = UsersToCourse(courseID=courseID, assignment=email)
         userTo.save()
         return userTo
+
+    @staticmethod
+    def delCourseUsers(courseID):
+        utcQuery = UsersToCourse.getUserToCourse(courseID)
+        for x in utcQuery:
+            x.removeUser()
+
+    @staticmethod
+    def delUserCourses(email):
+        utcQuery = UsersToCourse.getUserCourses(email)
+        for x in utcQuery:
+            x.removeUser()
