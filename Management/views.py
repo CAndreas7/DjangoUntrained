@@ -97,16 +97,14 @@ class courseAdd(View):
         return render(request, 'main/Course/courseAdd.html', {'form': form})
 
     def post(self, request):
-
         form = CourseForm(request.POST)
         if Course.formAdd(form):
-            request.session['messageC'] = "Course Successfully Added!"
-            return redirect('courses')
+            return render(request, 'main/Course/courseAdd.html',
+                          {'form': form, 'message': "Course Successfully added!"})
         else:
             form = CourseForm()
         return render(request, 'main/Course/courseAdd.html',
-                      {'form': form, 'message': "Course ID Already Exists."})
-
+                      {'form': form, 'message': "Error: Course ID Already Exists."})
 
 class courseEdit(View):
     def get(self, request, course_id):
@@ -121,21 +119,26 @@ class courseEdit(View):
         course = Course.getCourse(course_id)
         form = CourseEditForm(request.POST, instance=course)
         if course.formSave(form):
-            request.session['messageC'] = "Course Successfully Edited!"
-            return redirect('courses')
+            return render(request, 'main/Course/courseEdit.html',
+                          {'form': form, 'message': "Course was successfully edited!"})
+
         else:
-            context = {'course': course, 'form': form, "message": "Something went wrong."}
+            context = {'course': course, 'form': form, "message": "Error: Something went wrong."}
             return render(request, "main/Course/courseEdit.html", context)
 
 
 class courseDelete(View):
 
     def get(self, request, course_id):
-        thisCourse = Course.objects.get(courseID=course_id)
-        thisCourse.removeCourse()
-        UsersToCourse.delCourseUsers(course_id)
-        request.session['messageC'] = "Course Successfully Deleted!"
-        return redirect('courses')
+        Course.objects.filter(courseID=course_id).delete()
+        # Redirect to a success page or back to the list of courses
+        userRole = request.session['roleSession']
+        # get all method
+        course = Course.objects.all()
+        context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
+        return render(request, "main/Course/courses.html", context)
+
+
 
 
 class usersInCourse(View):
