@@ -225,7 +225,8 @@ class sectionEdit(View):
         section = Section.getSection(section_id)
         form = SectionEditForm(request.POST)
         if section.formSave(form):
-            return redirect('sections', course_id=course_id)
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             context = {'section': section, 'form': form}
             return render(request, "main/Section/sectionEdit.html", context)
@@ -237,7 +238,8 @@ class sectionDelete(View):
 
         Section.deleteSection(section_id)
         # Redirect to a success page or back to the list of sections
-        return redirect('sections', course_id=course_id)
+        sections_view = sections()
+        return sections_view.get(request, course_id)
 
 
 class userAdd(View):
