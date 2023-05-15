@@ -73,9 +73,15 @@ class MainHome(View):
 
 class courses(View):
     def get(self, request):
+        if 'messageC' not in request.session:
+            request.session['messageC']=""
+
+        msg = request.session['messageC']
+        request.session['messageC'] = ""
+
         userRole = request.session['roleSession']
         course = Course.objects.all()
-        context = {'courses': course, 'roleTemplate': userRole}
+        context = {'courses': course, 'roleTemplate': userRole, "message": msg}
         return render(request, "main/Course/courses.html", context)
 
 
@@ -89,6 +95,7 @@ class courseAdd(View):
 
         form = CourseForm(request.POST)
         if Course.formAdd(form):
+            request.session['messageC'] = "Course Successfully added!"
 
             return render(request, 'main/Course/courseAdd.html',
                           {'form': form, 'message': "Course Successfully added!"})
@@ -112,6 +119,7 @@ class courseEdit(View):
         course = Course.getCourse(course_id)
         form = CourseEditForm(request.POST, instance=course)
         if course.formSave(form):
+            request.session['messageC'] = "Course was successfully edited."
             return render(request, 'main/Course/courseEdit.html',
                           {'form': form, 'message': "Course was successfully edited!"})
         else:
@@ -128,12 +136,19 @@ class courseDelete(View):
 
         # get all method
         course = Course.objects.all()
+        request.session['messageC'] = "Course was successfully deleted."
+
         context = {'courses': course, 'roleTemplate': userRole, 'message': "Course Successfully Deleted"}
         return render(request, "main/Course/courses.html", context)
 
 
 class usersInCourse(View):
     def get(self, request, course_id):
+        if 'messageUIC' not in request.session:
+            request.session['messageUIC']=""
+        msg = request.session['messageUIC']
+        request.session['messageUIC'] = ""
+
         userList = []
 
         # Get method
@@ -146,8 +161,7 @@ class usersInCourse(View):
             userList.append(y.getUser())
 
         sortedUsers = sorted(userList, key=lambda user: (user.role, user.lName))
-        # sortedUsers = sorted(users, key=lambda x: (x[6], x[2]))
-        context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole}
+        context = {'course': course, 'users': sortedUsers, 'roleTemplate': userRole, "message": msg}
         return render(request, 'main/UserToCourse/courseUsers.html', context)
 
 
@@ -164,6 +178,8 @@ class userToCourseAdd(View):
 
         if UsersToCourse.addUserToCourse(email, course_id):
             Email.emailGen(name, email, course_id)
+            request.session['messageUIC'] = "User successfully added to course."
+
             return redirect('usersInCourse', course_id=course_id)
         else:
             return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
@@ -178,6 +194,7 @@ class userToCourseDelete(View):
                 x.delete()
         except:
             not isinstance(user, UsersToCourse)
+        request.session['messageUIC'] = "User successfully deleted."
 
         # Redirect to a success page or back to the list of courses
 
@@ -186,12 +203,18 @@ class userToCourseDelete(View):
 
 class sections(View):
     def get(self, request, course_id):
+        if 'messageS' not in request.session:
+            request.session['messageS'] = ""
+
+        msg = request.session['messageS']
+        request.session['messageS'] = ""
+
         # get method
         course = Course.getCourse(course_id)
         # get method
         sectionList = Section.getSectionsFromCourse(course_id)
         userRole = request.session['roleSession']
-        context = {'course': course, 'sections': sectionList, 'roleTemplate': userRole}
+        context = {'course': course, 'sections': sectionList, 'roleTemplate': userRole, "message": msg}
         return render(request, 'main/Section/sections.html', context)
 
 
@@ -204,6 +227,8 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if Section.formAdd(form, course_id):
+            request.session['messageS'] = "Section successfully added."
+
             return redirect('sections', course_id=course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
@@ -223,7 +248,9 @@ class sectionEdit(View):
         # could be a get method
         section = Section.getSection(section_id)
         form = SectionEditForm(request.POST)
-        if section.formAdd(form, course_id):
+        if section.formSave(form):
+            request.session['messageS'] = "Section successfully edited."
+
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
@@ -235,6 +262,8 @@ class sectionDelete(View):
         # could be a get and a delete method
 
         Section.deleteSection(section_id)
+        request.session['messageS'] = "Section successfully deleted."
+
         # Redirect to a success page or back to the list of sections
         return redirect('sections', course_id=course_id)
 
@@ -251,6 +280,7 @@ class userAdd(View):
             # could be set methods
 
             User.formAdd(form)
+            # request.session['messageU'] = "Account successfully created."
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
@@ -279,9 +309,10 @@ class userEdit(View):
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            request.session['messageU'] = "User Edited."
             return redirect('users')
         else:
-            context = {'user': user, 'form': form}
+            context = {'user': user, 'form': form, "message": "Something went wrong."}
             return render(request, "main/User/userEdit.html", context)
 
 
@@ -290,6 +321,12 @@ class users(ListView):
     model = User
     template_name = 'main/User/users.html'
     context_object_name = 'results'
+
+    # if 'messageU' not in request.session:
+    #     request.session['messageU'] = ""
+    #
+    # msg = request.session['messageU']
+    # request.session['messageU'] = ""
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
@@ -314,6 +351,8 @@ class userDelete(View):
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
         user = User.objects.all()
+        # request.session['messageU'] = "Account successfully deleted."
+
         context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
         return render(request, "main/User/users.html", context)
 
