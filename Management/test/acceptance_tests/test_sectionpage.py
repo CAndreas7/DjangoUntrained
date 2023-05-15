@@ -6,6 +6,12 @@ from Management.models import Section,Course,User
 class Test_SectionPage(TestCase):
     def setUp(self):
         self.client = Client()
+
+        #create a new session.
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
         self.course2 = Course.objects.create(courseID="2", courseName="CS350",
                                              courseDescription="Some class", courseDepartment="CS")
@@ -20,6 +26,17 @@ class Test_SectionPage(TestCase):
                                                              'section_id': self.section.sectionID})
         self.sectionDeleteURL = reverse('sectionDelete', kwargs={'course_id': self.course2.courseID,
                                                                 'section_id': self.section.sectionID})
+
+
+    def test_display(self):
+        response = self.client.get(self.sectionsOfCourse2URL)
+
+        queryset_sections = response.context['sections']
+        list = []
+        for section in queryset_sections:
+            list.append(section)
+        self.assertEqual(list[0].sectionID, 2, "Course 1 is not being displayed")
+
 
     def test_goToEditSection(self):
         response = self.client.get(self.sectionEditURL)

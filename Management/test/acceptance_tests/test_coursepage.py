@@ -7,6 +7,11 @@ class Test_CoursesPage(TestCase):
     def setUp(self):
         self.client = Client()
 
+        # creating a session?
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.course1 = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
         self.course2 = Course.objects.create(courseID=2, courseName="CS350",
@@ -43,7 +48,8 @@ class Test_CoursesPage(TestCase):
     def test_RemoveCourse1(self):
         response = self.client.get(self.course1DeleteURL)
 
-        self.assertEqual(response.url, '/courses/')
+        self.assertEqual(response.status_code, 200, "status code was not 200")
+        self.assertTemplateUsed(response, "main/Course/courses.html", "template was not correct template")
         self.assertEqual(Course.objects.filter(courseID=1).count(), 0, "course1 was not deleted from the database")
 
 
@@ -51,16 +57,16 @@ class Test_CoursesPage(TestCase):
         response = self.client.get(self.sectionsOfCourse2URL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
-        self.assertTemplateUsed(response, 'main/Section/sections.html')
+        self.assertTemplateUsed(response, 'main/Section/sections.html', "template was not correct template")
 
     def test_goToEditCourses1Page(self):
         response = self.client.get(self.course1EditURL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
-        self.assertTemplateUsed(response, 'main/Course/courseEdit.html')
+        self.assertTemplateUsed(response, 'main/Course/courseEdit.html', "template was not correct template")
 
     def test_go_to_Course1_Users_page(self):
         response = self.client.get(self.course1UserURL)
 
         self.assertEqual(response.status_code, 200, "response status code is not 200")
-        self.assertTemplateUsed(response, 'main/UserToCourse/courseUsers.html')
+        self.assertTemplateUsed(response, 'main/UserToCourse/courseUsers.html', "template was not correct template")

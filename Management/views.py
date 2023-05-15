@@ -94,7 +94,7 @@ class courseAdd(View):
 
     def get(self, request):
         form = CourseForm()
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
+        return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': ""})
 
     def post(self, request):
         form = CourseForm(request.POST)
@@ -296,6 +296,9 @@ class userEdit(View):
         user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            if email_id != form.cleaned_data['email']:
+                # Hurray! Calling ethan's methods!
+                User.deleteUser(email_id)
             form.save()
             request.session['messageU'] = "User Edited."
             return redirect('users')
