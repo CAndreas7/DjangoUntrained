@@ -223,7 +223,7 @@ class sectionEdit(View):
         # could be a get method
         section = Section.getSection(section_id)
         form = SectionEditForm(request.POST)
-        if section.formAdd(form, course_id):
+        if section.formSave(form):
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
@@ -278,6 +278,11 @@ class userEdit(View):
         user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            # When editing a user, when entering a new email, the previous email was not deleted.
+            # This if statement deletes the email.
+            if email_id != form.cleaned_data['email']:
+                User.deleteUser(email_id)
+
             form.save()
             return redirect('users')
         else:
