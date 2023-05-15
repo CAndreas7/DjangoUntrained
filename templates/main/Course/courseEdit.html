@@ -52,15 +52,9 @@ Edit Course
         </div>
         {% if message != None %}
             <div class="position-absolute top-100 start-50 translate-middle">
-                {% if success == 1 %}
-                    <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-                        <strong>Success! </strong>{{ message }}
-                    </div>
-                {% elif success != 1 %}
-                    <div class="container p-3 my-5 alert alert-warning alert-dismissible fade show text-black">
-                        <strong>Warning! </strong>{{ message }}
-                    </div>
-                {% endif %}
+                <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                    <strong>Success! </strong>{{ message }}
+                </div>
             </div>
         {% endif %}
     </div>
