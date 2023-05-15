@@ -204,7 +204,8 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if Section.formAdd(form, course_id):
-            return redirect('sections', course_id=course_id)
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
         return render(request, 'main/Section/addSection.html', {'form': form})
