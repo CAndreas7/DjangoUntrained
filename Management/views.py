@@ -294,6 +294,13 @@ class users(ListView):
     template_name = 'main/User/users.html'
     context_object_name = 'results'
 
+    # troubleshooting
+    # def get(self, request):
+    #     userRole = request.session['roleSession']
+    #     user = User.objects.all()
+    #     context = {'results': user, 'roleTemplate': userRole}
+    #     return render(request, "main/User/users.html", context)
+
     def get_queryset(self):
         query = self.request.GET.get('q', '')
         queryset = super().get_queryset()
@@ -314,9 +321,10 @@ class userDelete(View):
     def get(self, request, email_id):
         # could be a delete method
         User.deleteUser(email_id)
+
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
-        user = Course.objects.all()
+        user = User.objects.all()
         context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
         return render(request, "main/User/users.html", context)
 

@@ -9,8 +9,6 @@
 
 {% block content %}
 
-
-
     <div class="container">
         <form class="d-flex" role="search" method="get" action="{% url 'users' %}">
             <input class="form-control me-2" type="text" name="q" value="{{ query }}" placeholder="Search...">
@@ -30,6 +28,7 @@
                 </thead>
                 <tbody>
                     {% for result in results %}
+
                         <tr>
                             <td>{{ result.getfName }}</td>
                             <td>{{ result.getlName }}</td>
