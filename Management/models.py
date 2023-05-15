@@ -113,6 +113,9 @@ class User(models.Model):
 
         self.fName = name
 
+    def getFullName(self):
+        return self.getlName() + ", " + self.getfName()
+
     def getPassword(self):
         return self.password
 
