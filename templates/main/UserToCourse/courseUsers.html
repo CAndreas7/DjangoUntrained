@@ -1,40 +1,72 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
+
+{% block header %}
+    {{ course.courseName }} Users
+{% endblock header %}
+
 {% block content %}
+{#    TODO - make it so only Instructor and supervisors can see 'add user' and 'remove from course'#}
 
-<h1>{{ course.courseName }} Users</h1>
-<style>
-table, th, td {
-  border:1px solid navajowhite;
-}
-</style>
-<table style="width:100%">
-  <tr>
-      <th>Role</th>
-      <th>Last Name</th>
-      <th>First Name</th>
-      <th>Email</th>
-  </tr>
-  {% for user in users %}
-  <tr>
-  <td>{{ user.role }}</td>
-    <td>{{ user.lName }}</td>
-   <td>{{ user.fName }}</td>
-   <td>{{ user.email }}</td>
-      <td>
-        <button type="button"><a href="{% url 'userToCourseDelete' user.email course.courseID  %}">Remove From Course</a></button>
-    </td>
-  </tr>
-  {% endfor %}
-</table> <br>
-
-<button type="button"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>
-
-    <div class="CourseDeleted">
-        {% if message != "" %}
-            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-                <strong>Successful! </strong>{{ message }}
-            </div>
-        {% endif %}
+    <div class="container">
+        <table class="table table-dark table-striped" style="color: white">
+            <thead>
+                <th scope="col">Role</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Email</th>
+                <th scope="col"></th>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.lName }}</td>
+                        <td>{{ user.fName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if roleTemplate != 3 %}
+                                <a class="btn" href="{% url 'userToCourseDelete' user.email course.courseID %}" role="button" style="color: white; background-color: #494b5f">Remove From Course</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="AddUserButton container">
+            {% if roleTemplate != 3 %}
+                <a class="btn" href="{% url 'userToCourseAdd' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Add User</a>
+            {% endif %}
+        </div>
     </div>
+
+{#<table style="width:100%">#}
+{#  <tr>#}
+{#      <th>Role</th>#}
+{#      <th>Last Name</th>#}
+{#      <th>First Name</th>#}
+{#      <th>Email</th>#}
+{#  </tr>#}
+{#  {% for user in users %}#}
+{#  <tr>#}
+{#  <td>{{ user.role }}</td>#}
+{#    <td>{{ user.lName }}</td>#}
+{#   <td>{{ user.fName }}</td>#}
+{#   <td>{{ user.email }}</td>#}
+{#      <td>#}
+{#        <button type="button"><a href="{% url 'userToCourseDelete' user.email course.courseID  %}">Remove From Course</a></button>#}
+{#    </td>#}
+{#  </tr>#}
+{#  {% endfor %}#}
+{#</table> <br>#}
+{##}
+{#<button type="button"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>#}
+{##}
+{#    <div class="CourseDeleted">#}
+{#        {% if message != "" %}#}
+{#            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">#}
+{#                <strong>Successful! </strong>{{ message }}#}
+{#            </div>#}
+{#        {% endif %}#}
+{#    </div>#}
 
 {% endblock content %}

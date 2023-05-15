@@ -215,15 +215,16 @@ class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = Section.getSection(section_id)
         form = SectionEditForm(instance=section, initial={'courseID': course_id})
-        context = {'section': section, 'form': form, 'course_id': course_id}
+        user = User.objects.all()
+        context = {'section': section, 'form': form, 'course_id': course_id, 'people': user}
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
 
         # could be a get method
         section = Section.getSection(section_id)
-        form = SectionEditForm(request.POST)
-        if section.formAdd(form, course_id):
+        form = SectionEditForm(request.POST, instance=section)
+        if section.formSave(form):
             return redirect('sections', course_id=course_id)
         else:
             context = {'section': section, 'form': form}
@@ -259,8 +260,7 @@ class userAdd(View):
             form = UserForm()
 
         return render(request, 'main/User/userAdd.html',
-                      {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                "Please enter a different email"})
+                      {'form': form})
 
 
 class userEdit(View):
