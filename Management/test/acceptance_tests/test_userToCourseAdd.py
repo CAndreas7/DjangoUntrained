@@ -15,7 +15,7 @@ class Test_UserToCourseAdd(TestCase):
 
     def test_adding_new_user_to_course(self):
         self.client.post(self.userToCourseAddURL, {
-            'assignment': self.TA1.email
+            'assignment': self.TA1
         })
 
         #checks to see if a usertocourse object is created.
@@ -24,10 +24,10 @@ class Test_UserToCourseAdd(TestCase):
                          "user to course object was not created")
     def test_adding_existing_user_to_course(self):
         self.client.post(self.userToCourseAddURL, {
-            'assignment': self.TA1.email
+            'assignment': self.TA1
         })
         self.client.post(self.userToCourseAddURL, {
-            'assignment': self.TA1.email
+            'assignment': self.TA1
         })
 
         #checks to see if there is only one object.

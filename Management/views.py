@@ -113,11 +113,9 @@ class courseEdit(View):
         form = CourseEditForm(request.POST, instance=course)
         if course.formSave(form):
             return render(request, 'main/Course/courseEdit.html',
-                          {'form': form, 'message': "Course was successfully edited!", 'success': 1})
+                          {'form': form, 'message': "Course was successfully edited!"})
         else:
-
-            context = {'course': course, 'form': form, 'message': "Cannot reuse the same ID.", 'success': 0}
-
+            context = {'course': course, 'form': form}
             return render(request, "main/Course/courseEdit.html", context)
 
 
@@ -190,18 +188,16 @@ class sections(View):
     def get(self, request, course_id):
         # get method
         course = Course.getCourse(course_id)
-        userRole = request.session['roleSession']
         # get method
-        sectionList = Section.objects.filter(courseID=course)
-        context = {'course': course, 'sections': sectionList, 'roleTemplate': userRole}
+        sectionList = Section.getSectionsFromCourse(course_id)
+        context = {'course': course, 'sections': sectionList}
         return render(request, 'main/Section/sections.html', context)
 
 
 class sectionAdd(View):
     def get(self, request, course_id):
-        user = User.objects.all()
         form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id, 'people': user})
+        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id})
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
@@ -209,8 +205,7 @@ class sectionAdd(View):
             return redirect('sections', course_id=course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form}, {'course_id': course_id})
-
+        return render(request, 'main/Section/addSection.html', {'form': form})
 
 
 
@@ -253,7 +248,7 @@ class userAdd(View):
 
             # could be set methods
 
-            User.formAdd(form)
+            User.formAdd(self, form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
@@ -294,13 +289,6 @@ class users(ListView):
     template_name = 'main/User/users.html'
     context_object_name = 'results'
 
-    # troubleshooting
-    # def get(self, request):
-    #     userRole = request.session['roleSession']
-    #     user = User.objects.all()
-    #     context = {'results': user, 'roleTemplate': userRole}
-    #     return render(request, "main/User/users.html", context)
-
     def get_queryset(self):
         query = self.request.GET.get('q', '')
         queryset = super().get_queryset()
@@ -321,7 +309,6 @@ class userDelete(View):
     def get(self, request, email_id):
         # could be a delete method
         User.deleteUser(email_id)
-
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
         user = User.objects.all()

@@ -3,7 +3,7 @@ from django.urls import reverse
 from Management.models import Section,User,Course;
 
 class Test_SectionAdd(TestCase):
-
+        #theses don't run because kevin didn't change redirect to render.
     def setUp(self):
 
         self.client = Client()
@@ -26,19 +26,21 @@ class Test_SectionAdd(TestCase):
             'startTime': '7:00AM',
             'endTime': '7:50AM',
             'capacity': 100,
-            'TA': self.TA1,
+            'TA': self.TA1.email,
             'courseID': self.course1
         })
         #checks to see if the response didn't blow up.
-        self.assertEqual(response.status_code, 200, "Status code is not 200")
+        #self.assertEqual(response.status_code, 200, "Status code is not 200")
         #checks to see if the new section was added to the database.
         self.assertEqual(Section.objects.filter(sectionID=2).count(), 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
 
+        self.assertEqual(response.context['message'], "Section Successfully Added", "message displayed was not correct")
+
 
     def test_addSameSection(self):
-        self.client.post((self.sectionAddURL, {
+        response = self.client.post((self.sectionAddURL, {
             'location': 'Here',
             'startTime': '7:00PM',
             'endTime': '7:50PM',
@@ -50,10 +52,12 @@ class Test_SectionAdd(TestCase):
                          msg="there should only be 1 section with this unique ID in the database ")
         self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 section in the database.")
 
+        self.assertEqual(response.context['message'], "Section ID Already Exists.", "message displayed was not correct")
+
         #how would someone go about checking the display of the output
 
     def test_addSameID(self):
-        self.client.post((self.sectionAddURL, {
+        response = self.client.post((self.sectionAddURL, {
             'location': 'United States',
             'startTime': '72:00AM',
             'endTime': '72:50AM',
@@ -65,3 +69,5 @@ class Test_SectionAdd(TestCase):
         self.assertEqual(Section.objects.filter(sectionID=1).count(), 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 sections in the database.")
+
+        self.assertEqual(response.context['message'], "Section ID Already Exists.", "message displayed was not correct")

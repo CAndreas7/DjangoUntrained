@@ -55,6 +55,13 @@
         </div>
 
     </div>
+        <div class="CourseDeleted">
+        {% if message != "" and message != Null %}
+            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                <strong>Successful! </strong>{{ message }}
+            </div>
+        {% endif %}
+    </div>
 
 
 {% endblock content %}

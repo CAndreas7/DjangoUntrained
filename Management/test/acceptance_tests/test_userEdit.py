@@ -16,13 +16,14 @@ class Test_UserEdit(TestCase):
             'password': "testpassword",
             'fName': "Me",
             'lName': "not me",
-            'phone': "",
+            'phone': 43,
             'role': 3,
         })
-        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 0,
-                         "The previous unique email ID still exists.")
+
         self.assertEqual(User.objects.filter(email="newEmail@user.com").count(), 1,
                          "There are more than 1 user object with this unique ID")
+        self.assertEqual(User.objects.filter(email="SomeUser1@user.com").count(), 0,
+                         "The previous unique email ID still exists.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
 
 

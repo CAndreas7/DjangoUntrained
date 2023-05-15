@@ -1,6 +1,9 @@
 import unittest
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from django.test import TestCase
+
+from Management.forms import UserForm
 from Management.models import *
 
 
@@ -466,3 +469,174 @@ class editSection(TestCase):
                                         self.section.endTime,
                                         self.section.capacity, self.section.TA, "1")
 
+
+class testAddUserFromForm(TestCase):
+    # class UserForm(forms.ModelForm):
+    #     class Meta:
+    #         model = User
+    #         fields = ['email', 'lName', 'fName', 'password', 'phone', 'role']
+    def setUp(self):
+        self.form = UserForm({'email': "user@uwm.edu", 'lName': 'Boyland', 'fName': 'John', 'password': 'secret',
+                              'phone': '299-341-7843', 'role': 2})
+        self.badFormEmail = UserForm({'email': "bozo", 'lName': 'Guy', 'fName': 'Random', 'password': 'nftethusiaust',
+                                      'phone': '999-867-5309', 'role': 3})
+        self.badFormLastName = UserForm(
+            {'email': "user@uwm.edu", 'lName': '', 'fName': 'Random', 'password': 'nftethusiaust',
+             'phone': '999-867-5309', 'role': 3})
+        self.badFormFirstName = UserForm(
+            {'email': "bozo", 'lName': 'Guy', 'fName': '', 'password': 'nftethusiaust',
+             'phone': '999-867-5309', 'role': 3})
+        self.badFormPassword = UserForm(
+            {'email': "bozo", 'lName': 'Guy', 'fName': 'Random', '': 'nftethusiaust',
+             'phone': '999-867-5309', 'role': 3})
+        self.badFormPhone = UserForm({'email': "bozo", 'lName': 'Guy', 'fName': 'Random', 'password': 'nftethusiaust',
+                                      'phone': '', 'role': 3})
+        self.badFormRole = UserForm({'email': "bozo", 'lName': 'Guy', 'fName': 'Random', 'password': 'nftethusiaust',
+                                     'phone': '999-867-5309', 'role': ''})
+        self.user = User("testemail@uwm.edu", "test", "experiment", "testpassword", "", 1)
+        self.user.save()
+        # self.course = Course(courseID=251, courseName="Intermediate Computer Programming",
+        #                      courseDescription="A more advanced class that covers "
+        #                                        "programming topics in greater "
+        #                                        "depth", courseDepartment="CS")
+        # self.course.save()
+        # self.section = Section(sectionID=800, location="EMS100", startTime="05:00PM", endTime="07:00PM", capacity=30,
+        #                        TA=self.user, courseID=self.course)
+        # self.section.save()
+        self.supervisor = User("testemail@uwm.edu", "visor", "super", "testpassword", "", 1)
+        self.supervisor.save()
+
+    def test_userFromForm(self):
+        # User.formAdd(self.form)
+        self.assertEqual(User.formAdd(self.form), True, msg="User was not added from a form")
+
+    def test_userFromFormBadEmail(self):
+        self.assertEqual(User.formAdd(self.badFormEmail), False, msg="Form contained an invalid email, "
+                                                                     "did not return false")
+
+    def test_userFromFormBadEmail2(self):
+        self.badFormEmail.email = ''
+        self.assertEqual(User.formAdd(self.badFormEmail), False, msg="Form contained an empty email, "
+                                                                     "did not return false")
+
+    def test_userFromFormBadEmail3(self):
+        self.badFormEmail.email = None
+        self.assertEqual(User.formAdd(self.badFormEmail), False, msg="Form contained an email of None,"
+                                                                     "did not return false")
+
+    def test_userFromFormBadEmail4(self):
+        self.badFormEmail.email = 1
+        self.assertEqual(User.formAdd(self.badFormEmail), False, msg="Form contained an integer email,"
+                                                                     "did not return false")
+
+    def test_userFromFormBadLastName(self):
+        self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained an empty last name,"
+                                                                        "did not return false")
+    def test_userFromFormBadLastName2(self):
+        self.badFormLastName.lName = None
+        self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained a None last name,"
+                                                                        "did not return false")
+    def test_userFromFormBadLastName3(self):
+        self.badFormLastName.lName = 1
+        self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained an integer last name,"
+                                                                        "did not return false")
+
+    def test_userFormBadFirstName(self):
+        self.assertEqual(User.formAdd(self.badFormFirstName), False, msg="Form contained an empty first name, "
+                                                                         "did not return false")
+
+    def test_userFormBadFirstName2(self):
+        self.badFormFirstName.fName = None
+        self.assertEqual(User.formAdd(self.badFormFirstName), False, msg="Form contained a None first name, "
+                                                                         "did not return false")
+
+    def test_userFormBadFirstName3(self):
+        self.badFormFirstName.fName = 1
+        self.assertEqual(User.formAdd(self.badFormFirstName), False, msg="Form contained an integer first name, "
+                                                                         "did not return false")
+
+    def test_userFormBadPassword(self):
+        self.assertEqual(User.formAdd(self.badFormPassword), False, msg="Form contained an empty password, "
+                                                                        "did not return false")
+
+    def test_userFormBadPassword2(self):
+        self.badFormPassword.password = None
+        self.assertEqual(User.formAdd(self.badFormPassword), False, msg="Form contained a None password, "
+                                                                        "did not return false")
+    def test_userFormBadPassword2(self):
+        self.badFormPassword.password = 1
+        self.assertEqual(User.formAdd(self.badFormPassword), False, msg="Form contained an integer password, "
+                                                                        "did not return false")
+
+    def test_userFormBadPhoneNumber(self):
+        self.assertEqual(User.formAdd(self.badFormPhone), False, msg="Form contained an empty Phone Number, "
+                                                                     "did not return false")
+
+    def test_userFormBadPhoneNumber2(self):
+        self.badFormPhone.phone = None
+        self.assertEqual(User.formAdd(self.badFormPhone), False, msg="Form contained a None Phone Number, "
+                                                                     "did not return false")
+    def test_userFormBadPhoneNumber3(self):
+        self.badFormPhone.phone = 1
+        self.assertEqual(User.formAdd(self.badFormPhone), False, msg="Form contained an integer Phone Number, "
+                                                                     "did not return false")
+    def test_userFormBadRole(self):
+        self.assertEqual(User.formAdd(self.badFormRole), False, msg="Form contained an empty Role,"
+                                                                    "did not return false")
+
+    def test_userFormBadRole2(self):
+        self.badFormRole.role = None
+        self.assertEqual(User.formAdd(self.badFormRole), False, msg="Form contained an invalid Role,"
+                                                                    "did not return false")
+
+    def test_userFormBadRole3(self):
+        self.badFormRole.role = 0
+        self.assertEqual(User.formAdd(self.badFormRole), False, msg='')
+        # with self.assertRaises(ValidationError, msg="Role was outside of given range, Validation was not raised"):
+        #     User.formAdd(self.badFormRole)
+
+    def test_userFormBadRole4(self):
+        self.badFormRole.role = 4
+        self.assertEqual(User.formAdd(self.badFormRole), False, msg='')
+        # with self.assertRaises(ValueError, msg="Role was outside of given range, Validation was not raised"):
+        #     User.formAdd(self.badFormRole)
+
+
+
+class testGetUserObject(TestCase):
+    # get_object_or_404 raises HTTP404 exception, and NOT DoesNotExist exception
+    def setUp(self):
+        self.user = User("testemail@uwm.edu", "test", "experiment", "testpassword", "111-442-1192", 1)
+        self.user.save()
+        self.supervisor = User("testemail@uwm.edu", "Visor", "Super", "password", "394-822-1794", 1)
+        self.supervisor.save()
+
+    def test_getUser(self):
+        self.assertEqual(User.getUser(self.user.email), self.user, msg="Object returned was not User")
+
+    def test_getUserBad1(self):
+        with self.assertRaises(Http404, msg="Should raise 404 on a user that doesnt exist, but does not"):
+            User.getUser("imnotreal")
+
+    def test_deletedUserGet(self):
+        self.user.deleteUser(self.supervisor.email)
+        with self.assertRaises(Http404, msg="User was deleted but 404 was not raised"):
+            User.getUser("testemail@uwm.edu")
+
+
+class testDeleteUserObject(TestCase):
+
+    def setUp(self):
+        self.user = User("testemail@uwm.edu", "test", "experiment", "testpassword", "111-442-1192", 1)
+        self.user.save()
+        self.supervisor = User("superemail@uwm.edu", "Visor", "Super", "password", "394-822-1794", 1)
+        self.supervisor.save()
+
+    def test_deleteUserCount(self):
+        User.deleteUser(self.supervisor.email)
+        self.assertEqual(User.objects.filter(email="superemail@uwm.edu").count(), 0, msg="User was not deleted from DB")
+
+    def test_deleteUserBad(self):
+        # should raise no errors or changes due to using .filter().delete not causing any changes
+        User.deleteUser("fakeemail@uwm.edu")
+        self.assertEqual(User.objects.all().count(), 2, msg="Number of Users should not have changed, but did")

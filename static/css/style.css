@@ -15,7 +15,3 @@ body{
         radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c);
     background-attachment: fixed;
 }
-
-select{
-    background-color: #282934;
-}

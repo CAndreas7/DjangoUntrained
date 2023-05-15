@@ -20,7 +20,7 @@ class Test_CourseAdd(TestCase):
 
     def test_addNewCourse(self):
 
-        self.client.post('/courseAdd/', {
+        response = self.client.post('/courseAdd/', {
             'courseID': 1236,
             'courseName': 'CS400',
             'courseDescription': "Some elementary comp sci class",
@@ -34,15 +34,11 @@ class Test_CourseAdd(TestCase):
                          msg="the new course should have been added to the database ")
         self.assertEqual(len(Course.objects.all()), 3, "There should be a total of 3 courses in the database.")
 
-        # checks to see if the website prints correct response contents.
-        """self.assertNotIn(response.content, 'Please fill out this field.', msg="Response displayed the adding"
-                                                                              "\"the same course\"error message, when it "
-                                                                              "shouldn't have");
-        self.assertIn(response.content, 'Course Added Successfully!', msg="response did not show the correct message for"
-                                                                         "adding a course successfully.")"""
+        self.assertEqual(response.context['message'], "Course Successfully added!", "Message was not current message")
+
 
     def test_addSameCourse(self):
-        self.client.post('/courseAdd/', {
+        response = self.client.post('/courseAdd/', {
             'courseID': 1,
             'courseName': 'CS250',
             'courseDescription': "Some elementary comp sci class",
@@ -54,14 +50,10 @@ class Test_CourseAdd(TestCase):
                              "data base")
         self.assertEqual(len(Course.objects.all()), 2, "There should be a total of 2 courses in the database.")
 
-        """
-        response = self.client.get('/courseAdd')
-        self.assertIn(response.content, "Cannot add same course", msg="Response didn't correctly display the adding"
-                                                                      "\"the same course\"error message");
-        """
+        self.assertEqual(response.context['message'], "Error: Course ID Already Exists.", "message displayed was not correct")
     def test_addSameID(self):
-        self.client.post('/courseAdd', {
-            'courseID': '1',
+        response = self.client.post('/courseAdd/', {
+            'courseID': 1,
             'courseName': 'CS550',
             'courseDescription': "Some elementary comp sci class",
             'courseDepartment': "CS"
@@ -72,10 +64,4 @@ class Test_CourseAdd(TestCase):
                              "data base")
         self.assertEqual(len(Course.objects.all()), 2, "There should be a total of 2 courses in the database.")
 
-        """
-        # checks to see if correct message is displayed when trying to add a course with the same ID.
-        response = self.client.get('/courseAdd')
-        self.assertIn(response.content, "Cannot add a course with an ID in the system",
-                      msg="Response didn't correctly display the adding"
-                          "\"the same ID\"error message");
-        """
+        self.assertEqual(response.context['message'], "Error: Course ID Already Exists.", "message displayed was not correct")

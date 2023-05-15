@@ -5,15 +5,32 @@ from django.urls import reverse
 class Test_UserInCourse(TestCase):
     def setUp(self):
         self.client = Client()
+
+        # creating a session?
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
-        self.course1 = Course.objects.create(courseID="1", courseName="CS250",
+        self.course1 = Course.objects.create(courseID=1, courseName="CS250",
                                              courseDescription="Some elementary comp sci class", courseDepartment="CS")
 
         self.TA1toCourse1 = UsersToCourse.objects.create(assignment=self.TA1.email, courseID=self.course1.courseID)
 
+        self.userToCourseURL = reverse('usersInCourse', kwargs={'course_id': self.course1.courseID})
         self.addUserToCourseURL = reverse('userToCourseAdd', kwargs={'course_id': self.course1.courseID})
         self.deleteUserInCourseURL = reverse('userToCourseDelete', kwargs={'email_id': self.TA1.email,
                                                                     'course_id': self.course1.courseID})
+    def test_display(self):
+        response = self.client.get(self.userToCourseURL)
+
+        # grabs query set and gets all objects in the set.
+        queryset_user_in_course = response.context['users']
+        list = []
+        for x in queryset_user_in_course:
+            list.append(x)
+        self.assertEqual(list[0].email, self.TA1.email, "user to course1 is not being displayed")
+
 
     def test_add_user_link(self):
         response = self.client.get(self.addUserToCourseURL)
