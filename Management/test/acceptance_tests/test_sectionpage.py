@@ -6,6 +6,12 @@ from Management.models import Section,Course,User
 class Test_SectionPage(TestCase):
     def setUp(self):
         self.client = Client()
+
+        #create a new session.
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
         self.course2 = Course.objects.create(courseID="2", courseName="CS350",
                                              courseDescription="Some class", courseDepartment="CS")
@@ -21,6 +27,17 @@ class Test_SectionPage(TestCase):
         self.sectionDeleteURL = reverse('sectionDelete', kwargs={'course_id': self.course2.courseID,
                                                                 'section_id': self.section.sectionID})
 
+
+    def test_display(self):
+        response = self.client.get(self.sectionsOfCourse2URL)
+
+        queryset_sections = response.context['sections']
+        list = []
+        for section in queryset_sections:
+            list.append(section)
+        self.assertEqual(list[0].sectionID, 2, "Course 1 is not being displayed")
+
+
     def test_goToEditSection(self):
         response = self.client.get(self.sectionEditURL)
 
@@ -30,7 +47,7 @@ class Test_SectionPage(TestCase):
         response = self.client.get(self.sectionDeleteURL)
 
         self.assertEqual(Section.objects.filter(sectionID=2).count(), 0, "Section was not properly deleted")
-        self.assertRedirects(response, 'main/Section/sections.html')
+        self.assertRedirects(response, '/sections/2/')
 
     def test_goToAddSection(self):
         response = self.client.get(self.sectionAddURL)
