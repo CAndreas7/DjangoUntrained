@@ -190,14 +190,16 @@ class sections(View):
         course = Course.getCourse(course_id)
         # get method
         sectionList = Section.getSectionsFromCourse(course_id)
-        context = {'course': course, 'sections': sectionList}
+        userRole = request.session['roleSession']
+        context = {'course': course, 'sections': sectionList, 'roleTemplate': userRole}
         return render(request, 'main/Section/sections.html', context)
 
 
 class sectionAdd(View):
     def get(self, request, course_id):
         form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id})
+        user = User.objects.all()
+        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id, 'people': user})
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
@@ -248,7 +250,7 @@ class userAdd(View):
 
             # could be set methods
 
-            User.formAdd(self, form)
+            User.formAdd(form)
 
             # return HttpResponse('User added successfully')
             return render(request, 'main/User/userAdd.html', {'form': form, 'message': "User Successfully Added"})
@@ -311,7 +313,7 @@ class userDelete(View):
         User.deleteUser(email_id)
         # Redirect to a success page or back to the list of courses
         userRole = request.session['roleSession']
-        user = Course.objects.all()
+        user = User.objects.all()
         context = {'results': user, 'roleTemplate': userRole, 'message': "Account Successfully Deleted"}
         return render(request, "main/User/users.html", context)
 

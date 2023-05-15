@@ -1,14 +1,62 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
+
+{% block header %}
+Edit Course
+{% endblock header %}
+
 {% block content %}
-<h1>Edit Course</h1>
-{{ message }} <br>
-<form method="post">
-  {% csrf_token %}
-  {{ form|crispy }}
-  <input type="submit" value="Save changes">
-</form>
-<br><button type="button"><a href="{% url 'courses' %}">Courses Page</a></button> <br>
-<br> <br></brb><button type="home"><a href="{% url 'mainHome' %}">Home Page</a></button>
+
+{#{{ message }} <br>#}
+{#<form method="post">#}
+{#  {% csrf_token %}#}
+{#  {{ form|crispy }}#}
+{#  <input type="submit" value="Save changes">#}
+{#</form>#}
+{#<br><button type="button"><a href="{% url 'courses' %}">Courses Page</a></button> <br>#}
+
+    <div class="spacer" style="height: 100px"></div>
+    <div class="container position-relative" style="height: 500px">
+        <div class="CourseAddForm position-absolute top-0 start-50 translate-middle">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Course Name</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="courseName">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Course Description</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="courseDescription">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Course Department</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="courseDepartment">
+                    </div>
+                </div>
+                <br>
+                <button class="btn" type="submit" style="color: white; background-color: #494b5f">Save Changes</button>
+                <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
+            </form>
+        </div>
+        {% if message != None %}
+            <div class="position-absolute top-100 start-50 translate-middle">
+                <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                    <strong>Success! </strong>{{ message }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
 {% endblock content %}

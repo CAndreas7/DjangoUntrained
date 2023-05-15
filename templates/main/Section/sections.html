@@ -1,37 +1,43 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
+
+{% block header %}
+    {{ course.courseName }} Sections
+{% endblock header %}
+
 {% block content %}
 
-<h1>{{ course.courseName }} Sections</h1>
-<style>
-table, th, td {
-  border:1px solid black;
-}
-</style>
-<table id=1 style="width:100%">
-  <tr>
-    <th>Section ID</th>
-    <th>Location</th>
-    <th>Start Time</th>
-    <th>End Time</th>
-    <th>Capacity</th>
-    <th>Edit</th>
-    <th>Delete</th>
-  </tr>
-  {% for section in sections %}
-  <tr>
-    <td>{{ section.sectionID }}</td>
-    <td>{{ section.location }}</td>
-    <td>{{ section.startTime }}</td>
-    <td>{{ section.endTime }}</td>
-    <td>{{ section.capacity }}</td>
-    <td><a href="{% url 'sectionEdit' course.courseID section.sectionID %}">Edit Section</a></td>
-    <td><a href="{% url 'sectionDelete' course.courseID section.sectionID %}">Delete Section</a></td>
-  </tr>
-  {% endfor %}
-</table> <br>
+    <div class="container">
+        <table class="table table-dark table-striped" style="color: white">
+            <thead>
+                <th scope="col">Section ID</th>
+                <th scope="col">Location</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Capacity</th>
+                <th scope="col"></th>
+            </thead>
+            <tbody>
+                {% for section in sections %}
+                    <tr>
+                        <th scope="row">{{ section.sectionID }}</th>
+                        <td>{{ section.location }}</td>
+                        <td>{{ section.startTime }}</td>
+                        <td>{{ section.endTime }}</td>
+                        <td>{{ section.capacity }}</td>
+                        {% if roleTemplate == 1 %}
+                            <td>
+                                <a class="btn" href="{% url 'sectionEdit' course.courseID section.sectionID %}" role="button" style="color: white; background-color: #494b5f">Edit Section</a>
+                                <a class="btn" href="{% url 'sectionDelete' course.courseID section.sectionID %}" role="button" style="color: white; background-color: #494b5f">Delete Section</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
+        <a class="btn" href="{% url 'sectionAdd' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Add Section</a>
+    </div>
 
-<a href="{% url 'sectionAdd' course.courseID %}">Add Section</a>
-
- <br> <br> <button type="button"><a href="{% url 'courses' %}">Courses Page</a></button>
-<br> <br><button type="button"><a href="{% url 'mainHome' %}">Home Page</a></button>
 {% endblock content %}
