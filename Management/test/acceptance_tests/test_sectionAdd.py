@@ -7,6 +7,12 @@ class Test_SectionAdd(TestCase):
     def setUp(self):
 
         self.client = Client()
+
+        # creating a session?
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
 
         self.course1 = Course.objects.create(courseID=1, courseName="CS250",

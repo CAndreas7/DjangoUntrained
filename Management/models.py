@@ -497,6 +497,7 @@ class Section(models.Model):
         else:
             return False, form.errors
 
+
     def formSave(self, form):
         if form.is_valid():
             self.setLocation(form.cleaned_data['location'])

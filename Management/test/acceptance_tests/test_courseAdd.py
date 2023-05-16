@@ -7,6 +7,11 @@ class Test_CourseAdd(TestCase):
 
         self.client = Client()
 
+        # creating a session?
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.course = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
         self.course.save()

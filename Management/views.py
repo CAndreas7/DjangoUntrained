@@ -204,7 +204,8 @@ class sectionAdd(View):
     def post(self, request, course_id):
         form = SectionForm(request.POST)
         if Section.formAdd(form, course_id):
-            return redirect('sections', course_id=course_id)
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
         return render(request, 'main/Section/addSection.html', {'form': form})
@@ -223,8 +224,9 @@ class sectionEdit(View):
         # could be a get method
         section = Section.getSection(section_id)
         form = SectionEditForm(request.POST)
-        if section.formAdd(form, course_id):
-            return redirect('sections', course_id=course_id)
+        if section.formSave(form):
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             context = {'section': section, 'form': form}
             return render(request, "main/Section/sectionEdit.html", context)
@@ -236,7 +238,8 @@ class sectionDelete(View):
 
         Section.deleteSection(section_id)
         # Redirect to a success page or back to the list of sections
-        return redirect('sections', course_id=course_id)
+        sections_view = sections()
+        return sections_view.get(request, course_id)
 
 
 class userAdd(View):
@@ -278,6 +281,11 @@ class userEdit(View):
         user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            # When editing a user, when entering a new email, the previous email was not deleted.
+            # This if statement deletes the email.
+            if email_id != form.cleaned_data['email']:
+                User.deleteUser(email_id)
+
             form.save()
             return redirect('users')
         else:
