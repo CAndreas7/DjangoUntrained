@@ -383,7 +383,8 @@ class Course(models.Model):
         else:
             return False
 
-    def formSave(self, form):
+    @staticmethod
+    def formSave(form):
 
         if form.is_valid():
             form.save()
@@ -395,10 +396,10 @@ class Course(models.Model):
     def getCourse(courseID):
         return get_object_or_404(Course, pk=courseID)
 
-
     def removeCourse(self):
-        ThisCourse = Course.objects.get(courseID=self.courseID)
-        ThisCourse.delete()
+        # use at views 136, courseDelete
+        Course.objects.get(courseID=self.courseID).delete()
+        # ThisCourse.delete()
 
     @staticmethod
     def getAll():
@@ -424,7 +425,6 @@ class Section(models.Model):
     # since this is intrinsically tied to Courses, when a course is deleted
     # the section shouldn't exist anymore, so we delete this section
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
-
 
     def getID(self):
         # Return the section ID
@@ -468,6 +468,7 @@ class Section(models.Model):
 
     def getCourseName(self):
         return Course.objects.get(courseID=self.courseID).getName()
+
     @staticmethod
     def getSectionsFromCourse(courseID):
         return Section.objects.filter(courseID=courseID)
@@ -516,6 +517,7 @@ class Section(models.Model):
     @staticmethod
     def deleteSection(sectionID):
         Section.objects.filter(sectionID=sectionID).delete()
+
 
 # this is a junction table, showing a user assigned to a course
 # A user can be assigned multiple courses, and a course can have multiple users assigned
