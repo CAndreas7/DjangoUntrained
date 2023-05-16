@@ -495,8 +495,7 @@ class Section(models.Model):
             section.save()
             return True
         else:
-            return False, form.errors
-
+            return False
 
     def formSave(self, form):
         if form.is_valid():
