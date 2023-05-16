@@ -17,28 +17,23 @@
                 <div id="div_id_Assignment" class="mb-3">
                     <label class="form-label">User</label>
                     <select name="Assignment" class="select form-select">
-                        {% for u in people %}#}
+                        {% for u in users %}#}
                             <option value="{{ u.getEmail }}">{{ u.getFullName }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-{#                <div class="row mb-3">#}
-{#                    <div class="col">#}
-{#                        <label class="form-label text-white">Choose User</label>#}
-{#                    </div>#}
-{#                    <div class="col">#}
-{#                        <select name="TA">#}
-{#                            {% for u in people %}#}
-{#                                <option value="{{ u.getEmail }}">{{ u.getFullName }}</option>#}
-{#                            {% endfor %}#}
-{#                        </select>#}
-{#                    </div>#}
-{#                </div>#}
+
                 <input class="btn" type="submit" style="color: white; background-color: #494b5f">
             </form>
         </div>
-
+        {% if message != None %}
+            <div class="position-absolute top-100 start-50 translate-middle">
+                <div class="container p-3 my-5 alert alert-warning alert-dismissible fade show text-black">
+                    <strong>Warning! </strong>{{ message }}
+                </div>
+            </div>
+        {% endif %}
     </div>
 
 {#  <form method="post">#}
