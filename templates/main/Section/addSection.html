@@ -70,15 +70,15 @@
                     </div>
                 </div>
                 <br>
-                <a class="btn" type="submit" style="color: white; background-color: #494b5f">Save Changes</a>
-                <button class="btn" href="{% url 'sections' course_id %}" role="button" style="color: white; background-color: #494b5f">Back To Sections</button>
+                <input class="btn" type="submit" style="color: white; background-color: #494b5f" value="Save Changes">
+                <a class="btn" href="{% url 'sections' course_id %}" role="button" style="color: white; background-color: #494b5f">Back To Sections</a>
                 <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
             </form>
         </div>
         {% if message != None %}
             <div class="position-absolute top-100 start-50 translate-middle">
                 <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-                    <strong>Success! </strong>{{ message }}
+                    <strong>Error: </strong>{{ message }}
                 </div>
             </div>
         {% endif %}

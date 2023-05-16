@@ -96,13 +96,13 @@ class courseAdd(View):
         form = CourseForm(request.POST)
         if Course.formAdd(form):
             request.session['messageC'] = "Course Successfully added!"
-
-            return render(request, 'main/Course/courseAdd.html',
-                          {'form': form, 'message': "Course Successfully added!"})
+            courses_view = courses()
+            #return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
+            return courses_view.get(request)
         else:
-            form = CourseForm()
-
-        return render(request, 'main/Course/courseAdd.html', {'form': form})
+             form = CourseForm()
+        return render(request, 'main/Course/courseAdd.html', {'form': form,
+                                                              'message': "Course ID Already Exists."})
 
 
 class courseEdit(View):
@@ -112,7 +112,9 @@ class courseEdit(View):
 
         form = CourseEditForm(instance=course)
         context = {'course': course, 'form': form}
+
         return render(request, "main/Course/courseEdit.html", context)
+
 
     def post(self, request, course_id):
 
@@ -120,10 +122,12 @@ class courseEdit(View):
         form = CourseEditForm(request.POST, instance=course)
         if course.formSave(form):
             request.session['messageC'] = "Course was successfully edited."
-            return render(request, 'main/Course/courseEdit.html',
-                          {'form': form, 'message': "Course was successfully edited!"})
+
+            #return render(request, 'main/Course/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
+            courses_view = courses()
+            return courses_view.get(request)
         else:
-            context = {'course': course, 'form': form}
+            context = {'course': course, 'form': form, 'message': "Could not edit Course Information"}
             return render(request, "main/Course/courseEdit.html", context)
 
 
@@ -179,8 +183,9 @@ class userToCourseAdd(View):
         if UsersToCourse.addUserToCourse(email, course_id):
             Email.emailGen(name, email, course_id)
             request.session['messageUIC'] = "User successfully added to course."
-
-            return redirect('usersInCourse', course_id=course_id)
+            user_to_course_view = usersInCourse()
+            return user_to_course_view.get(request, course_id)
+            # return redirect('usersInCourse', course_id=course_id)
         else:
             return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
 
@@ -198,7 +203,9 @@ class userToCourseDelete(View):
 
         # Redirect to a success page or back to the list of courses
 
-        return redirect("usersInCourse", course_id=course_id)
+        #return redirect("usersInCourse", course_id=course_id)
+        user_to_course_view = usersInCourse()
+        return user_to_course_view.get(request, course_id)
 
 
 class sections(View):
@@ -222,17 +229,33 @@ class sectionAdd(View):
     def get(self, request, course_id):
         form = SectionForm(initial={'courseID': course_id})
         user = User.objects.all()
-        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id, 'people': user})
+
+        if 'messageS_invalid_form' in request.session:
+            context = {'form': form, 'course_id': course_id, 'people': user,
+                                                                'message': request.session['messageS_invalid_form']}
+            return render(request, 'main/Section/addSection.html', context)
+
+        return render(request, 'main/Section/addSection.html', {'form': form, 'course_id': course_id, 'people': user,
+                                                                })
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
+        print(Section.formAdd(form, course_id))
         if Section.formAdd(form, course_id):
             request.session['messageS'] = "Section successfully added."
 
-            return redirect('sections', course_id=course_id)
+            #return redirect('sections', course_id=course_id)
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
-        return render(request, 'main/Section/addSection.html', {'form': form})
+        sectionsAdd_view = sectionAdd()
+
+        request.session['messageS_invalid_form'] = "Section ID Already Exists."
+
+        return sectionsAdd_view.get(request, course_id)
+
+
 
 
 
@@ -251,7 +274,10 @@ class sectionEdit(View):
         if section.formSave(form):
             request.session['messageS'] = "Section successfully edited."
 
-            return redirect('sections', course_id=course_id)
+            # return redirect('sections', course_id=course_id)
+
+            sections_view = sections()
+            return sections_view.get(request, course_id)
         else:
             context = {'section': section, 'form': form}
             return render(request, "main/Section/sectionEdit.html", context)
@@ -265,7 +291,9 @@ class sectionDelete(View):
         request.session['messageS'] = "Section successfully deleted."
 
         # Redirect to a success page or back to the list of sections
-        return redirect('sections', course_id=course_id)
+        # return redirect('sections', course_id=course_id)
+        sections_view = sections()
+        return sections_view.get(request, course_id)
 
 
 class userAdd(View):

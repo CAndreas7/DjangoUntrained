@@ -5,6 +5,13 @@
 {% endblock header %}
 
 {% block content %}
+    <div class="CourseDeleted">
+        {% if message != "" %}
+            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                <strong>Successful! </strong>{{ message }}
+            </div>
+        {% endif %}
+    </div>
     <div class="container">
         <table class="table table-dark table-striped" style="color: white">
             <thead>
@@ -41,13 +48,7 @@
             <a class="btn" href="{% url 'courseAdd' %}" role="button" style="color: white; background-color: #494b5f">Add Course</a>
         {% endif %}
     </div>
-    <div class="CourseDeleted">
-        {% if message != "" %}
-            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-                <strong>Successful! </strong>{{ message }}
-            </div>
-        {% endif %}
-    </div>
+
 
 {#    <br> <br> <button type="button"><a href="{% url 'mainHome' %}">Home</a></button>#}
 {% endblock content %}
