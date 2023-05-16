@@ -21,13 +21,19 @@ table, th, td {
    <td>{{ user.fName }}</td>
    <td>{{ user.email }}</td>
       <td>
-        <button type="button"><a href="{% url 'userToCourseDelete' user.email course.courseID  %}">Remove From Course</a></button>
+          {% if roleTemplate == 1 %}
+             <button type="button"><a href="{% url 'userToCourseDelete' user.email course.courseID  %}">Remove From Course</a></button>
+          {% endif %}
+
     </td>
   </tr>
   {% endfor %}
 </table> <br>
 
-<button type="button"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>
+    {% if roleTemplate == 1 %}
+        <button type="button"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>
+    {% endif %}
+
 
     <div class="CourseDeleted">
         {% if message != "" %}
