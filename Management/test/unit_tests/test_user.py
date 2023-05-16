@@ -532,10 +532,12 @@ class testAddUserFromForm(TestCase):
     def test_userFromFormBadLastName(self):
         self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained an empty last name,"
                                                                         "did not return false")
+
     def test_userFromFormBadLastName2(self):
         self.badFormLastName.lName = None
         self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained a None last name,"
                                                                         "did not return false")
+
     def test_userFromFormBadLastName3(self):
         self.badFormLastName.lName = 1
         self.assertEqual(User.formAdd(self.badFormLastName), False, msg="Form contained an integer last name,"
@@ -563,6 +565,7 @@ class testAddUserFromForm(TestCase):
         self.badFormPassword.password = None
         self.assertEqual(User.formAdd(self.badFormPassword), False, msg="Form contained a None password, "
                                                                         "did not return false")
+
     def test_userFormBadPassword2(self):
         self.badFormPassword.password = 1
         self.assertEqual(User.formAdd(self.badFormPassword), False, msg="Form contained an integer password, "
@@ -576,10 +579,12 @@ class testAddUserFromForm(TestCase):
         self.badFormPhone.phone = None
         self.assertEqual(User.formAdd(self.badFormPhone), False, msg="Form contained a None Phone Number, "
                                                                      "did not return false")
+
     def test_userFormBadPhoneNumber3(self):
         self.badFormPhone.phone = 1
         self.assertEqual(User.formAdd(self.badFormPhone), False, msg="Form contained an integer Phone Number, "
                                                                      "did not return false")
+
     def test_userFormBadRole(self):
         self.assertEqual(User.formAdd(self.badFormRole), False, msg="Form contained an empty Role,"
                                                                     "did not return false")
@@ -600,7 +605,6 @@ class testAddUserFromForm(TestCase):
         self.assertEqual(User.formAdd(self.badFormRole), False, msg='')
         # with self.assertRaises(ValueError, msg="Role was outside of given range, Validation was not raised"):
         #     User.formAdd(self.badFormRole)
-
 
 
 class testGetUserObject(TestCase):

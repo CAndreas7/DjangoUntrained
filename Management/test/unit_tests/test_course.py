@@ -2,6 +2,7 @@ import unittest
 
 from django.core.exceptions import ValidationError
 
+from Management.forms import CourseForm
 from Management.models import Course, Section, User
 from django.test import TestCase
 
@@ -17,20 +18,20 @@ class TestCourse(TestCase):
         name = self.courseCS250.getName()
         self.assertEqual("CS250", name, msg="Returned name was not the course's name")
 
-    def test_setName(self):
+    def test_setName2(self):
         self.courseCS250.setName("NotCS250")
         self.assertEqual("NotCS250", self.courseCS250.courseName, msg="Tried to set the name of the course but "
                                                                       "didn't corrently store the new course name.")
 
-    def test_setName2(self):
+    def test_setName3(self):
         with self.assertRaises(ValidationError, msg="Course name cannot be None"):
             self.courseCS250.setName(None)
 
-    def test_setName3(self):
+    def test_setName4(self):
         with self.assertRaises(ValidationError, msg="Course Name cannot be an Integer"):
             self.courseCS250.setName(1)
 
-    def test_setName4(self):
+    def test_setName5(self):
         with self.assertRaises(ValidationError, msg="Course name cannot be empty"):
             self.courseCS250.setName('')
 
@@ -40,20 +41,20 @@ class TestCourse(TestCase):
         self.assertEqual("Some elementary comp sci class", description,
                          msg="returned course description was not the course's description")
 
-    def test_setDescription(self):
+    def test_setDescription2(self):
         self.courseCS250.setDescription("I love green eggs.")
         self.assertEqual("I love green eggs.", self.courseCS250.courseDescription, msg="course description"
                                                                                        "wasn't set properly.")
 
-    def test_setDescription2(self):
+    def test_setDescription3(self):
         with self.assertRaises(ValidationError, msg="Description cannot be None"):
             self.courseCS250.setDescription(None)
 
-    def test_setDescription3(self):
+    def test_setDescription4(self):
         with self.assertRaises(ValidationError, msg="Description cannot be an Integer"):
             self.courseCS250.setDescription(1)
 
-    def test_setDescription4(self):
+    def test_setDescription5(self):
         with self.assertRaises(ValidationError, msg="Description cannot be empty"):
             self.courseCS250.setDescription('')
 
@@ -96,3 +97,82 @@ class TestCourse(TestCase):
     #     self.assertEqual(None, self.courseCS350.Section[0],
     #                      msg="Added section is not removed from the section array in "
     #                          "courses")
+
+
+# formadd, formsave, getcourse, removecourse,getall
+# fields = ['courseID', 'courseName', 'courseDescription', 'courseDepartment']
+class testFormAdd(TestCase):
+
+    def setUp(self):
+        self.form = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+            'An introductory course to Python', 'courseDepartment': 'CS'})
+        self.badFormCourseID = CourseForm({'courseID': '', 'courseName': 'Python 101', 'courseDescription':
+            'An introductory course to Python', 'courseDepartment': 'CS'})
+        self.badFormCourseName = CourseForm({'courseID': 1, 'courseName': '', 'courseDescription':
+            'An introductory course to Python', 'courseDepartment': 'CS'})
+        self.badFormCourseDesc = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+            '', 'courseDepartment': 'CS'})
+        self.badFormCourseDept = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+            'An introductory course to Python', 'courseDepartment': ''})
+
+    def test_addFormGood(self):
+        self.assertEqual(Course.formAdd(self.form), True, msg='Form was valid but wasnt added')
+
+    def test_addFormBadID(self):
+        self.assertEqual(Course.formAdd(self.badFormCourseID), False, msg="Form was invalid but was added")
+
+    def test_addFormBadID2(self):
+        pass
+
+    def test_addFormBadID3(self):
+        pass
+
+    def test_addFormBadCourseName(self):
+        pass
+
+    def test_addFormBadCourseName2(self):
+        pass
+
+    def test_addFormBadCourseName3(self):
+        pass
+
+    def test_addFormBadCourseName4(self):
+        pass
+
+    def test_addFormBadCourseDesc(self):
+        pass
+
+    def test_addFormBadCourseDesc2(self):
+        pass
+
+    def test_addFormBadCourseDesc3(self):
+        pass
+
+    def test_addFormBadCourseDesc4(self):
+        pass
+
+    def test_addFormBadCourseDept(self):
+        pass
+
+    def test_addFormBadCourseDept2(self):
+        pass
+
+    def test_addFormBadCourseDept3(self):
+        pass
+
+
+
+class testFormSave(TestCase):
+    pass
+
+
+class testGetCourse(TestCase):
+    pass
+
+
+class testRemoveCourse(TestCase):
+    pass
+
+
+class testGetAll(TestCourse):
+    pass
