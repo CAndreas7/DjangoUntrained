@@ -7,6 +7,12 @@ class Test_EditCourses(TestCase):
 
     def setUp(self):
         self.client = Client()
+
+        # creating a session?
+        self.session = self.client.session
+        self.session['roleSession'] = 1
+        self.session.save()
+
         self.course = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
         self.editURL = reverse('courseEdit', kwargs={'course_id': self.course.courseID})

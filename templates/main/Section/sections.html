@@ -39,5 +39,11 @@
         <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
         <a class="btn" href="{% url 'sectionAdd' course.courseID %}" role="button" style="color: white; background-color: #494b5f">Add Section</a>
     </div>
-
+    <div class="CourseDeleted">
+        {% if message != "" %}
+            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                <strong>Successful! </strong>{{ message }}
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}
