@@ -155,7 +155,8 @@ class userToCourseAdd(View):
 
     def get(self, request, course_id):
         form = UserToFrom()
-        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+        user = User.objects.all()
+        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id, 'people': user})
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)

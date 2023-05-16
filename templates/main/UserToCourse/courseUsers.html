@@ -39,34 +39,4 @@
         </div>
     </div>
 
-{#<table style="width:100%">#}
-{#  <tr>#}
-{#      <th>Role</th>#}
-{#      <th>Last Name</th>#}
-{#      <th>First Name</th>#}
-{#      <th>Email</th>#}
-{#  </tr>#}
-{#  {% for user in users %}#}
-{#  <tr>#}
-{#  <td>{{ user.role }}</td>#}
-{#    <td>{{ user.lName }}</td>#}
-{#   <td>{{ user.fName }}</td>#}
-{#   <td>{{ user.email }}</td>#}
-{#      <td>#}
-{#        <button type="button"><a href="{% url 'userToCourseDelete' user.email course.courseID  %}">Remove From Course</a></button>#}
-{#    </td>#}
-{#  </tr>#}
-{#  {% endfor %}#}
-{#</table> <br>#}
-{##}
-{#<button type="button"><a href="{% url 'userToCourseAdd' course.courseID %}">Add User</a></button>#}
-{##}
-{#    <div class="CourseDeleted">#}
-{#        {% if message != "" %}#}
-{#            <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">#}
-{#                <strong>Successful! </strong>{{ message }}#}
-{#            </div>#}
-{#        {% endif %}#}
-{#    </div>#}
-
 {% endblock content %}

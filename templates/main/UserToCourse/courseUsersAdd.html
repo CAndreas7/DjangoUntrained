@@ -1,19 +1,57 @@
-{% extends 'base.html' %}
+{% extends 'basePages.html' %}
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
-{% block content %}
-  <h2>Add User</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit">Add User</button>
-  </form>
 
-<div class="CourseDeleted">
-{% if message == "That user is already assigned to this course." %}
-<div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-    <strong>Error! </strong>{{ message }}
-</div>
-{% endif %}
-</div>
+{% block header %}
+    Add User
+{% endblock header %}
+
+{% block content %}
+
+    <div class="container position-relative" style="height: 500px">
+        <div class="AddUserToCourse position-absolute top-50 start-50 translate-middle">
+            <form method="post">
+                {% csrf_token %}
+{#                {{ form|crispy }}#}
+
+                <div id="div_id_Assignment" class="mb-3">
+                    <label class="form-label">User</label>
+                    <select name="Assignment" class="select form-select">
+                        {% for u in people %}#}
+                            <option value="{{ u.getEmail }}">{{ u.getFullName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+{#                <div class="row mb-3">#}
+{#                    <div class="col">#}
+{#                        <label class="form-label text-white">Choose User</label>#}
+{#                    </div>#}
+{#                    <div class="col">#}
+{#                        <select name="TA">#}
+{#                            {% for u in people %}#}
+{#                                <option value="{{ u.getEmail }}">{{ u.getFullName }}</option>#}
+{#                            {% endfor %}#}
+{#                        </select>#}
+{#                    </div>#}
+{#                </div>#}
+                <input class="btn" type="submit" style="color: white; background-color: #494b5f">
+            </form>
+        </div>
+
+    </div>
+
+{#  <form method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ form|crispy }}#}
+{#    <button type="submit">Add User</button>#}
+{#  </form>#}
+{##}
+{#<div class="CourseDeleted">#}
+{#{% if message == "That user is already assigned to this course." %}#}
+{#<div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">#}
+{#    <strong>Error! </strong>{{ message }}#}
+{#</div>#}
+{#{% endif %}#}
+{#</div>#}
 {% endblock content %}
