@@ -5,19 +5,22 @@ from Management.models import Course, Section, User
 from Management.views import sections, sectionAdd, sectionEdit, sectionDelete, courses
 
 
-
-class SectionsViewTest(TestCase):
+class testSections(TestCase):
     def setUp(self):
         self.taOld = User(email="taOld@uwm.edu", password="taOldpassword", phone="", role=3)
         self.taNew = User(email="taNew@uwm.edu", password="taNewpassword", phone="", role=3)
         self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
         self.courseCS911 = Course(911, "CS911", "Emergency computer science, enroll immediately.", "CS")
-        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30, TA=self.taOld, courseID=self.courseMUS001)
-
+        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30,
+                                  TA=self.taOld, courseID=self.courseMUS001)
 
     def test_getID(self):
+        self.assertEqual(self.section001.getID(), 1, msg="This should return 1, but did not")
+
+    def test_getID2(self):
         tempSectionID = self.section001.getID()
-        self.assertEqual(tempSectionID, self.section001.sectionID, msg="getSectionID did not return the correct sectionID")
+        self.assertEqual(tempSectionID, self.section001.sectionID,
+                         msg="getSectionID did not return the correct sectionID")
         # response = self.client.get(reverse('sections', args=[self.course.courseID]))
         # self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'main/sections.html')
@@ -26,14 +29,17 @@ class SectionsViewTest(TestCase):
 
     def test_getLocation(self):
         tempLocation = self.section001.getLocation()
-        self.assertEqual(tempLocation, self.section001.location, msg="getSectionLocation did not return the correct location")
+        self.assertEqual(tempLocation, self.section001.location,
+                         msg="getSectionLocation did not return the correct location")
 
     def test_setLocation(self):
         self.section001.setLocation("MUS150")
         self.assertEqual("MUS150", self.section001.location, msg="setSectionLocation did not work correctly")
+
     def test_getStart(self):
         tempStart = self.section001.getStart()
-        self.assertEqual(tempStart, self.section001.startTime, msg="getSectionStart did not return the correct start time")
+        self.assertEqual(tempStart, self.section001.startTime,
+                         msg="getSectionStart did not return the correct start time")
 
     def test_setStart(self):
         self.section001.setStart("12:00AM")
@@ -71,67 +77,39 @@ class SectionsViewTest(TestCase):
         self.section001.setCourseID(self.courseCS911)
         self.assertEqual(self.courseCS911, self.section001.courseID, msg="setCourseID did not work correctly")
 
-    # def test_delete(self):
 
-#
-# class SectionAddViewTest(TestCase):
-#     def setUp(self):
-#         self.course = Course.objects.create(courseID=1, courseName='Test Course')
-#
-#     def test_get(self):
-#         response = self.client.get(reverse('sectionAdd', args=[self.course.courseID]))
-#         # self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'main/addSection.html')
-#
-#     def test_post(self):
-#         # Create a dictionary with the data to be submitted in the POST request
-#         post_data = {
-#             'courseID': self.course.courseID,
-#             'sectionID': 1,
-#             'location': 'Test Location',
-#             'startTime': '09:00',
-#             'endTime': '10:00',
-#             'capacity': 30
-#         }
-#
-#         # Send a POST request to the sectionAdd URL with the post_data
-#         response = self.client.post(reverse('sectionAdd', args=[self.course.courseID]), post_data)
-#
-#         # Check that a new Section object was created in the database
-#         self.assertTrue(Section.objects.filter(sectionID=1).exists())
-#
-#         # Get the newly created Section object from the database
-#         section = Section.objects.get(sectionID=1)
-#
-#         # Check that the attributes of the new Section object match the data submitted in the POST request
-#         self.assertEqual(section.location, post_data['location'])
-#         self.assertEqual(section.startTime, post_data['startTime'])
-#         self.assertEqual(section.endTime, post_data['endTime'])
-#         self.assertEqual(section.capacity, post_data['capacity'])
-#
-#
-# class TestSectionEditView(TestCase):
-#     pass
-#
-#
-# class SectionDeleteViewTest(TestCase):
-#     def setUp(self):
-#         self.course = Course.objects.create(courseID=1, courseName='Test Course')
-#         self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
-#
-#     def test_get(self):
-#         response = self.client.get(reverse('sectionDelete', args=[self.course.courseID, self.section.sectionID]))
-#         self.assertEqual(response.status_code, 302)
-#         with self.assertRaises(Section.DoesNotExist):
-#             Section.objects.get(pk=self.section.sectionID)
-#
-#
-# class CoursesViewTest(TestCase):
-#     def setUp(self):
-#         self.course = Course.objects.create(courseID=1, courseName='Test Course')
-#         self.section = Section.objects.create(courseID=self.course, sectionID=1, capacity=30)
-#
-#     def test_get(self):
-#         response = self.client.get(reverse('courses'))
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, "main/courses.html")
+# this method takes a section and returns the COURSE that it points to
+class testGetCourseName(TestCase):
+    # hold for now
+    def setUp(self):
+        self.taOld = User(email="taOld@uwm.edu", lName="Black", fName="Jack", password="taOldpassword", phone="",
+                          role=3)
+        self.taNew = User(email="taNew@uwm.edu", lName="Bridges", fName="Jeff", password="taNewpassword", phone="",
+                          role=3)
+        self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
+        self.courseCS911 = Course(911, "CS911", "Emergency computer science, enroll immediately.", "CS")
+        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30,
+                                  TA=self.taOld, courseID=self.courseMUS001)
+
+    def test_getCourseNameGood(self):
+        pass
+
+
+class testGetSectionsFromCourse(TestCase):
+    pass
+
+
+class testFormAdd(TestCase):
+    pass
+
+
+class testFormSave(TestCase):
+    pass
+
+
+class testGetSection(TestCase):
+    pass
+
+
+class testDeleteSection(TestCase):
+    pass
