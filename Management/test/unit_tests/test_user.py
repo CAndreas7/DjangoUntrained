@@ -14,7 +14,6 @@ from Management.models import *
 # Or we can HANDLE an exception to continue running
 # LOOK AT THE LINK CHASE SENT
 # https://www.geeksforgeeks.org/emailfield-django-models/
-# line 266 in views
 # In models, methods below initializer
 
 class TestUser(TestCase):

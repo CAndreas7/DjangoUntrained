@@ -383,11 +383,13 @@ class Course(models.Model):
         else:
             return False
 
-    @staticmethod
-    def formSave(form):
+    def formSave(self, form):
 
         if form.is_valid():
-            form.save()
+            self.setName(form.cleaned_data["courseName"])
+            self.setDescription(form.cleaned_data["courseDescription"])
+            self.setDepartment(form.cleaned_data["courseDepartment"])
+            self.save()
             return True
         else:
             return False
@@ -515,20 +517,21 @@ class Section(models.Model):
     #     self.save()
     @staticmethod
     def formAdd(form, courseID):
-        if not Course.objects.get(courseID = courseID):
+        if not Course.objects.get(courseID=courseID):
             raise ObjectDoesNotExist("No course with the given ID exists in the system")
         if form.is_valid():
             if not isinstance(form.cleaned_data['sectionID'], int):
                 raise ValidationError("Section ID must be an Integer")
             if Section.objects.filter(sectionID=form.cleaned_data['sectionID']).count() == 0:
+
                 location = form.cleaned_data['location']
                 startTime = form.cleaned_data['startTime']
                 endTime = form.cleaned_data['endTime']
+                if form.cleaned_data["capacity"] < 0:
+                    raise ValidationError("Capacity cannot be negative")
                 capacity = form.cleaned_data['capacity']
                 TA = form.cleaned_data['TA']
                 sectionID = form.cleaned_data['sectionID']
-                print(sectionID)
-
                 # Create a new Section object with the extracted data
                 section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
                                   courseID=Course.objects.get(pk=courseID), endTime=endTime)
@@ -549,7 +552,7 @@ class Section(models.Model):
             self.save()
             return True
         else:
-            return False, form.errors
+            return False
 
     @staticmethod
     def getSection(sectionID):

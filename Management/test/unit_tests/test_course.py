@@ -3,7 +3,7 @@ import unittest
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.http import Http404
 
-from Management.forms import CourseForm
+from Management.forms import CourseForm, CourseEditForm
 from Management.models import Course, Section, User
 from django.test import TestCase
 
@@ -177,66 +177,60 @@ class testFormSave(TestCase):
     # This method essentially just calls the in house form.save method
     # so we test for True/False returns
     def setUp(self):
-        self.form = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+        self.courseCS250 = Course(4, "CS250", "Some elementary comp sci class", "CS")
+        self.courseCS250.save()
+        self.form = CourseEditForm({'courseName': 'Python 101', 'courseDescription':
             'An introductory course to Python', 'courseDepartment': 'CS'})
-        self.badFormCourseID = CourseForm({'courseID': '', 'courseName': 'Python 101', 'courseDescription':
+        self.badFormCourseID = CourseEditForm({'courseName': 'Python 101', 'courseDescription':
             'An introductory course to Python', 'courseDepartment': 'CS'})
-        self.badFormCourseName = CourseForm({'courseID': 1, 'courseName': '', 'courseDescription':
+        self.badFormCourseName = CourseEditForm({'courseName': '', 'courseDescription':
             'An introductory course to Python', 'courseDepartment': 'CS'})
-        self.badFormCourseDesc = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+        self.badFormCourseDesc = CourseEditForm({'courseName': 'Python 101', 'courseDescription':
             '', 'courseDepartment': 'CS'})
-        self.badFormCourseDept = CourseForm({'courseID': 1, 'courseName': 'Python 101', 'courseDescription':
+        self.badFormCourseDept = CourseEditForm({'courseName': 'Python 101', 'courseDescription':
             'An introductory course to Python', 'courseDepartment': ''})
 
     def test_formSaveGood(self):
-        self.assertEqual(Course.formSave(self.form), True, msg="The form was valid but was not added")
-
-    def test_formSaveBadCourseID(self):
-        self.assertEqual(Course.formSave(self.badFormCourseID), False,
-                         msg="The form had an empty courseID but was added")
-
-    def test_formSaveBadCourseID2(self):
-        self.badFormCourseID.courseID = None
-        self.assertEqual(Course.formSave(self.badFormCourseID), False, msg="The form had a None courseID but was added")
+        self.assertEqual(self.courseCS250.formSave(self.form), True, msg="The form was valid but was not added")
 
     def test_formSaveBadCourseName(self):
-        self.assertEqual(Course.formSave(self.badFormCourseName), False, msg="The form had an empty name but was added")
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseName), False, msg="The form had an empty name but was added")
 
     def test_formSaveBadCourseName2(self):
         self.badFormCourseName.courseName = None
-        self.assertEqual(Course.formSave(self.badFormCourseName), False, msg="The form had a None name but was added")
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseName), False, msg="The form had a None name but was added")
 
     def test_formSaveBadCourseName3(self):
         self.badFormCourseName.courseName = 1
-        self.assertEqual(Course.formSave(self.badFormCourseName), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseName), False,
                          msg="The form had an Integer course name but was added")
 
     def test_formSaveBadCourseDesc(self):
-        self.assertEqual(Course.formSave(self.badFormCourseDesc), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDesc), False,
                          msg="The form had an empty description but was added")
 
     def test_formSaveBadCourseDesc2(self):
         self.badFormCourseDesc.courseDescription = None
-        self.assertEqual(Course.formSave(self.badFormCourseDesc), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDesc), False,
                          msg="The form had a None description but was added")
 
     def test_formSaveBadCourseDesc3(self):
         self.badFormCourseDesc.courseDescription = 1
-        self.assertEqual(Course.formSave(self.badFormCourseDesc), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDesc), False,
                          msg="The form had an Integer description but was added")
 
     def test_badFormCourseDept(self):
-        self.assertEqual(Course.formSave(self.badFormCourseDept), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDept), False,
                          msg="The form had an Empty department but was added")
 
     def test_badFormCourseDept2(self):
         self.badFormCourseDept.courseDepartment = None
-        self.assertEqual(Course.formSave(self.badFormCourseDept), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDept), False,
                          msg="The form had a None department but was added")
 
     def test_badFormCourseDept3(self):
         self.badFormCourseDept.courseDepartment = 1
-        self.assertEqual(Course.formSave(self.badFormCourseDept), False,
+        self.assertEqual(self.courseCS250.formSave(self.badFormCourseDept), False,
                          msg="The form had an Integer department but was added")
 
 

@@ -1,9 +1,10 @@
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.http import Http404
 from django.shortcuts import redirect
 from django.test import TestCase
 from django.urls import reverse
 
-from Management.forms import SectionForm
+from Management.forms import SectionForm, SectionEditForm
 from Management.models import Course, Section, User
 from Management.views import sections, sectionAdd, sectionEdit, sectionDelete, courses
 
@@ -204,41 +205,40 @@ class testFormAdd(TestCase):
         self.badFormStart = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "", "endTime": "10:20AM",
                                          "capacity": 80, "TA": self.taOld})
         self.badFormEnd = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "",
-                                 "capacity": 80, "TA": self.taOld})
-        self.form = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
-                                 "capacity": 80, "TA": self.taOld})
+                                       "capacity": 80, "TA": self.taOld})
+        self.badFormCapacity = SectionForm(
+            {"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+             "capacity": None, "TA": self.taOld})
+        self.badFormTA = SectionForm(
+            {"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+             "capacity": 80, "TA": ""})
 
     def test_formAddGood(self):
         self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), True,
                          msg="The form is valid but was not added")
 
     def test_formAddBadSID(self):
-        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+        self.assertEqual(Section.formAdd(self.badFormSID, self.courseMUS001.courseID), False,
                          msg="The form had an invalid sectionID but added")
 
     def test_formAddBadLoc(self):
-        self.form.location = ""
         self.assertEqual(Section.formAdd(self.badFormLoc, self.courseMUS001.courseID), False,
                          msg="The form had an invalid location but was added")
 
     def test_formAddBadStart(self):
-        self.form.startTime = ""
         self.assertEqual(Section.formAdd(self.badFormStart, self.courseMUS001.courseID), False,
                          msg="The form had an invalid start time but was added")
 
     def test_formAddBadEnd(self):
-        self.form.endTime = ""
-        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+        self.assertEqual(Section.formAdd(self.badFormEnd, self.courseMUS001.courseID), False,
                          msg="The form had an invalid end time but was added")
 
     def test_formAddBadCapacity(self):
-        self.form.capacity = "a"
-        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+        self.assertEqual(Section.formAdd(self.badFormCapacity, self.courseMUS001.courseID), False,
                          msg="The form had an invalid capacity but was added")
 
     def test_formAddBadTA(self):
-        self.form.TA = "a"
-        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+        self.assertEqual(Section.formAdd(self.badFormTA, self.courseMUS001.courseID), False,
                          msg="The form had an invalid TA but was added anyways")
 
     def test_formAddBadCourse(self):
@@ -247,12 +247,87 @@ class testFormAdd(TestCase):
 
 
 class testFormSave(TestCase):
-    pass
+
+    def setUp(self):
+        self.taOld = User(email="taOld@uwm.edu", lName="test", fName="Unit", password="taOldpassword", phone="", role=3)
+        self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
+        self.taOld.save()
+        self.courseMUS001.save()
+        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30,
+                                  TA=self.taOld, courseID=self.courseMUS001)
+        self.section001.save()
+        self.form = SectionEditForm({"location": "CHEM90", "startTime": "09:30AM", "endTime": "10:20AM",
+                                           "capacity": 80, "TA": self.taOld})
+        self.badFormLoc = SectionEditForm({"location": "", "startTime": "09:30AM", "endTime": "10:20AM",
+                                           "capacity": 80, "TA": self.taOld})
+        self.badFormStart = SectionEditForm({"location": "CHEM190", "startTime": "", "endTime": "10:20AM",
+                                             "capacity": 80, "TA": self.taOld})
+        self.badFormEnd = SectionEditForm({"location": "CHEM190", "startTime": "09:30AM", "endTime": "",
+                                           "capacity": 80, "TA": self.taOld})
+        self.badFormCapacity = SectionEditForm({"location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+                                                "capacity": "", "TA": self.taOld})
+        self.badFormTA = SectionEditForm({"location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+                                          "capacity": 80, "TA": ""})
+
+    def test_formSaveGood(self):
+        self.assertEqual(self.section001.formSave(self.form), True, msg="The form was valid but wasn't saved")
+
+    def test_badFormLoc(self):
+         self.assertEqual(self.section001.formSave(self.badFormLoc), False,
+                          msg="The form had an invalid location but was added")
+
+    def test_badFormStart(self):
+        self.assertEqual(self.section001.formSave(self.badFormStart), False,
+                         msg="The form had an invalid start but was entered")
+
+    def test_badFormEnd(self):
+        self.assertEqual(self.section001.formSave(self.badFormEnd), False,
+                         msg="The form had an invalid end but was entered")
+
+    def test_badFormCapacity(self):
+        self.assertEqual(self.section001.formSave(self.badFormCapacity), False,
+                         msg="The form had an invalid capacity but was entered")
+
+    def test_badFormTA(self):
+        self.assertEqual(self.section001.formSave(self.badFormTA), False,
+                         msg="The form had an invalid capacity but was entered")
 
 
 class testGetSection(TestCase):
-    pass
+
+    def setUp(self):
+        self.taOld = User(email="taOld@uwm.edu", lName="test", fName="Unit", password="taOldpassword", phone="", role=3)
+        self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
+        self.taOld.save()
+        self.courseMUS001.save()
+        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30,
+                                  TA=self.taOld, courseID=self.courseMUS001)
+        self.section001.save()
+
+    def test_getSectionGood(self):
+        self.assertEqual(Section.getSection(self.section001.sectionID), self.section001,
+                         msg="The returned section doesn't match the correct section")
+
+    def test_getSectionBad(self):
+        with self.assertRaises(Http404, msg="The requested object does not exist"):
+            Section.getSection(92)
 
 
 class testDeleteSection(TestCase):
-    pass
+
+    def setUp(self):
+        self.taOld = User(email="taOld@uwm.edu", lName="test", fName="Unit", password="taOldpassword", phone="", role=3)
+        self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
+        self.taOld.save()
+        self.courseMUS001.save()
+        self.section001 = Section(sectionID=1, location="Backyard", startTime="12:00PM", endTime="12:01PM", capacity=30,
+                                  TA=self.taOld, courseID=self.courseMUS001)
+        self.section001.save()
+
+    def test_deleteGood(self):
+        Section.deleteSection(self.section001.sectionID)
+        self.assertEqual(Section.objects.all().count(), 0, msg="There should be no section sin the database")
+
+    def test_deleteNonexistent(self):
+        Section.deleteSection(4)
+        self.assertEqual(Section.objects.all().count(), 1, msg="There should be 1 section in the database")

@@ -31,7 +31,7 @@ class TestUsersToCourse(TestCase):
                          msg="A record exists with the primary key that should have been deleted")
 
     def test_getUserToCourse(self):
-        courseUsers = UsersToCourse.getUserToCourse(911)
+        courseUsers = UsersToCourse.getUserInCourse(911)
         self.assertQuerysetEqual(courseUsers, UsersToCourse.objects.filter(courseID=911),
                          msg="getUserToCourse did not return the correct users assigned to the course.")
 
