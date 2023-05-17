@@ -595,6 +595,8 @@ class UsersToCourse(models.Model):
     # creates a new UTC object/record
     @staticmethod
     def addUserToCourse(email, courseID):
+        if UsersToCourse.objects.filter(courseID=courseID, assignment=email):
+            return False
         userTo = UsersToCourse(courseID=courseID, assignment=email)
         userTo.save()
         return userTo
