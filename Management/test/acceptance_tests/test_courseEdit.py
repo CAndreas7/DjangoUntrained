@@ -28,7 +28,7 @@ class Test_EditCourses(TestCase):
         self.assertEqual("CS001", Course.objects.get(courseID=1).courseName,
                          msg="the course name of CS250 was not changed to CS001")
         self.assertEqual(len(Course.objects.all()), 1, "There should be a total of 1 course in the database.")
-        self.assertEqual(response.context['message'], "Course was successfully edited!",
+        self.assertEqual(response.context['message'], "Course was successfully edited.",
                          "message displayed was not correct")
 
     def test_editCourseDescription(self):
@@ -41,7 +41,7 @@ class Test_EditCourses(TestCase):
         self.assertEqual("Some other", Course.objects.get(courseID=1).courseDescription,
                          "the course description was not changed")
         self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
-        self.assertEqual(response.context['message'], "Course was successfully edited!",
+        self.assertEqual(response.context['message'], "Course was successfully edited.",
                          "message displayed was not correct")
 
     def test_editCourseDepartment(self):
@@ -55,7 +55,7 @@ class Test_EditCourses(TestCase):
                          msg="When posting a new course Department field, the course department field was not changed")
 
         self.assertEqual(len(Course.objects.all()), 1, "There should STILL be a total of 1 course in the database.")
-        self.assertEqual(response.context['message'], "Course was successfully edited!",
+        self.assertEqual(response.context['message'], "Course was successfully edited.",
                          "message displayed was not correct")
 
 
