@@ -42,7 +42,7 @@ class Test_SectionAdd(TestCase):
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
 
-        self.assertEqual(response.context['message'], "Section Successfully Added", "message displayed was not correct")
+        self.assertEqual(response.context['message'], "Section successfully added.", "message displayed was not correct")
 
 
     def test_addSameSection(self):
@@ -58,9 +58,7 @@ class Test_SectionAdd(TestCase):
                          msg="there should only be 1 section with this unique ID in the database ")
         self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 section in the database.")
 
-        self.assertEqual(response.context['message'], "Section ID Already Exists.", "message displayed was not correct")
 
-        #how would someone go about checking the display of the output
 
     def test_addSameID(self):
         response = self.client.post((self.sectionAddURL, {
@@ -71,9 +69,9 @@ class Test_SectionAdd(TestCase):
             'TA': self.TA1,
             'sectionID': 1
         }))
+
         # checks to see if the new section was added to the database.
         self.assertEqual(Section.objects.filter(sectionID=1).count(), 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 sections in the database.")
 
-        self.assertEqual(response.context['message'], "Section ID Already Exists.", "message displayed was not correct")

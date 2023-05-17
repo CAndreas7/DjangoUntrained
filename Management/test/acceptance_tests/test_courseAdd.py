@@ -55,7 +55,7 @@ class Test_CourseAdd(TestCase):
                              "data base")
         self.assertEqual(len(Course.objects.all()), 2, "There should be a total of 2 courses in the database.")
 
-        self.assertEqual(response.context['message'], "Error: Course ID Already Exists.", "message displayed was not correct")
+        self.assertEqual(response.context['message'], "Course ID Already Exists.", "message displayed was not correct")
     def test_addSameID(self):
         response = self.client.post('/courseAdd/', {
             'courseID': 1,
@@ -69,4 +69,4 @@ class Test_CourseAdd(TestCase):
                              "data base")
         self.assertEqual(len(Course.objects.all()), 2, "There should be a total of 2 courses in the database.")
 
-        self.assertEqual(response.context['message'], "Error: Course ID Already Exists.", "message displayed was not correct")
+        self.assertEqual(response.context['message'], "Course ID Already Exists.", "message displayed was not correct")
