@@ -483,18 +483,21 @@ class Section(models.Model):
     @staticmethod
     def formAdd(form, courseID):
         if form.is_valid():
-            location = form.cleaned_data['location']
-            startTime = form.cleaned_data['startTime']
-            endTime = form.cleaned_data['endTime']
-            capacity = form.cleaned_data['capacity']
-            TA = form.cleaned_data['TA']
-            sectionID = form.cleaned_data['sectionID']
+            if Section.objects.filter(sectionID=form.cleaned_data['sectionID']).count() == 0:
+                location = form.cleaned_data['location']
+                startTime = form.cleaned_data['startTime']
+                endTime = form.cleaned_data['endTime']
+                capacity = form.cleaned_data['capacity']
+                TA = form.cleaned_data['TA']
+                sectionID = form.cleaned_data['sectionID']
 
-            # Create a new Section object with the extracted data
-            section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
-                              courseID=Course.objects.get(pk=courseID), endTime=endTime)
-            section.save()
-            return True
+                # Create a new Section object with the extracted data
+                section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
+                                  courseID=Course.objects.get(pk=courseID), endTime=endTime)
+                section.save()
+                return True
+            else:
+                return False
         else:
             return False
 
