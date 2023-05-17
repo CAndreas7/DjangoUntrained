@@ -264,8 +264,9 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = Section.getSection(section_id)
+        user = User.objects.all()
         form = SectionEditForm(instance=section, initial={'courseID': course_id})
-        context = {'section': section, 'form': form, 'course_id': course_id}
+        context = {'section': section, 'form': form, 'course_id': course_id, 'people': user}
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
