@@ -383,11 +383,13 @@ class Course(models.Model):
         else:
             return False
 
-    @staticmethod
-    def formSave(form):
+    def formSave(self, form):
 
         if form.is_valid():
-            form.save()
+            self.setName(form.cleaned_data["courseName"])
+            self.setDescription(form.cleaned_data["courseDescription"])
+            self.setDepartment(form.cleaned_data["courseDepartment"])
+            self.save()
             return True
         else:
             return False
@@ -434,43 +436,76 @@ class Section(models.Model):
         return self.location
 
     def setLocation(self, location):
+        if location is None:
+            raise ValidationError("Location cannot be type None")
+        if not isinstance(location, str):
+            raise ValidationError("Location must be type String")
+        if location.__len__() == 0:
+            raise ValidationError("Location cannot be empty")
         self.location = location
 
     def getStart(self):
         return self.startTime
 
     def setStart(self, start):
+        if start is None:
+            raise ValidationError("Start time cannot be None")
+        if not isinstance(start, str):
+            raise ValidationError("Start time must be type String")
+        if start.__len__() == 0:
+            raise ValidationError("Start time cannot be empty")
         self.startTime = start
 
     def getEnd(self):
         return self.endTime
 
     def setEnd(self, end):
+        if end is None:
+            raise ValidationError("End time cannot be None")
+        if not isinstance(end, str):
+            raise ValidationError("End time must be type String")
+        if end.__len__() == 0:
+            raise ValidationError("End time cannot be empty")
         self.endTime = end
 
     def getCapacity(self):
         return self.capacity
 
     def setCapacity(self, capacity):
+        if capacity is None:
+            raise ValidationError("Capacity cannot be None")
+        if not isinstance(capacity, int):
+            raise ValidationError("Capacity must be type Integer")
+        if capacity < 0:
+            raise ValidationError("Capacity cannot be negative")
         self.capacity = capacity
 
     def getTA(self):
         return self.TA
 
     def setTA(self, ta):
+        if not isinstance(ta, User):
+            raise ValidationError("TA must be a User object")
+        if not User.objects.get(email=ta.email):
+            raise ObjectDoesNotExist("This user is not in the system")
         self.TA = ta
 
     def getCourseID(self):
         return self.courseID
 
     def setCourseID(self, course):
+        if not isinstance(course, Course):
+            raise ValidationError("Course must be a Course Object")
+        if not Course.objects.get(courseID=course.courseID):
+            raise ObjectDoesNotExist("This course is not in the system")
         self.courseID = course
-
-    def getCourseName(self):
-        return Course.objects.get(courseID=self.courseID).getName()
 
     @staticmethod
     def getSectionsFromCourse(courseID):
+        if not isinstance(courseID, int):
+            raise ValidationError("CourseID must be an Integer")
+        if not Course.objects.get(courseID=courseID):
+            raise ObjectDoesNotExist("No course exists with the given courseID")
         return Section.objects.filter(courseID=courseID)
 
     # def setID(self, new_id):
@@ -482,15 +517,21 @@ class Section(models.Model):
     #     self.save()
     @staticmethod
     def formAdd(form, courseID):
+        if not Course.objects.get(courseID=courseID):
+            raise ObjectDoesNotExist("No course with the given ID exists in the system")
         if form.is_valid():
+            if not isinstance(form.cleaned_data['sectionID'], int):
+                raise ValidationError("Section ID must be an Integer")
             if Section.objects.filter(sectionID=form.cleaned_data['sectionID']).count() == 0:
+
                 location = form.cleaned_data['location']
                 startTime = form.cleaned_data['startTime']
                 endTime = form.cleaned_data['endTime']
+                if form.cleaned_data["capacity"] < 0:
+                    raise ValidationError("Capacity cannot be negative")
                 capacity = form.cleaned_data['capacity']
                 TA = form.cleaned_data['TA']
                 sectionID = form.cleaned_data['sectionID']
-
                 # Create a new Section object with the extracted data
                 section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,
                                   courseID=Course.objects.get(pk=courseID), endTime=endTime)
@@ -511,7 +552,7 @@ class Section(models.Model):
             self.save()
             return True
         else:
-            return False, form.errors
+            return False
 
     @staticmethod
     def getSection(sectionID):
@@ -537,18 +578,21 @@ class UsersToCourse(models.Model):
     def getCourse(self):
         return Course.objects.get(pk=self.courseID)
 
-    def removeUser(self):
+    def removePairing(self):
         UserTo = UsersToCourse.objects.get(courseID=self.courseID, assignment=self.assignment)
         UserTo.delete()
 
+    # get all users in a course
     @staticmethod
-    def getUserToCourse(courseID):
+    def getUserInCourse(courseID):
         return UsersToCourse.objects.filter(courseID=courseID)
 
+    # get all courses a user is in
     @staticmethod
     def getUserCourses(email):
         return UsersToCourse.objects.filter(assignment=email)
 
+    # creates a new UTC object/record
     @staticmethod
     def addUserToCourse(email, courseID):
         if UsersToCourse.objects.filter(courseID=courseID, assignment=email):
@@ -559,12 +603,8 @@ class UsersToCourse(models.Model):
 
     @staticmethod
     def delCourseUsers(courseID):
-        utcQuery = UsersToCourse.getUserToCourse(courseID)
-        for x in utcQuery:
-            x.removeUser()
+        UsersToCourse.getUserInCourse(courseID).delete()
 
     @staticmethod
     def delUserCourses(email):
-        utcQuery = UsersToCourse.getUserCourses(email)
-        for x in utcQuery:
-            x.removeUser()
+        UsersToCourse.getUserCourses(email).delete()
