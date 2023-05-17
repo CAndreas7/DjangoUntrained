@@ -1,8 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from Management.models import User, Course, UsersToCourse
 from django.test import TestCase
-
-
 class TestUsersToCourse(TestCase):
     def setUp(self):
         self.supervisor = User("supervisor@uwm.edu", "Visor", "Super", "superpassword", "", 1)
@@ -30,7 +28,7 @@ class TestUsersToCourse(TestCase):
     def test_getUserToCourse(self):
         courseUsers = UsersToCourse.getUserInCourse(911)
         self.assertQuerysetEqual(courseUsers, UsersToCourse.objects.filter(courseID=911),
-                                 msg="getUserToCourse did not return the correct users assigned to the course.")
+                         msg="getUserToCourse did not return the correct users assigned to the course.")
 
     def test_getUserCourses(self):
         courseUsers = UsersToCourse.getUserCourses(self.taOld.email)
@@ -38,7 +36,7 @@ class TestUsersToCourse(TestCase):
                                  msg="getUserToCourse did not return the correct users assigned to the course.")
 
     def test_addUserToCourse(self):
-        newUtcObject = UsersToCourse.addUserToCourse(self.taNew.email, self.courseMUS001.courseID)
+        newUtcObject = UsersToCourse.addUserToCourse(self.taNew.email, self.courseCS911.courseID)
         self.assertIn(newUtcObject, UsersToCourse.objects.all(),
                       msg="The user was not successfully added to the course.")
 
@@ -54,4 +52,4 @@ class TestUsersToCourse(TestCase):
 
     def test_removePairing(self):
         self.usersToCourse01.removePairing()
-        self.assertEqual(UsersToCourse.objects.filter().count(), 1, msg="There can only be one")
+        self.assertEqual(UsersToCourse.objects.filter().count(), 1, msg="There can only one")
