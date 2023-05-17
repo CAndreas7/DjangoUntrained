@@ -500,6 +500,10 @@ class Section(models.Model):
 
     @staticmethod
     def getSectionsFromCourse(courseID):
+        if not isinstance(courseID, int):
+            raise ValidationError("CourseID must be an Integer")
+        if not Course.objects.get(courseID=courseID):
+            raise ObjectDoesNotExist("No course exists with the given courseID")
         return Section.objects.filter(courseID=courseID)
 
     # def setID(self, new_id):
@@ -511,7 +515,11 @@ class Section(models.Model):
     #     self.save()
     @staticmethod
     def formAdd(form, courseID):
+        if not Course.objects.get(courseID = courseID):
+            raise ObjectDoesNotExist("No course with the given ID exists in the system")
         if form.is_valid():
+            if not isinstance(form.cleaned_data['sectionID'], int):
+                raise ValidationError("Section ID must be an Integer")
             if Section.objects.filter(sectionID=form.cleaned_data['sectionID']).count() == 0:
                 location = form.cleaned_data['location']
                 startTime = form.cleaned_data['startTime']
@@ -519,6 +527,7 @@ class Section(models.Model):
                 capacity = form.cleaned_data['capacity']
                 TA = form.cleaned_data['TA']
                 sectionID = form.cleaned_data['sectionID']
+                print(sectionID)
 
                 # Create a new Section object with the extracted data
                 section = Section(sectionID=sectionID, location=location, startTime=startTime, capacity=capacity, TA=TA,

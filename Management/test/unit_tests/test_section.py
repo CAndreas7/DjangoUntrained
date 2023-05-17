@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.test import TestCase
 from django.urls import reverse
+
+from Management.forms import SectionForm
 from Management.models import Course, Section, User
 from Management.views import sections, sectionAdd, sectionEdit, sectionDelete, courses
 
@@ -20,7 +22,6 @@ class testSections(TestCase):
         self.courseMUS001.save()
         self.courseCS911.save()
         self.section001.save()
-
 
     def test_getID(self):
         self.assertEqual(self.section001.getID(), 1, msg="This should return 1, but did not")
@@ -171,18 +172,78 @@ class testGetSectionsFromCourse(TestCase):
         self.section001.save()
 
     def test_getSectionFromCourseGood(self):
-        self.assertEqual(Section.getSectionsFromCourse(self.courseMUS001.courseID).count(), 1, msg=
-        "Only one section in the course")
+        self.assertEqual(Section.getSectionsFromCourse(self.courseMUS001.courseID).count(), 1,
+                         msg="Only one section in the course")
 
     def test_getSectionFromCourseEmpty(self):
-        self.assertEqual(Section.getSectionsFromCourse(self.courseCS911).count(), 0, msg="Did not return empty queryset")
+        self.assertEqual(Section.getSectionsFromCourse(self.courseCS911.courseID).count(), 0,
+                         msg="Did not return empty queryset")
 
     def test_getSectionFromCourseBad(self):
-        pass
+        fakeCourse = Course(courseID=87, courseName="Not real", courseDescription="This course is fake, nerd",
+                            courseDepartment="Imaginary")
+        with self.assertRaises(ObjectDoesNotExist, msg="This course is not in the database"):
+            Section.getSectionsFromCourse(fakeCourse.courseID)
 
 
 class testFormAdd(TestCase):
-    pass
+    # fields = ['sectionID', 'location', 'startTime', 'endTime', 'capacity', 'TA']
+    def setUp(self):
+        self.taOld = User(email="taOld@uwm.edu", lName="test", fName="Unit", password="taOldpassword", phone="", role=3)
+        self.courseMUS001 = Course(1, "MUS001", "Just like a wartime novelty.", "MUS")
+        self.taOld.save()
+        self.courseMUS001.save()
+        self.form = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+                                 "capacity": 80, "TA": self.taOld})
+        self.badFormSID = SectionForm(
+            {"sectionID": "a", "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+             "capacity": 80, "TA": self.taOld})
+        self.badFormLoc = SectionForm(
+            {"sectionID": 1, "location": "", "startTime": "09:30AM", "endTime": "10:20AM",
+             "capacity": 80, "TA": self.taOld})
+        self.badFormStart = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "", "endTime": "10:20AM",
+                                         "capacity": 80, "TA": self.taOld})
+        self.badFormEnd = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "",
+                                 "capacity": 80, "TA": self.taOld})
+        self.form = SectionForm({"sectionID": 1, "location": "CHEM190", "startTime": "09:30AM", "endTime": "10:20AM",
+                                 "capacity": 80, "TA": self.taOld})
+
+    def test_formAddGood(self):
+        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), True,
+                         msg="The form is valid but was not added")
+
+    def test_formAddBadSID(self):
+        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid sectionID but added")
+
+    def test_formAddBadLoc(self):
+        self.form.location = ""
+        self.assertEqual(Section.formAdd(self.badFormLoc, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid location but was added")
+
+    def test_formAddBadStart(self):
+        self.form.startTime = ""
+        self.assertEqual(Section.formAdd(self.badFormStart, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid start time but was added")
+
+    def test_formAddBadEnd(self):
+        self.form.endTime = ""
+        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid end time but was added")
+
+    def test_formAddBadCapacity(self):
+        self.form.capacity = "a"
+        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid capacity but was added")
+
+    def test_formAddBadTA(self):
+        self.form.TA = "a"
+        self.assertEqual(Section.formAdd(self.form, self.courseMUS001.courseID), False,
+                         msg="The form had an invalid TA but was added anyways")
+
+    def test_formAddBadCourse(self):
+        with self.assertRaises(ObjectDoesNotExist, msg="The given courseID must correspond to a course in the system"):
+            Section.formAdd(self.form, 9)
 
 
 class testFormSave(TestCase):
