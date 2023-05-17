@@ -1,16 +1,107 @@
 {% extends 'basePages.html' %}
-
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
-{% block content %}
-<h1>Edit User</h1>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form|crispy }}
-  <input type="submit" value="Save changes">
-</form>
- <br><button type="button"><a href="{% url 'users' %}">Account Information Page</a></button>
+{% block header %}
+    Edit User
+{% endblock header %}
+
+{% block content %}
+
+    <div class="container position-relative" style="height: 500px">
+        <div class="UserAddForm position-absolute top-50 start-50 translate-middle">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Email</label>
+                    </div>
+                    <div class="col">
+                        <input type="email" class="form-control" name="email" value="{{ user.email }}" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Last Name</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="lName" value="{{ user.lName }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">First Name</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="fName" value="{{ user.fName }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">User Password</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="password" value="{{ user.password }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">User Phone #</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="phone" value="{{ user.phone }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">User Role</label>
+                    </div>
+                    <div class="col">
+                        <select name="role" value="{{ user.role }}">
+                            {% if user.role == 1 %}
+                            <option selected value="1">Supervisor</option>
+                            {% else %}
+                            <option value="1">Supervisor</option>
+                            {% endif %}
+
+                            {% if user.role == 2 %}
+                            <option selected value="2">Instructor</option>
+                            {% else %}
+                            <option value="2">Instructor</option>
+                            {% endif %}
+
+                            {% if user.role == 3 %}
+                            <option selected value="3">TA</option>
+                            {% else %}
+                            <option value="3">TA</option>
+                            {% endif %}
+{#                            <option value="1">Supervisor</option>#}
+{#                            <option value="2">Instructor</option>#}
+{#                            <option value="3">TA</option>#}
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <input class="btn" type="submit" value="Save User" style="color: white; background-color: #494b5f"></input>
+                <a class="btn" href="{% url 'users' %}" role="button" style="color: white; background-color: #494b5f">Back To Users</a>
+            </form>
+        </div>
+        {% if message != None %}
+            <div class="position-absolute top-100 start-50 translate-middle">
+                <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                    <strong>Success! </strong>{{ message }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+
+{#<form method="post">#}
+{#  {% csrf_token %}#}
+{#  {{ form|crispy }}#}
+{#  <input type="submit" value="Save changes">#}
+{#</form>#}
+{# <br><button type="button"><a href="{% url 'users' %}">Account Information Page</a></button>#}
 
 
 
