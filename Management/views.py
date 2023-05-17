@@ -339,6 +339,8 @@ class userEdit(View):
         user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            if email_id != form.cleaned_data['email']:
+                User.deleteUser(email_id)
             form.save()
             request.session['messageU'] = "User Edited."
             return redirect('users')
