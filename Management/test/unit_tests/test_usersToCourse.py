@@ -1,6 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from Management.models import User, Course, UsersToCourse
 from django.test import TestCase
+
+
 class TestUsersToCourse(TestCase):
     def setUp(self):
         self.supervisor = User("supervisor@uwm.edu", "Visor", "Super", "superpassword", "", 1)
@@ -28,7 +30,7 @@ class TestUsersToCourse(TestCase):
     def test_getUserToCourse(self):
         courseUsers = UsersToCourse.getUserInCourse(911)
         self.assertQuerysetEqual(courseUsers, UsersToCourse.objects.filter(courseID=911),
-                         msg="getUserToCourse did not return the correct users assigned to the course.")
+                                 msg="getUserToCourse did not return the correct users assigned to the course.")
 
     def test_getUserCourses(self):
         courseUsers = UsersToCourse.getUserCourses(self.taOld.email)
