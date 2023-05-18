@@ -158,7 +158,7 @@ class usersInCourse(View):
         # Get method
         course = Course.getCourse(course_id)
         # get method
-        usersToCourses = UsersToCourse.getUserToCourse(course_id)
+        usersToCourses = UsersToCourse.getUserInCourse(course_id)
         userRole = request.session['roleSession']
 
         for y in usersToCourses:
@@ -254,9 +254,9 @@ class sectionAdd(View):
             return sections_view.get(request, course_id)
         else:
             form = SectionForm(initial={'courseID': course_id})
-        sectionsAdd_view = sectionAdd()
+            sectionsAdd_view = sectionAdd()
 
-        request.session['messageS_invalid_form'] = "Section ID Already Exists."
+            request.session['messageS_invalid_form'] = "Section ID Already Exists."
 
         return sectionsAdd_view.get(request, course_id)
 
