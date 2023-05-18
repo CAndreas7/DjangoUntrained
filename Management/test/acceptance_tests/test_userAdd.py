@@ -35,7 +35,7 @@ class Test_UserAdd(TestCase):
                          "The added same user was either deleted or added twice.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
 
-        self.assertEqual(response.context['message'], "Cannot use an email already owned by another user. Please enter a different email")
+        self.assertEqual(response.context['message'], "Email is either already used or Invalid Form Data")
     def test_addSameEmail(self):
         response = self.client.post(self.userAddURL, {
             'email': 'SomeUser@user.com',
@@ -48,5 +48,5 @@ class Test_UserAdd(TestCase):
                          " was either deleted or added twice.")
         self.assertEqual(len(User.objects.all()), 1, "There should be a total of 1 User in the database.")
 
-        self.assertEqual(response.context['message'], "Cannot use an email already owned by another user. Please enter a different email")
+        self.assertEqual(response.context['message'], "Email is either already used or Invalid Form Data")
 
