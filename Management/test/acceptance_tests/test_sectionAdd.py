@@ -33,11 +33,9 @@ class Test_SectionAdd(TestCase):
             'endTime': '7:50AM',
             'capacity': 100,
             'TA': self.TA1.email,
-            'courseID': self.course1
         })
-        #checks to see if the response didn't blow up.
-        #self.assertEqual(response.status_code, 200, "Status code is not 200")
-        #checks to see if the new section was added to the database.
+
+
         self.assertEqual(Section.objects.filter(sectionID=2).count(), 1,
                          msg="the new section should have been added to the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 sections in the database.")
@@ -46,17 +44,32 @@ class Test_SectionAdd(TestCase):
 
 
     def test_addSameSection(self):
+        self.client.post(self.sectionAddURL, {
+            'sectionID': 2,
+            'location': 'MS200',
+            'startTime': '7:00AM',
+            'endTime': '7:50AM',
+            'capacity': 100,
+            'TA': self.TA1.email,
+        })
+
         response = self.client.post((self.sectionAddURL, {
             'location': 'Here',
             'startTime': '7:00PM',
             'endTime': '7:50PM',
             'capacity': 100,
-            'TA': self.TA1,
-            'sectionID': 1
+            'TA': self.TA1.email,
+            'sectionID': 2
         }))
+
+
         self.assertEqual(Section.objects.filter(sectionID=1).count(), 1,
                          msg="there should only be 1 section with this unique ID in the database ")
-        self.assertEqual(len(Section.objects.all()), 1, "There should be a total of 1 section in the database.")
+        self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 1 section in the database.")
+
+        response.url
+        self.assertEqual(response.context['message'], "Section successfully added.",
+                         "message displayed was not correct")
 
 
 
