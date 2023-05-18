@@ -1,6 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from Management.models import User, Course, UsersToCourse
 from django.test import TestCase
+
+
 class TestUsersToCourse(TestCase):
     def setUp(self):
         self.supervisor = User("supervisor@uwm.edu", "Visor", "Super", "superpassword", "", 1)
@@ -25,15 +27,10 @@ class TestUsersToCourse(TestCase):
         course = self.usersToCourse01.getCourse()
         self.assertEqual(course, self.courseCS911, msg="Returned course not the same as assigned course.")
 
-    def test_removeUserPass(self):
-        self.usersToCourse01.removeUser()
-        self.assertEqual(UsersToCourse.objects.filter(assignment=self.taOld.email, courseID=self.courseCS911.courseID).count(), 0,
-                         msg="A record exists with the primary key that should have been deleted")
-
     def test_getUserToCourse(self):
-        courseUsers = UsersToCourse.getUserToCourse(911)
+        courseUsers = UsersToCourse.getUserInCourse(911)
         self.assertQuerysetEqual(courseUsers, UsersToCourse.objects.filter(courseID=911),
-                         msg="getUserToCourse did not return the correct users assigned to the course.")
+                                 msg="getUserToCourse did not return the correct users assigned to the course.")
 
     def test_getUserCourses(self):
         courseUsers = UsersToCourse.getUserCourses(self.taOld.email)
@@ -54,3 +51,7 @@ class TestUsersToCourse(TestCase):
         UsersToCourse.delUserCourses(self.taOld.email)
         self.assertEqual(0, UsersToCourse.objects.filter(assignment=self.taOld.email).count(),
                          msg="Objects still exist with this user assigned to courses.")
+
+    def test_removePairing(self):
+        self.usersToCourse01.removePairing()
+        self.assertEqual(UsersToCourse.objects.filter().count(), 1, msg="There can only be one")

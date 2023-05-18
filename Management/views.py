@@ -1,5 +1,6 @@
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
 from .email import Email
@@ -26,7 +27,7 @@ class Home(View):
             password = request.POST['password']
             m = User.objects.get(email=request.POST['email'])
             badPassword = (m.password != request.POST['password'])
-        except User.DoesNotExist:
+        except:
             noSuchUser = True
         if user == '' and password == '':
             return render(request, "main/home.html", {"message": "Email and password required."})
@@ -97,8 +98,7 @@ class courseAdd(View):
         if Course.formAdd(form):
             request.session['messageC'] = "Course Successfully added!"
             courses_view = courses()
-            # return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': "Course Successfully
-            # added!"})
+            # return render(request, 'main/Course/courseAdd.html', {'form': form, 'message': "Course Successfully added!"})
             return courses_view.get(request)
         else:
             form = CourseForm()
@@ -123,8 +123,7 @@ class courseEdit(View):
         if course.formSave(form):
             request.session['messageC'] = "Course was successfully edited."
 
-            # return render(request, 'main/Course/courseEdit.html', {'form': form, 'message': "Course was
-            # successfully edited!"})
+            # return render(request, 'main/Course/courseEdit.html', {'form': form, 'message': "Course was successfully edited!"})
             courses_view = courses()
             return courses_view.get(request)
         else:
@@ -174,7 +173,10 @@ class userToCourseAdd(View):
 
     def get(self, request, course_id):
         form = UserToFrom()
-        return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+        # need users in context to show people in the template to choose from
+        user = User.objects.all()
+        return render(request, 'main/UserToCourse/courseUsersAdd.html',
+                      {'form': form, 'course_id': course_id, 'users': user})
 
     def post(self, request, course_id):
         form = UserToFrom(request.POST)
@@ -188,7 +190,9 @@ class userToCourseAdd(View):
             return user_to_course_view.get(request, course_id)
             # return redirect('usersInCourse', course_id=course_id)
         else:
-            return render(request, 'main/UserToCourse/courseUsersAdd.html', {'form': form, 'course_id': course_id})
+            user = User.objects.all()
+            return render(request, 'main/UserToCourse/courseUsersAdd.html',
+                          {'form': form, 'course_id': course_id, 'users': user, 'message': "User already exists!"})
 
 
 class userToCourseDelete(View):
@@ -197,11 +201,10 @@ class userToCourseDelete(View):
         user = UsersToCourse.objects.filter(assignment=email_id, courseID=course_id)
         try:
             for x in user:
-                if not isinstance(x, UsersToCourse):
-                    raise TypeError("x is not an instance of UsersToCourse")
                 x.delete()
-        except TypeError as e:
-            request.session['messageUIC'] = str(e)
+        except:
+            not isinstance(user, UsersToCourse)
+        request.session['messageUIC'] = "User successfully deleted."
 
         # Redirect to a success page or back to the list of courses
 
@@ -261,8 +264,9 @@ class sectionAdd(View):
 class sectionEdit(View):
     def get(self, request, section_id, course_id):
         section = Section.getSection(section_id)
+        user = User.objects.all()
         form = SectionEditForm(instance=section, initial={'courseID': course_id})
-        context = {'section': section, 'form': form, 'course_id': course_id}
+        context = {'section': section, 'form': form, 'course_id': course_id, 'people': user}
         return render(request, "main/Section/sectionEdit.html", context)
 
     def post(self, request, section_id, course_id):
@@ -335,6 +339,8 @@ class userEdit(View):
         user = User.getUser(email_id)
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            if email_id != form.cleaned_data['email']:
+                User.deleteUser(email_id)
             form.save()
             request.session['messageU'] = "User Edited."
             return redirect('users')
