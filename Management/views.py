@@ -245,7 +245,6 @@ class sectionAdd(View):
 
     def post(self, request, course_id):
         form = SectionForm(request.POST)
-        print(Section.formAdd(form, course_id))
         if Section.formAdd(form, course_id):
             request.session['messageS'] = "Section successfully added."
 
