@@ -32,6 +32,30 @@ class Test_AccountInfoPage(TestCase):
         self.assertEqual(list[1].email, "SomeUser2@user.com", "Course 2 is not being displayed")
         self.assertEqual(list[2].email, "SomeUser3@user.com", "Course 2 is not being displayed")
 
+    def test_display_Instructor(self):
+        self.session['roleSession'] = 2;
+        response = self.client.get(self.accountInfoURL)
+
+        queryset_users = response.context['results']
+        list = []
+        for user in queryset_users:
+            list.append(user)
+        self.assertNotEqual(list[0].email, "SomeUser1@user.com", "User 1 is being displayed when both users are not assigned to the same course")
+        self.assertNotEqual(list[1].email, "SomeUser2@user.com", "User 2 is being displayed when both users are not assigned to the same course")
+        self.assertNotEqual(list[2].email, "SomeUser3@user.com", "User 3 is being displayed when both users are not assigned to the same course")
+
+    def test_display_TA(self):
+        self.session['roleSession'] = 3;
+        response = self.client.get(self.accountInfoURL)
+
+        queryset_users = response.context['results']
+        list = []
+        for user in queryset_users:
+            list.append(user)
+        self.assertNotEqual(list[0].email, "SomeUser1@user.com", "User 1 is being displayed when both users are not assigned to the same course")
+        self.assertNotEqual(list[1].email, "SomeUser2@user.com", "User 2 is being displayed when both users are not assigned to the same course")
+        self.assertNotEqual(list[2].email, "SomeUser3@user.com", "User 3 is being displayed when both users are not assigned to the same course")
+
     def test_add_user_link(self):
         response = self.client.get(self.userAddURL)
 

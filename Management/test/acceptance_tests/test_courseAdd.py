@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from Management.models import Course
+from Management.models import Course, User
 
 class Test_CourseAdd(TestCase):
 
@@ -11,6 +11,7 @@ class Test_CourseAdd(TestCase):
         self.session = self.client.session
         self.session['roleSession'] = 1
         self.session.save()
+        self.inst = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=2)
 
         self.course = Course.objects.create(courseID=1, courseName="CS250",
                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
@@ -22,6 +23,17 @@ class Test_CourseAdd(TestCase):
             'courseDescription': "Some elementary comp sci class",
             'courseDepartment': "CS"
         })
+
+    def test_add_instructor_to_course(self):
+        response = self.client.post('/courseAdd/', {
+            'courseID': 1236,
+            'courseName': 'CS400',
+            'courseDescription': "Some elementary comp sci class",
+            'courseDepartment': "CS",
+            'instructor': "SomeUser@user.com",
+        })
+
+        self.assertEqual(response.context['message'], "instructor and course added.")
 
     def test_addNewCourse(self):
 

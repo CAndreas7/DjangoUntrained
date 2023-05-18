@@ -11,12 +11,33 @@ class Test_UserToCourseAdd(TestCase):
         self.session.save()
 
         self.TA1 = User.objects.create(email="SomeUser@user.com", password="testpassword", phone="", role=3)
-        self.course1 = Course.objects.create(courseID="1", courseName="CS250",
+        self.course1 = Course.objects.create(courseID=1, courseName="CS250",
+                                             courseDescription="Some elementary comp sci class", courseDepartment="CS")
+        self.course2 = Course.objects.create(courseID=2, courseName="CS250",
                                              courseDescription="Some elementary comp sci class", courseDepartment="CS")
 
+        self.instr = User.objects.create(email="inst@inst.com", password="testpassword", phone="", role=2)
 
 
         self.userToCourseAddURL = reverse('userToCourseAdd', kwargs={'course_id': self.course1.courseID})
+
+        self.userToCourse2AddURL = reverse('userToCourseAdd', kwargs={'course_id': self.course2.courseID})
+
+    def test_user_add_themselves_to_course(self):
+        self.session['roleSession'] = 2
+        response = self.client.post(self.userToCourseAddURL, {
+            'Assignment': "inst@inst.com"
+        })
+
+        self.assertEqual(response.context['message'], "User successfully added to course.")
+
+    def test_user_add_themselves_to_unassigned_course(self):
+        self.session['roleSession'] = 2
+        response = self.client.post(self.userToCourse2AddURL, {
+            'Assignment': "inst@inst.com"
+        })
+
+        self.assertEqual(response.context['message'], "User is not assigned to this course by the supervisor")
 
     def test_adding_new_user_to_course(self):
         response = self.client.post(self.userToCourseAddURL, {
