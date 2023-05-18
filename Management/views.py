@@ -174,7 +174,7 @@ class userToCourseAdd(View):
     def get(self, request, course_id):
         form = UserToFrom()
         # need users in context to show people in the template to choose from
-        user = User.objects.all()
+        user = User.objects.exclude(role=1)
         return render(request, 'main/UserToCourse/courseUsersAdd.html',
                       {'form': form, 'course_id': course_id, 'users': user})
 
@@ -364,7 +364,8 @@ class users(ListView):
         queryset = super().get_queryset()
         if query:
             queryset = queryset.filter(
-                Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query))
+                Q(fName__icontains=query) | Q(email__icontains=query) | Q(lName__icontains=query)
+                | Q(phone__icontains=query) | Q(role__icontains=query))
         return queryset
 
     def get_context_data(self, **kwargs):
