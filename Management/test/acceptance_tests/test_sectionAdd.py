@@ -67,7 +67,7 @@ class Test_SectionAdd(TestCase):
                          msg="there should only be 1 section with this unique ID in the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 section in the database.")
 
-        self.assertEqual(response.context['message'], "Section ID Already Exists.",
+        self.assertEqual(response.context['message'], "Section ID is either already used or Invalid Form Data",
                          "message displayed was not correct")
 
 
@@ -95,6 +95,6 @@ class Test_SectionAdd(TestCase):
                          msg="there should only be 1 section with this unique ID in the database ")
         self.assertEqual(len(Section.objects.all()), 2, "There should be a total of 2 section in the database.")
 
-        self.assertEqual(response.context['message'], "Section ID Already Exists.",
+        self.assertEqual(response.context['message'], "Section ID is either already used or Invalid Form Data",
                          "message displayed was not correct")
 

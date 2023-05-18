@@ -103,7 +103,7 @@ class courseAdd(View):
         else:
             form = CourseForm()
         return render(request, 'main/Course/courseAdd.html', {'form': form,
-                                                              'message': "Course ID Already Exists."})
+                                                              'message': "Course ID is either already used or Invalid Form Data"})
 
 
 class courseEdit(View):
@@ -255,7 +255,7 @@ class sectionAdd(View):
             form = SectionForm(initial={'courseID': course_id})
             sectionsAdd_view = sectionAdd()
 
-            request.session['messageS_invalid_form'] = "Section ID Already Exists."
+            request.session['messageS_invalid_form'] = "Section ID is either already used or Invalid Form Data"
 
         return sectionsAdd_view.get(request, course_id)
 
@@ -319,8 +319,7 @@ class userAdd(View):
             form = UserForm()
 
         return render(request, 'main/User/userAdd.html',
-                      {'form': form, 'message': "Cannot use an email already owned by another user. "
-                                                "Please enter a different email"})
+                      {'form': form, 'message': "Email is either already used or Invalid Form Data"})
 
 
 class userEdit(View):
