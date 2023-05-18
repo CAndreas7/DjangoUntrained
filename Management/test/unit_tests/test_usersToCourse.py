@@ -25,13 +25,8 @@ class TestUsersToCourse(TestCase):
         course = self.usersToCourse01.getCourse()
         self.assertEqual(course, self.courseCS911, msg="Returned course not the same as assigned course.")
 
-    def test_removeUserPass(self):
-        self.usersToCourse01.removeUser()
-        self.assertEqual(UsersToCourse.objects.filter(assignment=self.taOld.email, courseID=self.courseCS911.courseID).count(), 0,
-                         msg="A record exists with the primary key that should have been deleted")
-
     def test_getUserToCourse(self):
-        courseUsers = UsersToCourse.getUserToCourse(911)
+        courseUsers = UsersToCourse.getUserInCourse(911)
         self.assertQuerysetEqual(courseUsers, UsersToCourse.objects.filter(courseID=911),
                          msg="getUserToCourse did not return the correct users assigned to the course.")
 
@@ -41,7 +36,7 @@ class TestUsersToCourse(TestCase):
                                  msg="getUserToCourse did not return the correct users assigned to the course.")
 
     def test_addUserToCourse(self):
-        newUtcObject = UsersToCourse.addUserToCourse(self.taNew.email, self.courseMUS001.courseID)
+        newUtcObject = UsersToCourse.addUserToCourse(self.taNew.email, self.courseCS911.courseID)
         self.assertIn(newUtcObject, UsersToCourse.objects.all(),
                       msg="The user was not successfully added to the course.")
 
@@ -54,3 +49,7 @@ class TestUsersToCourse(TestCase):
         UsersToCourse.delUserCourses(self.taOld.email)
         self.assertEqual(0, UsersToCourse.objects.filter(assignment=self.taOld.email).count(),
                          msg="Objects still exist with this user assigned to courses.")
+
+    def test_removePairing(self):
+        self.usersToCourse01.removePairing()
+        self.assertEqual(UsersToCourse.objects.filter().count(), 1, msg="There can only one")

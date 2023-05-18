@@ -1,22 +1,94 @@
 {% extends 'basePages.html' %}
-
     {% load crispy_forms_tags %}
     {% load crispy_forms_filters %}
+
+{% block header %}
+    Edit Section
+{% endblock header %}
+
 {% block content %}
 
-<h1>Edit Section</h1>
+    <div class="container position-relative" style="height: 500px">
+        <div class="CourseAddForm position-absolute top-50 start-50 translate-middle">
+            <form method="post">
+                {% csrf_token %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form|crispy }}
-  <input type="submit" value="Save changes">
-</form>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Location</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="location" value="{{ section.location }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Start Time</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="startTime" value="{{ section.startTime }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">End Time</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="endTime" value="{{ section.endTime }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">Capacity</label>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="form-control" name="capacity" value="{{ section.capacity }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label text-white">TA</label>
+                    </div>
+                    <div class="col">
+                        <select name="TA">
+                            {% for u in people %}
+                                {% if u.role == 3 %}
+                                    {% if section.TA == u %}
+                                    <option selected value="{{ u.getEmail }}">{{ u.getFullName }}</option>
+                                    {% else %}
+                                    <option value="{{ u.getEmail }}">{{ u.getFullName }}</option>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <input class="btn" type="submit" style="color: white; background-color: #494b5f" value="Save Changes"></input>
+                <button class="btn" href="{% url 'sections' course_id %}" role="button" style="color: white; background-color: #494b5f">Back To Sections</button>
+                <a class="btn" href="{% url 'courses' %}" role="button" style="color: white; background-color: #494b5f">Back To Courses</a>
+            </form>
+        </div>
+        {% if message != None %}
+            <div class="position-absolute top-100 start-50 translate-middle">
+                <div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
+                    <strong>Success! </strong>{{ message }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
 
-<div class="CourseDeleted">
-{% if message == "Something went wrong." %}
-<div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">
-    <strong>Error! </strong>{{ message }}
-</div>
-{% endif %}
-</div>
+{#<form method="post">#}
+{#  {% csrf_token %}#}
+{#  {{ form|crispy }}#}
+{#  <input type="submit" value="Save changes">#}
+{#</form>#}
+{##}
+{#<div class="CourseDeleted">#}
+{#{% if message == "Something went wrong." %}#}
+{#<div class="container p-3 my-5 alert alert-success alert-dismissible fade show text-black">#}
+{#    <strong>Error! </strong>{{ message }}#}
+{#</div>#}
+{#{% endif %}#}
+{#</div>#}
 {% endblock content %}
