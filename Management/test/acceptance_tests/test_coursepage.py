@@ -31,13 +31,7 @@ class Test_CoursesPage(TestCase):
 
     def test_display(self):
         response = self.client.get(self.coursesURL)
-        """ ROLE SEESSION ERROR YAY!
-        
-        session = self.client.session
-        session['roleSession'] = 1
-        session.save()
-        """
-        #Kevin helped display courses
+
         queryset_courses = response.context['courses']
         list = []
         for x in queryset_courses:
@@ -45,6 +39,31 @@ class Test_CoursesPage(TestCase):
         self.assertEqual(list[0].courseID, 1, "Course 1 is not being displayed")
         self.assertEqual(list[1].courseID, 2, "Course 2 is not being displayed")
 
+    def test_display_instr(self):
+        self.session['roleSession'] = 2;
+        response = self.client.get(self.coursesURL)
+        queryset_courses = response.context['courses']
+        list = []
+        for x in queryset_courses:
+            list.append(x)
+        self.assertEqual(list[0].courseID, 1, "Course 1 is not being displayed")
+        self.assertEqual(list[1].courseID, 2, "Course 2 is not being displayed")
+
+        self.assertNotEqual(list[0].courseID, 1, "Course 1 is being displayed")
+        self.assertNotEqual(list[1].courseID, 2, "Course 2 is being displayed")
+
+    def test_display_TA(self):
+        self.session['roleSession'] = 3;
+        response = self.client.get(self.coursesURL)
+        queryset_courses = response.context['courses']
+        list = []
+        for x in queryset_courses:
+            list.append(x)
+        self.assertEqual(list[0].courseID, 1, "Course 1 is not being displayed")
+        self.assertEqual(list[1].courseID, 2, "Course 2 is not being displayed")
+
+        self.assertNotEqual(list[0].courseID, 1, "Course 1 is being displayed")
+        self.assertNotEqual(list[1].courseID, 2, "Course 2 is being displayed")
     def test_RemoveCourse1(self):
         response = self.client.get(self.course1DeleteURL)
 
