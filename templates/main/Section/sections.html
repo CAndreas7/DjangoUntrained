@@ -14,6 +14,7 @@
                 <th scope="col">Start Time</th>
                 <th scope="col">End Time</th>
                 <th scope="col">Capacity</th>
+                <th scope="col">TA</th>
                 {% if roleTemplate != 3 %}
                     <th scope="col"></th>
                 {% endif %}
@@ -26,6 +27,7 @@
                         <td>{{ section.startTime }}</td>
                         <td>{{ section.endTime }}</td>
                         <td>{{ section.capacity }}</td>
+                        <td>{{ section.TA.fName}} {{ section.TA.lName }}</td>
                         {% if roleTemplate != 3 %}
                             <td>
                                 <a class="btn" href="{% url 'sectionEdit' course.courseID section.sectionID %}" role="button" style="color: white; background-color: #494b5f">Edit Section</a>
